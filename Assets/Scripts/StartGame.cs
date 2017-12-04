@@ -1,0 +1,28 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class StartGame : MonoBehaviour {
+
+	private Animator anim;
+	public GameObject pauseButton;
+
+	void Awake(){
+		anim = GetComponent<Animator> ();
+	}
+
+	//Función para iniciar el conteo de inico de juego
+	public void ReadyToPlay(){
+
+		if (GameController.gameController.canPlay && !GameController.gameController.startGame) {
+			anim.SetTrigger ("Start");
+		}
+	}
+	//Al terminar la animación del conteo, comenzamos el juego
+	public void StartTheGame(){
+
+		GameController.gameController.startGame = true;
+		//Al estar en pleno juego mostramos el botón de pausa
+		pauseButton.SetActive (true);
+	}
+}

@@ -16,7 +16,6 @@ public class EnemiesController : MonoBehaviour {
 		DisableSprites (centerEnemies);
 		DisableSprites (rightEnemies);
 		StartCoroutine (SpawnEnemies());
-		//StartCoroutine (SpawnEnemies());
 	}
 	//Función para desactivar los sprites de los enemigos
 	void DisableSprites(SpriteRenderer[] spriteList){

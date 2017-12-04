@@ -10,7 +10,9 @@ public class GameController : MonoBehaviour {
 	public SpriteRenderer[] enemy;
 	public SpriteRenderer[] player;
 	public Image[] lives;
-	public bool inGame;
+	public bool canPlay;
+	public bool startGame;
+	//public bool gameOver;
 	public int currentLife;
 
 	void Awake(){
@@ -32,23 +34,24 @@ public class GameController : MonoBehaviour {
 			currentLife = PlayerPrefs.GetInt ("CurrentLife");
 		}
 		ShowCurrentLives ();
-		if (currentLife > 0) {
-			inGame = true;
+		if (currentLife <= 0) {
+			canPlay = false;
 		} else {
-			currentLife = 0;
-			inGame = false;
+			canPlay = true;
 		}
 	}
 
 	void Update(){
-		
-		if (inGame) {
+
+		if (startGame) {
 			//Si el indice del sprite activo del player encaja con el del enemigo, significa que colisionaron; por lo tanto detenemos el juego
 			for (int i = 0; i < player.Length; i++) {
 				if (enemy[i].enabled && player[i].enabled) {
-					inGame = false;
-					PauseGame (0);
+					startGame = false;
+					//PauseGame (0);
 					RemoveLife ();
+					//INVOCACIÓN TEMPORAL
+					Invoke ("RestartGame",3);
 				}
 			}
 		}
@@ -57,6 +60,15 @@ public class GameController : MonoBehaviour {
 	public void PauseGame(int timeScale){
 
 		Time.timeScale = timeScale;
+		startGame = false;
+	}
+	//Función para mostrar las vidas disponibles al iniciar el juego
+	void ShowCurrentLives(){
+
+		currentLife = PlayerPrefs.GetInt ("CurrentLife");
+		for (int i = currentLife -1; i > -1; i--) {
+			lives [i].enabled = true;
+		}
 	}
 	//Función para remover una vida
 	void RemoveLife(){
@@ -70,12 +82,8 @@ public class GameController : MonoBehaviour {
 			}
 		}
 	}
-	//Función para mostrar las vidas disponibles al iniciar el juego
-	void ShowCurrentLives(){
-
-		currentLife = PlayerPrefs.GetInt ("CurrentLife");
-		for (int i = currentLife -1; i > -1; i--) {
-			lives [i].enabled = true;
-		}
+	//Función para reiniciar el juego
+	void RestartGame(){
+		SceneManager.LoadScene ("Main");
 	}
 }

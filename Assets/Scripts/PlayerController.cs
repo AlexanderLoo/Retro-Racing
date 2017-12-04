@@ -13,7 +13,6 @@ public class PlayerController : MonoBehaviour {
 		leftPlayer.sprite = sideSprite;
 		centerPlayer.sprite = centerSprite;
 		rightPlayer.sprite = sideSprite;
-		StayInCenter ();
 	}
 	//Las siguientes funciones mueven al player
 	public void MoveToLeft(){
@@ -29,7 +28,8 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void EnabledSprite(SpriteRenderer enabledSprite, SpriteRenderer disableSprite, SpriteRenderer disableSprite2){
-		if (GameController.gameController.inGame) {
+		
+		if (GameController.gameController.startGame) {
 			enabledSprite.enabled = true;
 			disableSprite.enabled = false;
 			disableSprite2.enabled = false;
