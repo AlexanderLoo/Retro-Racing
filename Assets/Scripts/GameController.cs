@@ -48,19 +48,12 @@ public class GameController : MonoBehaviour {
 			for (int i = 0; i < player.Length; i++) {
 				if (enemy[i].enabled && player[i].enabled) {
 					startGame = false;
-					//PauseGame (0);
 					RemoveLife ();
 					//INVOCACIÓN TEMPORAL
 					Invoke ("RestartGame",3);
 				}
 			}
 		}
-	}
-	//Función para pausar el juego, el parámetro timeScale 0: para pausar, 1: para continuar el juego
-	public void PauseGame(int timeScale){
-
-		Time.timeScale = timeScale;
-		startGame = false;
 	}
 	//Función para mostrar las vidas disponibles al iniciar el juego
 	void ShowCurrentLives(){

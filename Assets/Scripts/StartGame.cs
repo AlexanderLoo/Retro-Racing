@@ -11,6 +11,12 @@ public class StartGame : MonoBehaviour {
 		anim = GetComponent<Animator> ();
 	}
 
+	public void PauseGame(){
+
+		Time.timeScale = 0;
+		GameController.gameController.startGame = false;
+	}
+
 	//Función para iniciar el conteo de inico de juego
 	public void ReadyToPlay(){
 
@@ -21,6 +27,7 @@ public class StartGame : MonoBehaviour {
 	//Al terminar la animación del conteo, comenzamos el juego
 	public void StartTheGame(){
 
+		Time.timeScale = 1;
 		GameController.gameController.startGame = true;
 		//Al estar en pleno juego mostramos el botón de pausa
 		pauseButton.SetActive (true);

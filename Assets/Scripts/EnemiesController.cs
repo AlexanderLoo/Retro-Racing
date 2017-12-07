@@ -15,7 +15,11 @@ public class EnemiesController : MonoBehaviour {
 		DisableSprites (leftEnemies);
 		DisableSprites (centerEnemies);
 		DisableSprites (rightEnemies);
-		StartCoroutine (SpawnEnemies());
+		StartCoroutine (SpawnEnemies ());
+	}
+	void Update(){
+
+
 	}
 	//Función para desactivar los sprites de los enemigos
 	void DisableSprites(SpriteRenderer[] spriteList){
@@ -25,6 +29,7 @@ public class EnemiesController : MonoBehaviour {
 			sprite.enabled = false;
 		}
 	}
+
 	//Función para spawnear los enemigos
 	IEnumerator SpawnEnemies(){
 
@@ -42,6 +47,21 @@ public class EnemiesController : MonoBehaviour {
 				yield return new WaitForSeconds (speed);
 			}
 			DisableSprites (spriteList);
+		}
+	}
+
+	IEnumerator SpawnEnemy(SpriteRenderer[] spriteList){
+
+		yield return new WaitForSeconds (1);
+
+		while (true) {
+			for (int i = 0; i < spriteList.Length; i++) {
+				if (i != 0) spriteList [i - 1].enabled = false;
+				spriteList [i].enabled = true;
+				yield return new WaitForSeconds (speed);
+			}
+			DisableSprites (spriteList);
+			break;
 		}
 	}
 }
