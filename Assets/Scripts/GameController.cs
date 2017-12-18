@@ -9,8 +9,10 @@ public class GameController : MonoBehaviour {
 	public static GameController gameController;
 	public SpriteRenderer[] enemy;
 	public SpriteRenderer[] player;
+	public SpriteRenderer[] collision;
 	public Image[] lives;
 	public bool canPlay;
+	public GameObject starButton;
 	public bool startGame;
 	//public bool gameOver;
 	public int currentLife;
@@ -38,16 +40,19 @@ public class GameController : MonoBehaviour {
 			canPlay = false;
 		} else {
 			canPlay = true;
+			starButton.SetActive (true);
 		}
 	}
 
 	void Update(){
-
+		//Lógica de colisión
 		if (startGame) {
 			//Si el indice del sprite activo del player encaja con el del enemigo, significa que colisionaron; por lo tanto detenemos el juego
 			for (int i = 0; i < player.Length; i++) {
 				if (enemy[i].enabled && player[i].enabled) {
 					startGame = false;
+					//mostramos la colisión
+					collision[i].enabled = true;
 					RemoveLife ();
 					//INVOCACIÓN TEMPORAL
 					Invoke ("RestartGame",3);

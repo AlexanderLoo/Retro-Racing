@@ -24,7 +24,7 @@ public class StartGame : MonoBehaviour {
 			anim.SetTrigger ("Start");
 		}
 	}
-	//Al terminar la animación del conteo, comenzamos el juego
+	//Al terminar la animación del conteo, comenzamos el juego(esta función se llama en el evento al terminar la animación de countdown)
 	public void StartTheGame(){
 
 		Time.timeScale = 1;
