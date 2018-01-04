@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEditor;
 using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour {
@@ -11,11 +12,16 @@ public class GameController : MonoBehaviour {
 	public SpriteRenderer[] player;
 	public SpriteRenderer[] collision;
 	public Image[] lives;
+	//Velocidad 1 que equivale a 16.6 m/s
+	public float speed = 1;
+	public int score;
+	public Text scoreText;
 	public bool canPlay;
 	public GameObject starButton;
 	public bool startGame;
 	//public bool gameOver;
 	public int currentLife;
+
 
 	void Awake(){
 		//Singleton
@@ -42,6 +48,9 @@ public class GameController : MonoBehaviour {
 			canPlay = true;
 			starButton.SetActive (true);
 		}
+
+		scoreText.text = "00";
+		Time.timeScale = 0;
 	}
 
 	void Update(){
@@ -58,13 +67,21 @@ public class GameController : MonoBehaviour {
 					Invoke ("RestartGame",3);
 				}
 			}
+			Distance ();
+		}
+		if (Input.GetKeyDown(KeyCode.Escape)) {
+			#if UNITY_EDITOR
+			UnityEditor.EditorApplication.isPlaying = false;
+			#endif
+			Application.Quit();
 		}
 	}
 	//Función para mostrar las vidas disponibles al iniciar el juego
 	void ShowCurrentLives(){
 
 		currentLife = PlayerPrefs.GetInt ("CurrentLife");
-		for (int i = currentLife -1; i > -1; i--) {
+
+		for (int i = lives.Length -1; i > lives.Length - 1 - currentLife ; i--) {
 			lives [i].enabled = true;
 		}
 	}
@@ -83,5 +100,16 @@ public class GameController : MonoBehaviour {
 	//Función para reiniciar el juego
 	void RestartGame(){
 		SceneManager.LoadScene ("Main");
+	}
+
+	//Función para calcular la distancia en km y mostrarlas en el score
+	void Distance(){
+		//Usando como parámetro mínimo de velocidad 60 km/h ---> 16.6 m/s(km/h * 0.277)
+		//Aplicamos la siguiente fórmula para hallar la distancia ---> d = v*t
+		//distance = (16.6 / speed) * time ---> distance = (16.6 / speed) * Time.time(distancia en metros, distancia en km --> score/1000)
+		//dividimos la velocidad(16.6) entre la variable speed por que mientras el speed sea mas bajo, la velocidad es mas alta
+
+		float distance = (float)(16.6/speed) * Time.time;
+		scoreText.text = Mathf.Round (distance).ToString ();
 	}
 }
