@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEditor;
 using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour {
@@ -14,12 +13,15 @@ public class GameController : MonoBehaviour {
 	public Image[] lives;
 	//Velocidad 1 que equivale a 16.6 m/s
 	public float speed = 1;
-	public int score;
+	public float score;
 	public Text scoreText;
+	[HideInInspector]
 	public bool canPlay;
 	public GameObject starButton;
+	[HideInInspector]
 	public bool startGame;
 	//public bool gameOver;
+	[HideInInspector]
 	public int currentLife;
 
 
@@ -48,8 +50,9 @@ public class GameController : MonoBehaviour {
 			canPlay = true;
 			starButton.SetActive (true);
 		}
-
-		scoreText.text = "00";
+		speed = 1;
+		score = 0;
+		scoreText.text = score.ToString();
 		Time.timeScale = 0;
 	}
 
@@ -109,7 +112,8 @@ public class GameController : MonoBehaviour {
 		//distance = (16.6 / speed) * time ---> distance = (16.6 / speed) * Time.time(distancia en metros, distancia en km --> score/1000)
 		//dividimos la velocidad(16.6) entre la variable speed por que mientras el speed sea mas bajo, la velocidad es mas alta
 
-		float distance = (float)(16.6/speed) * Time.time;
-		scoreText.text = Mathf.Round (distance).ToString ();
+		float distance = (float)(16.6 /speed) * Time.timeSinceLevelLoad;
+		score = distance;
+		scoreText.text = Mathf.Round (score).ToString ();
 	}
 }

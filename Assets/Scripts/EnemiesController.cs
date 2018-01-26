@@ -7,23 +7,33 @@ public class EnemiesController : MonoBehaviour {
 	public SpriteRenderer[] leftEnemies, centerEnemies, rightEnemies;
 	//Con esta variable regulamos el tiempo de espera para el siguente spawn
 	public float spawnTimeInSeconds;
-	//Los siguientes booleanos son los niveles de dificultad del juego
-	private bool oneLineSpawn = false, twoLineSpawn = true;
+	//Variable para determinar en cuanto score se aumenta la dificultad
+	public int changeLevel = 500;
+	//El siguiente entero indica el número de enemigos en la misma fila
+	private int enemyNum = 1;
+	private int currentScore;
 
 	void Start(){
 
 		DisableSprites (leftEnemies);
 		DisableSprites (centerEnemies);
 		DisableSprites (rightEnemies);
+
+		currentScore = changeLevel;
 	}
+
 	void Update(){
 
+		UpdateLevel ();
+	}
+	void LateUpdate(){
 		if (GameController.gameController.startGame) {
-			if (oneLineSpawn) {
+			if (enemyNum == 1) {
 				OneLineSpawn ();
-			}
-			if (twoLineSpawn) {
+			} else if (enemyNum == 2) {
 				TwoLinesSpawn ();
+			} else {
+				return;
 			}
 		}
 	}
@@ -57,14 +67,18 @@ public class EnemiesController : MonoBehaviour {
 //			break;
 //		}
 //	}
-	IEnumerator SpawnEnemy(SpriteRenderer[] spriteList){
+	IEnumerator SpawnEnemy(SpriteRenderer[] spriteList,int enemynum){
 		while (true) {
 			for (int i = 0; i < spriteList.Length; i++) {
 				if (i != 0) spriteList [i - 1].enabled = false;
 				spriteList [i].enabled = true;
+				print (i);
 				yield return new WaitForSeconds (GameController.gameController.speed);
+				if (i == 1) {
+					enemyNum = Random.Range(1,3);
+				} 
 			}
-			twoLineSpawn = true;
+			enemyNum = enemynum;
 			DisableSprites (spriteList);
 			//Usamos break para no usar esta corutina mas
 			break;
@@ -73,19 +87,19 @@ public class EnemiesController : MonoBehaviour {
 
 	void OneLineSpawn(){
 
-		oneLineSpawn = false;
+		enemyNum = 0;
 		//Lista que contiene listas de sprites
 		SpriteRenderer[][] listOfSpriteList = { leftEnemies, centerEnemies, rightEnemies };
 		//Elegimos una linea al azar
 		int index = Random.Range (0, listOfSpriteList.Length);
 		SpriteRenderer[] spriteList = listOfSpriteList [index];
 		//Llamamos la corutina
-		StartCoroutine (SpawnEnemy (spriteList));
+		StartCoroutine (SpawnEnemy (spriteList,1));
 	}
 
 	void TwoLinesSpawn(){
 
-		twoLineSpawn = false;
+		enemyNum = 0;
 		SpriteRenderer[][] listOfSpriteList = { leftEnemies, centerEnemies, rightEnemies };
 		int index = Random.Range (0, listOfSpriteList.Length);
 		int index2 = Random.Range (0, listOfSpriteList.Length);
@@ -95,8 +109,18 @@ public class EnemiesController : MonoBehaviour {
 		SpriteRenderer[] spriteList = listOfSpriteList[index];
 		SpriteRenderer[] spriteList2 = listOfSpriteList [index2];
 
-		StartCoroutine (SpawnEnemy (spriteList));
-		StartCoroutine (SpawnEnemy (spriteList2));
+		StartCoroutine (SpawnEnemy (spriteList,2));
+		StartCoroutine (SpawnEnemy (spriteList2,2));
+	}
+
+	void UpdateLevel(){
+
+		if (GameController.gameController.speed > 0.1f) {
+			if (GameController.gameController.score > currentScore) {
+				currentScore += changeLevel;
+				GameController.gameController.speed -= 0.1f;
+			}
+		}
 	}
 }
 
