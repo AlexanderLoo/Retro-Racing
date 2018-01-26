@@ -104,7 +104,8 @@ public class GameController : MonoBehaviour {
 		PlayerPrefs.SetInt ("CurrentLife", currentLife);
 		for (int i = 0; i < lives.Length; i++) {
 			if (lives[i].enabled) {
-				lives [i].enabled = false;
+				//lives [i].enabled = false;
+				lives[i].GetComponent<Animator>().enabled = true;
 				break;
 			}
 		}
