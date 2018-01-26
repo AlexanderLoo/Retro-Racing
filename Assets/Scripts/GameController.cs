@@ -7,8 +7,10 @@ using UnityEngine.SceneManagement;
 public class GameController : MonoBehaviour {
 
 	public static GameController gameController;
-	public SpriteRenderer[] enemy;
+	//Lista de los sprites de enemigos que estan en la misma fila que el player
+	public SpriteRenderer[] enemyCollision;
 	public SpriteRenderer[] player;
+	//Lista de sprites del choque
 	public SpriteRenderer[] collision;
 	public Image[] lives;
 	//Velocidad 1 que equivale a 16.6 m/s
@@ -57,21 +59,12 @@ public class GameController : MonoBehaviour {
 	}
 
 	void Update(){
-		//Lógica de colisión
+
 		if (startGame) {
-			//Si el indice del sprite activo del player encaja con el del enemigo, significa que colisionaron; por lo tanto detenemos el juego
-			for (int i = 0; i < player.Length; i++) {
-				if (enemy[i].enabled && player[i].enabled) {
-					startGame = false;
-					//mostramos la colisión
-					collision[i].enabled = true;
-					RemoveLife ();
-					//INVOCACIÓN TEMPORAL
-					Invoke ("RestartGame",3);
-				}
-			}
+			CarCollision ();
 			Distance ();
 		}
+
 		if (Input.GetKeyDown(KeyCode.Escape)) {
 			#if UNITY_EDITOR
 			UnityEditor.EditorApplication.isPlaying = false;
@@ -88,6 +81,22 @@ public class GameController : MonoBehaviour {
 			lives [i].enabled = true;
 		}
 	}
+
+	//Lógica de colisión
+	void CarCollision(){
+		//Si el índice del sprite activo del player encaja con el del enemigo, significa que colisionaron; por lo tanto detenemos el juego
+		for (int i = 0; i < player.Length; i++) {
+			if (enemyCollision[i].enabled && player[i].enabled) {
+				startGame = false;
+				//mostramos la colisión
+				collision[i].enabled = true;
+				//removemos la vida
+				RemoveLife ();
+				Time.timeScale = 0;
+			}
+		}
+	}
+
 	//Función para remover una vida
 	void RemoveLife(){
 
@@ -99,10 +108,6 @@ public class GameController : MonoBehaviour {
 				break;
 			}
 		}
-	}
-	//Función para reiniciar el juego
-	void RestartGame(){
-		SceneManager.LoadScene ("Main");
 	}
 
 	//Función para calcular la distancia en km y mostrarlas en el score
@@ -116,4 +121,10 @@ public class GameController : MonoBehaviour {
 		score = distance;
 		scoreText.text = Mathf.Round (score).ToString ();
 	}
+
+	//Función para reiniciar el juego
+	void RestartGame(){
+		SceneManager.LoadScene ("Main");
+	}
+
 }

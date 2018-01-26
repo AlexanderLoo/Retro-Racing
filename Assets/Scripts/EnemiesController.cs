@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//El siguiente script es un poco complicado ya que llama a las corutinas a cada rato y no sé si es eficiente...EN ESPERA DE MEJORAR LA LÓGICA
+//El siguiente script es un poco complicado ya que llama a las corutinas a cada rato y los corta, no sé si es eficiente...EN ESPERA DE MEJORAR LA LÓGICA
 public class EnemiesController : MonoBehaviour {
 
 	public SpriteRenderer[] leftEnemies, centerEnemies, rightEnemies;
@@ -72,10 +72,12 @@ public class EnemiesController : MonoBehaviour {
 			for (int i = 0; i < spriteList.Length; i++) {
 				if (i != 0) spriteList [i - 1].enabled = false;
 				spriteList [i].enabled = true;
-				print (i);
 				yield return new WaitForSeconds (GameController.gameController.speed);
+				//El índice uno parecer ser el más adecuado por el espacio que tiene el player para esquivar..y por que no se superpone con otros spawns
 				if (i == 1) {
+					//Esto permite un nivel mas random usando spawns de 1 enemigo por fila o 2 enemigos por fila
 					enemyNum = Random.Range(1,3);
+					//enemyNum = enemynum;
 				} 
 			}
 			enemyNum = enemynum;
@@ -84,7 +86,7 @@ public class EnemiesController : MonoBehaviour {
 			break;
 		}
 	}
-
+	//Función para spawnear un enemigo por fila
 	void OneLineSpawn(){
 
 		enemyNum = 0;
@@ -96,13 +98,14 @@ public class EnemiesController : MonoBehaviour {
 		//Llamamos la corutina
 		StartCoroutine (SpawnEnemy (spriteList,1));
 	}
-
+	//Función para spawnear 2 enemigos por fila
 	void TwoLinesSpawn(){
 
 		enemyNum = 0;
 		SpriteRenderer[][] listOfSpriteList = { leftEnemies, centerEnemies, rightEnemies };
 		int index = Random.Range (0, listOfSpriteList.Length);
 		int index2 = Random.Range (0, listOfSpriteList.Length);
+		//usamos este bucle while para asegurarnos de que no nos toque el mismo indice dos veces
 		while (index2 == index) {
 			index2 = Random.Range (0, listOfSpriteList.Length);
 		}
@@ -118,6 +121,7 @@ public class EnemiesController : MonoBehaviour {
 		if (GameController.gameController.speed > 0.1f) {
 			if (GameController.gameController.score > currentScore) {
 				currentScore += changeLevel;
+				changeLevel *=2;
 				GameController.gameController.speed -= 0.1f;
 			}
 		}
