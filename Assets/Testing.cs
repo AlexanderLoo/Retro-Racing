@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class Testing : MonoBehaviour {
 
 	public SpriteRenderer[] background;
+	public PlayerController playerController;
 
 	public void DeleteMemory(){
 
@@ -17,6 +18,11 @@ public class Testing : MonoBehaviour {
 		foreach (SpriteRenderer item in background) {
 			item.enabled = !item.enabled;
 		}
+	}
+
+	public void ChangePlayerController(){
+
+		playerController.m2 = !playerController.m2;
 	}
 
 }
