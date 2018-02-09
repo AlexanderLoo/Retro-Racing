@@ -41,9 +41,9 @@ public class GameController : MonoBehaviour {
 		if (PlayerPrefs.GetInt ("FirstTime") == 0) {
 			PlayerPrefs.SetInt ("FirstTime", 1);
 			currentLife = 3;
-			PlayerPrefs.SetInt ("CurrentLife", currentLife);
-		} else {
-			currentLife = PlayerPrefs.GetInt ("CurrentLife");
+			SetCurrentLives (currentLife);
+			} else {
+			currentLife = GetCurrentLives ();
 		}
 		ShowCurrentLives ();
 		if (currentLife <= 0) {
@@ -75,7 +75,7 @@ public class GameController : MonoBehaviour {
 	//Función para mostrar las vidas disponibles al iniciar el juego
 	void ShowCurrentLives(){
 
-		currentLife = PlayerPrefs.GetInt ("CurrentLife");
+		currentLife = GetCurrentLives ();
 
 		for (int i = lives.Length -1; i > lives.Length - 1 - currentLife ; i--) {
 			lives [i].enabled = true;
@@ -101,7 +101,7 @@ public class GameController : MonoBehaviour {
 	void RemoveLife(){
 
 		currentLife -= 1;
-		PlayerPrefs.SetInt ("CurrentLife", currentLife);
+		SetCurrentLives (currentLife);
 		for (int i = 0; i < lives.Length; i++) {
 			if (lives[i].enabled) {
 				//lives [i].enabled = false;
@@ -126,6 +126,19 @@ public class GameController : MonoBehaviour {
 	//Función para reiniciar el juego
 	void RestartGame(){
 		SceneManager.LoadScene ("Main");
+	}
+
+	//*******PLACE HOLDERS CURRENT LIVES************
+
+	//Guarda en la memoria la cantidad de vida que nos queda donde i es el valor a guardar
+	public void SetCurrentLives(int i){
+
+		PlayerPrefs.SetInt ("CurrentLife", i);
+	}
+	//Retorna la cantidad de vida guardada en la memoria
+	public int GetCurrentLives(){
+
+		return PlayerPrefs.GetInt ("CurrentLife");
 	}
 
 }
