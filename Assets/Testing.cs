@@ -8,6 +8,19 @@ public class Testing : MonoBehaviour {
 	public SpriteRenderer[] background;
 	public PlayerController playerController;
 
+	private BatteryManager bm;
+
+	void Start(){
+
+		bm = FindObjectOfType<BatteryManager> ();
+	}
+	void Update(){
+
+		if (Input.GetKeyDown(KeyCode.Space)) {
+			bm.AddLife ();
+		}
+	}
+
 	public void DeleteMemory(){
 
 		PlayerPrefs.DeleteAll ();
@@ -24,5 +37,7 @@ public class Testing : MonoBehaviour {
 
 		playerController.m2 = !playerController.m2;
 	}
+
+
 
 }

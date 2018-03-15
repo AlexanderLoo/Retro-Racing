@@ -7,12 +7,12 @@ using UnityEngine.SceneManagement;
 public class GameController : MonoBehaviour {
 
 	public static GameController gameController;
+	public BatteryManager batteryManager;
 	//Lista de los sprites de enemigos que estan en la misma fila que el player
 	public SpriteRenderer[] enemyCollision;
 	public SpriteRenderer[] player;
 	//Lista de sprites del choque
 	public SpriteRenderer[] collision;
-	public Image[] lives;
 	//Velocidad 1 que equivale a 16.6 m/s
 	public float speed = 1;
 	public float score;
@@ -23,8 +23,7 @@ public class GameController : MonoBehaviour {
 	[HideInInspector]
 	public bool startGame;
 	//public bool gameOver;
-	[HideInInspector]
-	public int currentLife;
+
 
 
 	void Awake(){
@@ -40,13 +39,13 @@ public class GameController : MonoBehaviour {
 		//EN ESPERA DE SUGERENCIAS PARA MEJORAR LA LÓGICA
 		if (PlayerPrefs.GetInt ("FirstTime") == 0) {
 			PlayerPrefs.SetInt ("FirstTime", 1);
-			currentLife = 3;
-			SetCurrentLives (currentLife);
+			batteryManager.currentLife = 3;
+			batteryManager.SetCurrentLives (batteryManager.currentLife);
 			} else {
-			currentLife = GetCurrentLives ();
+			batteryManager.currentLife = batteryManager.GetCurrentLives ();
 		}
-		ShowCurrentLives ();
-		if (currentLife <= 0) {
+		batteryManager.ShowCurrentLives ();
+		if (batteryManager.currentLife <= 0) {
 			canPlay = false;
 		} else {
 			canPlay = true;
@@ -72,15 +71,6 @@ public class GameController : MonoBehaviour {
 			Application.Quit();
 		}
 	}
-	//Función para mostrar las vidas disponibles al iniciar el juego
-	void ShowCurrentLives(){
-
-		currentLife = GetCurrentLives ();
-
-		for (int i = lives.Length -1; i > lives.Length - 1 - currentLife ; i--) {
-			lives [i].enabled = true;
-		}
-	}
 
 	//Lógica de colisión
 	void CarCollision(){
@@ -90,23 +80,9 @@ public class GameController : MonoBehaviour {
 				startGame = false;
 				//mostramos la colisión
 				collision[i].enabled = true;
-				//removemos la vida
-				RemoveLife ();
+				//removemos una vida
+				batteryManager.RemoveLife ();
 				Time.timeScale = 0;
-			}
-		}
-	}
-
-	//Función para remover una vida
-	void RemoveLife(){
-
-		currentLife -= 1;
-		SetCurrentLives (currentLife);
-		for (int i = 0; i < lives.Length; i++) {
-			if (lives[i].enabled) {
-				//lives [i].enabled = false;
-				lives[i].GetComponent<Animator>().enabled = true;
-				break;
 			}
 		}
 	}
@@ -127,18 +103,4 @@ public class GameController : MonoBehaviour {
 	void RestartGame(){
 		SceneManager.LoadScene ("Main");
 	}
-
-	//*******PLACE HOLDERS CURRENT LIVES************
-
-	//Guarda en la memoria la cantidad de vida que nos queda donde i es el valor a guardar
-	public void SetCurrentLives(int i){
-
-		PlayerPrefs.SetInt ("CurrentLife", i);
-	}
-	//Retorna la cantidad de vida guardada en la memoria
-	public int GetCurrentLives(){
-
-		return PlayerPrefs.GetInt ("CurrentLife");
-	}
-
 }
