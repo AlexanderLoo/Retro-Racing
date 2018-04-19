@@ -8,16 +8,16 @@ public class Testing : MonoBehaviour {
 	public SpriteRenderer[] background;
 	public PlayerController playerController;
 
-	private BatteryManager bm;
+	private BatteryDisplay bd;
 
 	void Start(){
 
-		bm = FindObjectOfType<BatteryManager> ();
+		bd = FindObjectOfType<BatteryDisplay> ();
 	}
 	void Update(){
 
 		if (Input.GetKeyDown(KeyCode.Space)) {
-			bm.AddLife ();
+			bd.AddLife ();
 		}
 	}
 

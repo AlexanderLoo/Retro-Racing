@@ -38,7 +38,7 @@ public class PlacingEnemies : MonoBehaviour {
 		EnemiesNewPositions (centerPosition);
 		EnemiesNewPositions (rightPosition, ScreenController.screen.screenWidth / 2, -propInX);
 	}
-	//Función para posicionar los enemigos
+	//Función para posicionar los enemigos de forma proporcional usando perspectiva(un punto de fuga)
 	void EnemiesNewPositions(Transform[] transformList, float lastXPos = 0, float proportionInX = 0, float proportionInY = 0.5f){
 
 		float actualXProportion = proportionInX * 5;

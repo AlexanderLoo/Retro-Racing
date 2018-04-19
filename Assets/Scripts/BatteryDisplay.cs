@@ -1,0 +1,88 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class BatteryDisplay : MonoBehaviour {
+
+	private BatteryManager batteryManager;
+	private Lives lives;
+	//las vidas que se muestran en el UI
+	public Image[] livesImage;
+
+	void Awake(){
+
+		batteryManager = GetComponent<BatteryManager> ();
+		lives = GetComponent<Lives> ();
+	}
+
+	//Función para mostrar las vidas disponibles al iniciar el juego
+	public void ShowCurrentLives(){
+
+		for (int i = livesImage.Length -1; i > livesImage.Length - 1 - lives.GetCurrentLives() ; i--) {
+			livesImage [i].enabled = true;
+		}
+	}
+
+	//Función para remover vida
+	public void RemoveLife(){
+
+		lives.LivesManager (-1);
+		for (int i = 0; i < livesImage.Length; i++) {
+			if (livesImage[i].enabled) {
+				livesImage [i].enabled = false;
+				//livesImage[i].GetComponent<Animator>().enabled = true;
+				batteryManager.WaitForLife ();
+				break;	
+			}
+		}
+	}
+
+	//Función para agregar vida
+	public void AddLife(){
+
+		lives.LivesManager (1);
+		for (int i = livesImage.Length -1; i > -1 ; i--) {
+			if (!livesImage[i].enabled) {
+				livesImage[i].enabled = true;
+				break;
+			}
+		}
+	}
+	// MARTÍN, EL SIGUIENTE COMENTARIO ES TU PLACEHOLDER QUE ANTES ESCRIBISTE , HE PUESTO UNOs COMENTARIOS..LO GUARDO POR SEACASO
+	//	private DateTime time = DateTime.Now;
+	//	private int batteryPacksLeft = 3;
+	//
+	//
+	//
+	//	// Use this for initialization
+	//	void Start () {
+	//		
+	//	}
+	//	
+	//	// Update is called once per frame
+	//	void Update () {
+	//		
+	//	}
+	//
+	//
+	//	// Llamar esto para ver cuanto de tiempo le queda de espera al jugador para recien poder empezar a jugar(ESTA FUNCIÓN TODAVÍA NO EXISTE, QUEDA PENDIENTE...)
+	//	public Text timeLeft() {
+	//
+	//	}	
+	//
+	//	// Llamar a esto cuando el player se estrelle(ESTA FUNCIÓN SE ENCUENTRA EN GAMECONTROLLER 'CarCollision()')
+	//	public void playerLost() {
+	//		batteryPacksLeft--;
+	//	}
+	//
+	//	// Llamar esto para ver si hay bateria para que el jugador pueda jugar o no(ESTA FUNCIÓN YA EXISTE, SE ENCUENTRA EN GAMECONTROLLER EN UNA VARIABLE LLAMADA 'canPlay')
+	//	public bool batteryAvailable() {
+	//		return true;
+	//	}
+	//
+	//	// Llamar esto para ver cuanta carga le queda(ESTA FUNCIÓN YA EXISTE, SE ACCEDE CON LA FUNCIÓN 'GetCurrentLife()')
+	//	public int batteryLeft() {
+	//		return batteryPacksLeft;
+	//	}
+}

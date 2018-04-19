@@ -5,27 +5,17 @@ using UnityEngine;
 public class EnemiesController : MonoBehaviour {
 
 	public SpriteRenderer[] leftEnemies, centerEnemies, rightEnemies;
-	//Con esta variable regulamos el tiempo de espera para el siguente spawn
-	public float spawnTimeInSeconds;
-	//Variable para determinar en cuanto score se aumenta la dificultad
-	public int changeLevel = 500;
+
 	//El siguiente entero indica el número de enemigos en la misma fila
 	private int enemyNum = 1;
-	private int currentScore;
 
 	void Start(){
 
 		DisableSprites (leftEnemies);
 		DisableSprites (centerEnemies);
 		DisableSprites (rightEnemies);
-
-		currentScore = changeLevel;
 	}
 
-	void Update(){
-
-		UpdateLevel ();
-	}
 	void LateUpdate(){
 		if (GameController.gameController.startGame) {
 			if (enemyNum == 1) {
@@ -75,10 +65,15 @@ public class EnemiesController : MonoBehaviour {
 				yield return new WaitForSeconds (GameController.gameController.speed);
 				//El índice uno parecer ser el más adecuado por el espacio que tiene el player para esquivar..y por que no se superpone con otros spawns
 				if (i == 1) {
-					//Esto permite un nivel mas random usando spawns de 1 enemigo por fila o 2 enemigos por fila
-					enemyNum = Random.Range(1,3);
-					//enemyNum = enemynum;
-				} 
+					if (LevelManager.levelManager.alternateSpawn) {
+						enemyNum = enemynum;
+					}
+					else if(LevelManager.levelManager.randomSpawn){
+						enemyNum = Random.Range (1, 3);
+					}else {
+						enemyNum = 0;
+					}
+				}
 			}
 			enemyNum = enemynum;
 			DisableSprites (spriteList);
@@ -114,17 +109,6 @@ public class EnemiesController : MonoBehaviour {
 
 		StartCoroutine (SpawnEnemy (spriteList,2));
 		StartCoroutine (SpawnEnemy (spriteList2,2));
-	}
-
-	void UpdateLevel(){
-
-		if (GameController.gameController.speed > 0.1f) {
-			if (GameController.gameController.score > currentScore) {
-				currentScore += changeLevel;
-				changeLevel *=2;
-				GameController.gameController.speed -= 0.1f;
-			}
-		}
 	}
 }
 

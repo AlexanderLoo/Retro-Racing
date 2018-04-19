@@ -7,7 +7,9 @@ using UnityEngine.SceneManagement;
 public class GameController : MonoBehaviour {
 
 	public static GameController gameController;
-	public BatteryManager batteryManager;
+	public BatteryDisplay batteryDisplay;
+	public Lives lives;
+	private ScoreDisplay scoreDisplay;
 	//Lista de los sprites de enemigos que estan en la misma fila que el player
 	public SpriteRenderer[] enemyCollision;
 	public SpriteRenderer[] player;
@@ -15,16 +17,11 @@ public class GameController : MonoBehaviour {
 	public SpriteRenderer[] collision;
 	//Velocidad 1 que equivale a 16.6 m/s
 	public float speed = 1;
-	public float score;
-	public Text scoreText;
 	[HideInInspector]
 	public bool canPlay;
-	public GameObject starButton;
+	public GameObject startButton;
 	[HideInInspector]
 	public bool startGame;
-	//public bool gameOver;
-
-
 
 	void Awake(){
 		//Singleton
@@ -33,27 +30,19 @@ public class GameController : MonoBehaviour {
 		} else if (gameController != this) {
 			Destroy (gameObject);
 		}
+		scoreDisplay = GetComponent<ScoreDisplay> ();
 	}
 
 	void Start(){
-		//EN ESPERA DE SUGERENCIAS PARA MEJORAR LA LÓGICA
-		if (PlayerPrefs.GetInt ("FirstTime") == 0) {
-			PlayerPrefs.SetInt ("FirstTime", 1);
-			batteryManager.currentLife = 3;
-			batteryManager.SetCurrentLives (batteryManager.currentLife);
-			} else {
-			batteryManager.currentLife = batteryManager.GetCurrentLives ();
-		}
-		batteryManager.ShowCurrentLives ();
-		if (batteryManager.currentLife <= 0) {
+		
+		batteryDisplay.ShowCurrentLives ();
+		if (lives.currentLife <= 0) {
 			canPlay = false;
 		} else {
 			canPlay = true;
-			starButton.SetActive (true);
+			startButton.SetActive (true);
 		}
 		speed = 1;
-		score = 0;
-		scoreText.text = score.ToString();
 		Time.timeScale = 0;
 	}
 
@@ -61,7 +50,7 @@ public class GameController : MonoBehaviour {
 
 		if (startGame) {
 			CarCollision ();
-			Distance ();
+			scoreDisplay.Distance ();
 		}
 
 		if (Input.GetKeyDown(KeyCode.Escape)) {
@@ -81,22 +70,10 @@ public class GameController : MonoBehaviour {
 				//mostramos la colisión
 				collision[i].enabled = true;
 				//removemos una vida
-				batteryManager.RemoveLife ();
+				batteryDisplay.RemoveLife ();
 				Time.timeScale = 0;
 			}
 		}
-	}
-
-	//Función para calcular la distancia en km y mostrarlas en el score
-	void Distance(){
-		//Usando como parámetro mínimo de velocidad 60 km/h ---> 16.6 m/s(km/h * 0.277)
-		//Aplicamos la siguiente fórmula para hallar la distancia ---> d = v*t
-		//distance = (16.6 / speed) * time ---> distance = (16.6 / speed) * Time.time(distancia en metros, distancia en km --> score/1000)
-		//dividimos la velocidad(16.6) entre la variable speed por que mientras el speed sea mas bajo, la velocidad es mas alta
-
-		float distance = (float)(16.6 /speed) * Time.timeSinceLevelLoad;
-		score = distance;
-		scoreText.text = Mathf.Round (score).ToString ();
 	}
 
 	//Función para reiniciar el juego

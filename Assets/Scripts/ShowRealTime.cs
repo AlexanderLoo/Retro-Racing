@@ -6,7 +6,8 @@ using System;
 
 public class ShowRealTime : MonoBehaviour {
 
-	public Text timeText;
+	public Text hourText;
+	public Text minuteText;
 	public Text amOrPm;
 
 	void Update(){
@@ -22,9 +23,18 @@ public class ShowRealTime : MonoBehaviour {
 			hour -= 12;
 			amPm = "PM";
 		}
+
+		//Si la hora es menor a 10, nos aseguramos que se muestre un cero adelante
+		if (hour < 10)
+			hourText.text = "0" + hour.ToString ();
+		else
+			hourText.text = hour.ToString ();
+		
 		//Si el minuto es menor a 10, nos aseguramos que se muestre un cero adelante
-		if (minute < 10) timeText.text = hour.ToString () + ":0" + minute.ToString ();
-		else timeText.text = hour.ToString () + ":" + minute.ToString ();	
+		if (minute < 10)
+			minuteText.text = "0" + minute.ToString ();
+		else
+			minuteText.text = minute.ToString ();	
 
 		amOrPm.text = amPm;
 	}
