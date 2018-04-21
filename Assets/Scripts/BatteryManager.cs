@@ -8,18 +8,23 @@ public class BatteryManager : MonoBehaviour {
 	private BatteryDisplay batteryDisplay;
 
 	//tiempo de espera en segundos
-	public int timeToWait = 60;
+	public int timeToWait = 900;
 	//tiempo total desde la medianoche en segundos
 	private int totalTime;
 	//variable a alcanzar para obtener una vida
 	private int getNewLife;
 	//Booleano que controla el estado de carga de vida, esto permite que no se resetee el tiempo de espera si se pierde mas de una vida
 	private bool waitingForLife = false;
+	//Entero que nos indica cuanto tiempo total nos falta en segundos
+	private int timeRemaining;
+	//Las siguiente variables indican el tiempo que falta en segundos y en minutos
+	private int timeRemainingInSeconds, timeRemainingInMinutes;
 
 	void Awake(){
 
 		batteryDisplay = GetComponent<BatteryDisplay> ();
 	}
+
 	void Update(){
 
 		//Asignamos a time la hora completa actual(esto incluye fecha completa y hora)
@@ -45,6 +50,7 @@ public class BatteryManager : MonoBehaviour {
 		if (!waitingForLife) {
 			getNewLife = totalTime + timeToWait;
 			waitingForLife = true;
+			batteryDisplay.batteryCountDown.SetActive (true);
 		}
 	}
 
@@ -52,8 +58,9 @@ public class BatteryManager : MonoBehaviour {
 	void LivesManager(){
 
 		if (getNewLife > totalTime) {
-			//por ahora mostramos un print en la consola, más adelante mostramos el tiempo de espera en el UI
-			print (getNewLife - totalTime);
+			TimeRemaining ();
+			batteryDisplay.ShowCountDown (batteryDisplay.minutesText, timeRemainingInMinutes);
+			batteryDisplay.ShowCountDown (batteryDisplay.secondsText, timeRemainingInSeconds);
 		} else {
 			if (waitingForLife) {
 				batteryDisplay.AddLife ();
@@ -65,9 +72,17 @@ public class BatteryManager : MonoBehaviour {
 					} else {
 						//se vuelve falso sólo si estamos full de batería
 						waitingForLife = false;
+						batteryDisplay.batteryCountDown.SetActive (false);
 					}
 				}
 			}
 		}
+	}
+	//Esta función transforma los segundos de espera en minutos y segundos de forma las leible
+	void TimeRemaining(){
+
+		timeRemaining = getNewLife - totalTime;
+		timeRemainingInMinutes = timeRemaining / 60;
+		timeRemainingInSeconds = timeRemaining % 60;
 	}
 }

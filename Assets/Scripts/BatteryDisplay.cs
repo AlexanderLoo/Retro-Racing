@@ -9,6 +9,9 @@ public class BatteryDisplay : MonoBehaviour {
 	private Lives lives;
 	//las vidas que se muestran en el UI
 	public Image[] livesImage;
+	//Referencia al contador dentro del UI
+	public GameObject batteryCountDown;
+	public Text minutesText, secondsText;
 
 	void Awake(){
 
@@ -47,6 +50,15 @@ public class BatteryDisplay : MonoBehaviour {
 				livesImage[i].enabled = true;
 				break;
 			}
+		}
+	}
+	//Mostramos el conteo regresivo para adquerir una vida
+	public void ShowCountDown(Text text,int counter){
+
+		if (counter < 10) {
+			text.text = "0" + counter.ToString ();
+		} else {
+			text.text = counter.ToString ();
 		}
 	}
 	// MARTÍN, EL SIGUIENTE COMENTARIO ES TU PLACEHOLDER QUE ANTES ESCRIBISTE , HE PUESTO UNOs COMENTARIOS..LO GUARDO POR SEACASO
