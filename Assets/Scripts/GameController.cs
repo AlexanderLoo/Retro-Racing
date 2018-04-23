@@ -8,6 +8,7 @@ public class GameController : MonoBehaviour {
 
 	public static GameController gameController;
 	public BatteryDisplay batteryDisplay;
+	public BatteryManager batteryManager;
 	public Lives lives;
 	private ScoreDisplay scoreDisplay;
 	//Lista de los sprites de enemigos que estan en la misma fila que el player
@@ -17,8 +18,6 @@ public class GameController : MonoBehaviour {
 	public SpriteRenderer[] collision;
 	//Velocidad 1 que equivale a 16.6 m/s
 	public float speed = 1;
-	[HideInInspector]
-	public bool canPlay;
 	public GameObject startButton;
 	[HideInInspector]
 	public bool startGame;
@@ -36,14 +35,19 @@ public class GameController : MonoBehaviour {
 	void Start(){
 		
 		batteryDisplay.ShowCurrentLives ();
-		if (lives.currentLife <= 0) {
-			canPlay = false;
+		if (lives.GetCurrentLives() <= 0) {
+			CanPlay (false);
 		} else {
-			canPlay = true;
-			startButton.SetActive (true);
+			CanPlay (true);
 		}
 		speed = 1;
 		Time.timeScale = 0;
+	}
+	//Función que se llama cuando salimos del juego
+	void OnDisable(){
+
+		batteryManager.SaveLastTotalTime ();
+		batteryManager.SaveLastTimeRemaining ();
 	}
 
 	void Update(){
@@ -59,6 +63,11 @@ public class GameController : MonoBehaviour {
 			#endif
 			Application.Quit();
 		}
+	}
+
+	public void CanPlay(bool b){
+
+		startButton.SetActive (b);
 	}
 
 	//Lógica de colisión

@@ -29,13 +29,13 @@ public class BatteryDisplay : MonoBehaviour {
 
 	//Función para remover vida
 	public void RemoveLife(){
-
-		lives.LivesManager (-1);
+		
 		for (int i = 0; i < livesImage.Length; i++) {
 			if (livesImage[i].enabled) {
 				livesImage [i].enabled = false;
+				lives.LivesManager (-1);
 				//livesImage[i].GetComponent<Animator>().enabled = true;
-				batteryManager.WaitForLife ();
+				batteryManager.WaitForLife (batteryManager.timeToWait);
 				break;	
 			}
 		}
@@ -44,10 +44,16 @@ public class BatteryDisplay : MonoBehaviour {
 	//Función para agregar vida
 	public void AddLife(){
 
-		lives.LivesManager (1);
 		for (int i = livesImage.Length -1; i > -1 ; i--) {
 			if (!livesImage[i].enabled) {
 				livesImage[i].enabled = true;
+				lives.LivesManager (1);
+				if (i == 0) {
+					batteryManager.BatteryFilled ();
+				}
+				else if(i == livesImage.Length -1){
+					GameController.gameController.CanPlay (true);
+				}
 				break;
 			}
 		}

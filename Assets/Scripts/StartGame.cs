@@ -20,7 +20,7 @@ public class StartGame : MonoBehaviour {
 	//Función para iniciar el conteo de inico de juego
 	public void ReadyToPlay(){
 
-		if (GameController.gameController.canPlay && !GameController.gameController.startGame) {
+		if (!GameController.gameController.startGame) {
 			anim.SetTrigger ("Start");
 		}
 	}
