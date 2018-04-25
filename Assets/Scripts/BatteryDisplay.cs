@@ -32,9 +32,9 @@ public class BatteryDisplay : MonoBehaviour {
 		
 		for (int i = 0; i < livesImage.Length; i++) {
 			if (livesImage[i].enabled) {
-				livesImage [i].enabled = false;
 				lives.LivesManager (-1);
-				//livesImage[i].GetComponent<Animator>().enabled = true;
+				livesImage[i].GetComponent<Animator>().enabled = true;
+				//livesImage [i].enabled = false;
 				batteryManager.WaitForLife (batteryManager.timeToWait);
 				break;	
 			}

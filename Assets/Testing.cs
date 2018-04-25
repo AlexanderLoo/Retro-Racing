@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Testing : MonoBehaviour {
 
 	public SpriteRenderer[] background;
 	public PlayerController playerController;
+	public Text speedText;
 
 	private BatteryDisplay bd;
 
@@ -38,6 +40,26 @@ public class Testing : MonoBehaviour {
 		playerController.m2 = !playerController.m2;
 	}
 
+	public void Addlife(){
 
+		bd.AddLife ();
+	}
 
+	public void AlternateSpawn(){
+		LevelManager.levelManager.alternateSpawn = !LevelManager.levelManager.alternateSpawn;
+	}
+
+	public void RandomSpawn(){
+		LevelManager.levelManager.randomSpawn = !LevelManager.levelManager.randomSpawn;
+	}
+
+	public void AddSpeed(){
+
+		GameController.gameController.speed -= 0.1f;
+		speedText.text = GameController.gameController.speed.ToString ();
+	}
+
+	public void Restart(){
+		SceneManager.LoadScene ("Main");
+	}
 }

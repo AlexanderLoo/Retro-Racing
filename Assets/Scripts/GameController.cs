@@ -77,16 +77,16 @@ public class GameController : MonoBehaviour {
 			if (enemyCollision[i].enabled && player[i].enabled) {
 				startGame = false;
 				//mostramos la colisión
-				collision[i].enabled = true;
+				//collision[i].enabled = true;
 				//removemos una vida
 				batteryDisplay.RemoveLife ();
 				Time.timeScale = 0;
+
+				//**********
+				enemyCollision[i].enabled = false;
+				player[i].GetComponent<Animator>().enabled = true;
+				collision [i].GetComponent<Animator> ().enabled = true;
 			}
 		}
-	}
-
-	//Función para reiniciar el juego
-	void RestartGame(){
-		SceneManager.LoadScene ("Main");
 	}
 }
