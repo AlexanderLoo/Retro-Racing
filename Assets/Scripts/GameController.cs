@@ -176,143 +176,143 @@ void GameOver(){
 	}
 }*/
 
---> import bat from batteryManager
---> import lives from livesManager
-
-void Start(){
-
-	display.showSplashScreen(); // aunque este vacio y no haga nada
-
-	// generalmente aqui se cargan lo assets (en muchos frameworks)    
-	// incluyendo el que se viene.
-
-	display.mainmenu( lives.left(), bat.left() );
-
-	setState(‘mainMenu’);
-
-}
-
-void display.mainmenu( lives, bateries ){
-
-	draw.console();
-	draw.lives(lives);
-	draw.bateries(bateries);
-
-}
-
-
-void setState(state) {
-	GlobalState = state
-}
-
-void getState() {
-	return GlobalState
-	}
-
-
-
-// states: mainmenu, startgame, playing, crashed, paused, gameover
-
-
-void Update(){
-
-	if  (state == ‘mainMenu’) {
-		if (buttons.StartButtonPressed()) {
-			setState(‘startGame’); 
-		}
-	}
-
-	if (state == ‘startGame’) {
-		if (bat.left?() == true) {
-			bat.remove();
-			timeToNextBattery = bat.timeToNextCharge();
-			display.startingGame();
-			setState(playing);
-			pause.beforeStart();
-			return
-		} else {
-			display.notEnoughtBattery();
-			sound.badLuck();
-			setState(‘mainMenu’);
-		}
-	}
-
-
-
-	if  (state == ‘playing’) {
-		if (buttons.StartButtonPressed()) { 
-			setState(‘paused);
-			return; //  <---- para no continuar lo de abajo
-		}
-
-		display.batteryTimerFor(timeToNextBattery);
-
-		display.currentScore;
-
-		if (keys.left() && player.canleft?()) {
-			display.player( player.moveLeft() );
-			// donde player.moveLeft retorna (de 1 a 3) la nueva posición del player y display.player se encarga de dibujar.
-
-		}
-
-		if (keys.right() && player.canright?()) {
-			display.player( player.moveRight() );
-			// donde player.moveLeft retorna (de 1 a 3) la nueva posición del player y display.player se encarga de dibujar.
-
-		}
-
-		if (time.OtherCarsMoveNow()) {
-			arrayOfCars = otherCars.moveDown();
-			// donde otherCars.moveDown retorna un array con la posicion de los otros autos DESPUES de haberlos hecho bajar a todos.
-
-			display.otherCars(arrayOfCars)
-		}
-
-		if (colision.crashed()) {
-			setState(‘crashed’)
-		}
-	}
-
-	if (state == ‘paused’) {
-		display.ShowExit();
-
-		if (buttons.StartButtonPressed()) {
-			state == ‘playing’;
-			return
-			}
-
-		return
-		}
-
-
-	if (state == ‘crashed’) {
-		if (lives.left()) {
-			lives.decrease();
-			display.crashed();
-			sound.crashed();
-			pause.crashed();
-			otherCars.reset();
-			setState(‘playing’)
-			return;
-		}else{
-			bat.gameover();
-			display.gameover();
-			sound.gameover();
-			setState(‘gameoverStart’);
-			timeForMainMenu = now() + gameOverWait;
-		}
-	}
-
-	if (state == ‘gameover’) {
-		if (buttons.StartButtonPressed()) {
-			setState(‘mainmenu’);
-			return
-			}
-		if (now() < timeForMainMenu) {
-			setState(‘mainmenu’);
-			return
-
-			}
-	}
+//--> import bat from batteryManager
+//--> import lives from livesManager
+//
+//void Start(){
+//
+//	display.showSplashScreen(); // aunque este vacio y no haga nada
+//
+//	// generalmente aqui se cargan lo assets (en muchos frameworks)    
+//	// incluyendo el que se viene.
+//
+//	display.mainmenu( lives.left(), bat.left() );
+//
+//	setState(‘mainMenu’);
+//
+//}
+//
+//void display.mainmenu( lives, bateries ){
+//
+//	draw.console();
+//	draw.lives(lives);
+//	draw.bateries(bateries);
+//
+//}
+//
+//
+//void setState(state) {
+//	GlobalState = state
+//}
+//
+//void getState() {
+//	return GlobalState
+//	}
+//
+//
+//
+//// states: mainmenu, startgame, playing, crashed, paused, gameover
+//
+//
+//void Update(){
+//
+//	if  (state == ‘mainMenu’) {
+//		if (buttons.StartButtonPressed()) {
+//			setState(‘startGame’); 
+//		}
+//	}
+//
+//	if (state == ‘startGame’) {
+//		if (bat.left?() == true) {
+//			bat.remove();
+//			timeToNextBattery = bat.timeToNextCharge();
+//			display.startingGame();
+//			setState(playing);
+//			pause.beforeStart();
+//			return
+//		} else {
+//			display.notEnoughtBattery();
+//			sound.badLuck();
+//			setState(‘mainMenu’);
+//		}
+//	}
+//
+//
+//
+//	if  (state == ‘playing’) {
+//		if (buttons.StartButtonPressed()) { 
+//			setState(‘paused);
+//			return; //  <---- para no continuar lo de abajo
+//		}
+//
+//		display.batteryTimerFor(timeToNextBattery);
+//
+//		display.currentScore;
+//
+//		if (keys.left() && player.canleft?()) {
+//			display.player( player.moveLeft() );
+//			// donde player.moveLeft retorna (de 1 a 3) la nueva posición del player y display.player se encarga de dibujar.
+//
+//		}
+//
+//		if (keys.right() && player.canright?()) {
+//			display.player( player.moveRight() );
+//			// donde player.moveLeft retorna (de 1 a 3) la nueva posición del player y display.player se encarga de dibujar.
+//
+//		}
+//
+//		if (time.OtherCarsMoveNow()) {
+//			arrayOfCars = otherCars.moveDown();
+//			// donde otherCars.moveDown retorna un array con la posicion de los otros autos DESPUES de haberlos hecho bajar a todos.
+//
+//			display.otherCars(arrayOfCars)
+//		}
+//
+//		if (colision.crashed()) {
+//			setState(‘crashed’)
+//		}
+//	}
+//
+//	if (state == ‘paused’) {
+//		display.ShowExit();
+//
+//		if (buttons.StartButtonPressed()) {
+//			state == ‘playing’;
+//			return
+//			}
+//
+//		return
+//		}
+//
+//
+//	if (state == ‘crashed’) {
+//		if (lives.left()) {
+//			lives.decrease();
+//			display.crashed();
+//			sound.crashed();
+//			pause.crashed();
+//			otherCars.reset();
+//			setState(‘playing’)
+//			return;
+//		}else{
+//			bat.gameover();
+//			display.gameover();
+//			sound.gameover();
+//			setState(‘gameoverStart’);
+//			timeForMainMenu = now() + gameOverWait;
+//		}
+//	}
+//
+//	if (state == ‘gameover’) {
+//		if (buttons.StartButtonPressed()) {
+//			setState(‘mainmenu’);
+//			return
+//			}
+//		if (now() < timeForMainMenu) {
+//			setState(‘mainmenu’);
+//			return
+//
+//			}
+//	}
 
 
