@@ -4,9 +4,7 @@ using UnityEngine;
 
 public class Display : MonoBehaviour {
 
-
-	public Lives2 lives;
-	public Battery battery;
+	public SpriteRenderer[] playerSprites;
 
 	public void MainMenu(){
 
@@ -24,8 +22,12 @@ public class Display : MonoBehaviour {
 		return;
 	}
 
-	public void PlayerMove(int value){
-		return;
+	public void PlayerMove(int index){
+
+		foreach (SpriteRenderer player in playerSprites) {
+			player.enabled = false;
+		}
+		playerSprites [index].enabled = true;
 	}
 
 	public void NotEnoughtBat(){

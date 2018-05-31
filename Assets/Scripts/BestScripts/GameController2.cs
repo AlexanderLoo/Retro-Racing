@@ -28,6 +28,8 @@ public class GameController2 : MonoBehaviour {
 
 	void Update(){		
 
+		print (globalState);
+
 		switch (globalState) {
 			
 		case "mainMenu":
@@ -67,9 +69,9 @@ public class GameController2 : MonoBehaviour {
 
 	void MainMenuState(){
 
-		if (buttons.StartPressed()) {
+		if (buttons.StartPressed ()) {
 			SetState ("startGame");
-		}
+		} 
 	}
 
 	void StartGameState(){
@@ -93,21 +95,27 @@ public class GameController2 : MonoBehaviour {
 		if (buttons.PausePressed()) {
 			SetState("paused");
 		}
-		//display.batTimeFor(timeToNextbat);
+		display.batTimeFor(timeToNextbat);
 		display.CurrentScore();
+
+		#if UNITY_EDITOR
+		buttons.KeysController();
+		#endif
+
 		if (buttons.Left() && player.CanLeft()) {
-			display.PlayerMove(player.Movement());
+			display.PlayerMove(player.Movement(-1));
 		}
 		if (buttons.Right() && player.CanRight()) {
-			display.PlayerMove(player.Movement());
+			display.PlayerMove(player.Movement(1));
 		}
 
-//		if (Time.OtherCarsMoveNow()) {
-//			arrayOfCars = otherCars.moveDown();
-//			display.otherCars(arrayOfCars);
-//		}
+		if (Time.OtherCarsMoveNow()) {
+			arrayOfCars = otherCars.moveDown();
+			display.otherCars(arrayOfCars);
+		}
+			
 
-		if(colision.Crashed()){
+		if(colision.Crashed(player.currentIndex, arrayOfCars )){
 
 			SetState("crashed");
 		}

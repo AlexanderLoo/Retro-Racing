@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Battery : MonoBehaviour {
 
-	private bool isbatteryLeft;
-	private int batteries;
+	private bool isbatteryLeft = true;
+	private int batteries = 3;
 
 	public bool Left(){
 		

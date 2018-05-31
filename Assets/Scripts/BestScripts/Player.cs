@@ -4,18 +4,29 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
+	private int currentIndex = 1;
+	private int maxIndex = 2;
+
 	public bool CanLeft(){
 
-		return true;
+		if (currentIndex > 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public bool CanRight(){
 
-		return true;
+		if (currentIndex < maxIndex) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
-	public int Movement(){
-
-		return 0;
+	public int Movement(int dir){
+		currentIndex += dir;
+		return currentIndex;
 	}
 }
