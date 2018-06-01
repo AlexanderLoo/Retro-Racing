@@ -14,7 +14,7 @@ public class GameController2 : MonoBehaviour {
 	public Pause pause;
 	public Colision colision;
 	public Sound sound;
-
+	//POR QUE TENGO REFERENCIA DE SPRITES ACÁ?
 	private List<SpriteRenderer> arrayOfEnemies;
 
 	private int timeToNextbat;
@@ -63,6 +63,19 @@ public class GameController2 : MonoBehaviour {
 		}
 	}
 
+	private void AlreadyPlayed(){
+
+		/*PENDIENTE EN BUSCAR UNA MEJOR SOLUCIÓN(NO DEBERÍA USAR LA FUNCIÓN 'SetDataInMemory' EN BATTERY?,
+		 * Y SI CREO LA FUNCIÓN ACÁ, TENDRIA QUE TENER UNA REFERENCIA DE 'GameController' EN 'Battery'
+		 * Y SE ROMPERÍA LA ESTRUTURA)*/
+		//POSIBLE SOLUCIÓN: USAR UNA NUEVA CLASE 'DATAMANAGER'
+		 
+		if (PlayerPrefs.GetInt("AlreadyPlayed") == 0) {
+			bat.SetDataInMemory ("AlreadyPlayed", 1);
+			bat.SetDataInMemory ("CurrentBatteries", bat.maxBatteries);
+		}
+	}
+
 	//states: mainMenu, startGame, playing, crashed, paused, gameover
 	void SetState(string state){
 
@@ -85,7 +98,7 @@ public class GameController2 : MonoBehaviour {
 
 		if (bat.Left ()) {
 
-			bat.Remove (1);
+			bat.Add (-1);
 			timeToNextbat = bat.TimeToNextCharge();
 			display.StartingGame();
 			SetState ("playing");

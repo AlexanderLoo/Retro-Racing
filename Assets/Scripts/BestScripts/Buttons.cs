@@ -30,7 +30,7 @@ public class Buttons : MonoBehaviour/*, IPointerDownHandler, IPointerUpHandler*/
 	}
 
 	public void ButtonPressed(){
-
+		//Lógica temporal
 		start = !start;
 	}
 	//Función para controllador usando teclas

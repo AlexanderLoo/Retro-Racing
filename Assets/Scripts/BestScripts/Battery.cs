@@ -18,12 +18,14 @@ public class Battery : MonoBehaviour {
 	public int Get(){
 	
 		batteries = GetDataInMemory ("CurrentBatteries");
+		print (batteries);
 		return batteries;
 	}
+	//Función usada para añadir o remover un valor a las baterías
+	public void Add(int value){
 
-	public void Remove(int value){
-
-		batteries -= value;
+		batteries += value;
+		SetDataInMemory ("CurrentBatteries", batteries);
 	}
 
 	public int TimeToNextCharge(){
@@ -40,5 +42,10 @@ public class Battery : MonoBehaviour {
 
 		int value = PlayerPrefs.GetInt (name);
 		return value;
+	}
+
+	public void SetDataInMemory(string name, int value){
+		
+		PlayerPrefs.SetInt (name, value);
 	}
 }

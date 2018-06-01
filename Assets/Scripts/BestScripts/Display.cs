@@ -8,6 +8,7 @@ public class Display : MonoBehaviour {
 
 	public void MainMenu(int lives, int batteries){
 
+		//Función para mostrar las vidas y baterías que nos quedan
 		draw.Console();
 		draw.Lives();
 		draw.Battery();
