@@ -6,22 +6,29 @@ public class GameController2 : MonoBehaviour {
 
 	public Battery bat;
 	public Lives2 lives;
+	public TimeManager time;
 	public Player player;
+	public Enemies enemies;
 	public Display display;
 	public Buttons buttons;
 	public Pause pause;
 	public Colision colision;
 	public Sound sound;
 
+	private List<SpriteRenderer> arrayOfEnemies;
+
+	private int timeToNextbat;
+
+	public int gameOverWait;
 	public float timeToMainMenu;
 
 	private string globalState;
 
 	void Start(){
 
-		//Display.ShowSplashScreen ();
+		display.ShowSplashScreen ();
 
-		//Display.MainMenu (lives.GetLives (), bat.GetBatteries ());
+		display.MainMenu (bat.Get(),lives.Get());
 
 		SetState ("mainMenu");
 	}
@@ -79,7 +86,7 @@ public class GameController2 : MonoBehaviour {
 		if (bat.Left ()) {
 
 			bat.Remove (1);
-			//timeToNextbat = bat.timeToNextCharge();
+			timeToNextbat = bat.TimeToNextCharge();
 			display.StartingGame();
 			SetState ("playing");
 			pause.BeforeStart();
@@ -95,7 +102,7 @@ public class GameController2 : MonoBehaviour {
 		if (buttons.PausePressed()) {
 			SetState("paused");
 		}
-		display.batTimeFor(timeToNextbat);
+		display.BatTimeFor(timeToNextbat);
 		display.CurrentScore();
 
 		#if UNITY_EDITOR
@@ -109,13 +116,12 @@ public class GameController2 : MonoBehaviour {
 			display.PlayerMove(player.Movement(1));
 		}
 
-		if (Time.OtherCarsMoveNow()) {
-			arrayOfCars = otherCars.moveDown();
-			display.otherCars(arrayOfCars);
+		if (time.EnemiesMoveNow()) {
+			arrayOfEnemies = enemies.MoveDown();
+			display.Enemies(arrayOfEnemies);
 		}
-			
 
-		if(colision.Crashed(player.currentIndex, arrayOfCars )){
+		if(colision.Crashed(player.currentIndex, arrayOfEnemies )){
 
 			SetState("crashed");
 		}
@@ -136,15 +142,15 @@ public class GameController2 : MonoBehaviour {
 		display.Crashed ();
 		sound.Crashed();
 		pause.Crashed();
-		//otherCars.reset();
+		enemies.Reset();
 		if (lives.Left ()) {
 			SetState ("playing");
 		} else {
-			//bat.GameOver();
+			bat.GameOver();
 			display.GameOver();
 			sound.GameOver();
 			SetState("gameOver");
-			//timeForMainMenu = now () + gameOverWait;
+			timeToMainMenu = time.Now () + gameOverWait;
 		}
 	}
 
@@ -153,8 +159,8 @@ public class GameController2 : MonoBehaviour {
 		if (buttons.StartPressed()) {
 			SetState ("mainMenu");
 		}
-//		else if (now() < timeToMainMenu) {
-//			SetState ("mainMenu");
-//		}
+		else if (time.Now() < timeToMainMenu) {
+			SetState ("mainMenu");
+		}
 	}
 }

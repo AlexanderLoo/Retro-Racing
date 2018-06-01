@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
-	private int currentIndex = 1;
+	public int currentIndex = 1;
 	private int maxIndex = 2;
 
 	public bool CanLeft(){

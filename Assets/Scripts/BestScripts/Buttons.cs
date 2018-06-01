@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Buttons : MonoBehaviour, IPointerDownHandler, IPointerUpHandler{
+public class Buttons : MonoBehaviour/*, IPointerDownHandler, IPointerUpHandler*/{
 
 	public GameObject startButton;
 	private bool leftPressed, rightPressed;
@@ -48,11 +48,11 @@ public class Buttons : MonoBehaviour, IPointerDownHandler, IPointerUpHandler{
 		}
 	}
 
-	void OnPointerDown(PointerEventData ped){
-
-	}
-
-	void OnPointerUp(PointerEventData ped){
-
-	}
+//	void OnPointerDown(PointerEventData ped){
+//		return;
+//	}
+//
+//	void OnPointerUp(PointerEventData ped){
+//		return;
+//	}
 }

@@ -9,7 +9,7 @@ public class Lives2 : MonoBehaviour {
 	private bool livesLeft;
 
 	public int Get(){
-
+		
 		return lives;
 	}
 
