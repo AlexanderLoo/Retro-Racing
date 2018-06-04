@@ -8,6 +8,7 @@ public class Buttons : MonoBehaviour/*, IPointerDownHandler, IPointerUpHandler*/
 	public GameObject startButton;
 	private bool leftPressed, rightPressed;
 	private bool start = false;
+	private bool pause = false;
 
 	public bool StartPressed(){
 
@@ -16,7 +17,7 @@ public class Buttons : MonoBehaviour/*, IPointerDownHandler, IPointerUpHandler*/
 
 	public bool PausePressed(){
 
-		return false;
+		return pause;
 	}
 
 	public bool Left(){

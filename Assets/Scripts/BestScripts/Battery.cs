@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Battery : MonoBehaviour {
 
+	public DataManager2 data;
+
 	private bool isbatteryLeft = true;
 	private int batteries;
 
@@ -17,7 +19,7 @@ public class Battery : MonoBehaviour {
 
 	public int Get(){
 	
-		batteries = GetDataInMemory ("CurrentBatteries");
+		batteries = data.GetDataInMemory ("CurrentBatteries");
 		print (batteries);
 		return batteries;
 	}
@@ -25,7 +27,7 @@ public class Battery : MonoBehaviour {
 	public void Add(int value){
 
 		batteries += value;
-		SetDataInMemory ("CurrentBatteries", batteries);
+		data.SetDataInMemory ("CurrentBatteries", batteries);
 	}
 
 	public int TimeToNextCharge(){
@@ -38,14 +40,5 @@ public class Battery : MonoBehaviour {
 		return;
 	}
 
-	private int GetDataInMemory(string name){
 
-		int value = PlayerPrefs.GetInt (name);
-		return value;
-	}
-
-	public void SetDataInMemory(string name, int value){
-		
-		PlayerPrefs.SetInt (name, value);
-	}
 }

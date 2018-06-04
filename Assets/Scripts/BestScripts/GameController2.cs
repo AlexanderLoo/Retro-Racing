@@ -6,6 +6,8 @@ public class GameController2 : MonoBehaviour {
 
 	public Battery bat;
 	public Lives2 lives;
+	public DataManager2 data;
+	public ScoreManager score;
 	public TimeManager time;
 	public Player player;
 	public Enemies enemies;
@@ -14,17 +16,29 @@ public class GameController2 : MonoBehaviour {
 	public Pause pause;
 	public Colision colision;
 	public Sound sound;
+
+	private string globalState;
+
+	public float lowestSpeed = 16.6f; //16.6 m/s
+	public int gameSpeed = 1; //Velocidad del juego donde 1 es normal
+	public float racingTime = 0; //Tiempo en carrera
+
 	//POR QUE TENGO REFERENCIA DE SPRITES ACÁ?
 	private List<SpriteRenderer> arrayOfEnemies;
+
+
 
 	private int timeToNextbat;
 
 	public int gameOverWait;
 	public float timeToMainMenu;
 
-	private string globalState;
+
 
 	void Start(){
+
+		AlreadyPlayed ();
+		print("Primera vez = " + data.GetDataInMemory("AlreadyPlayed"));
 
 		display.ShowSplashScreen ();
 
@@ -65,14 +79,9 @@ public class GameController2 : MonoBehaviour {
 
 	private void AlreadyPlayed(){
 
-		/*PENDIENTE EN BUSCAR UNA MEJOR SOLUCIÓN(NO DEBERÍA USAR LA FUNCIÓN 'SetDataInMemory' EN BATTERY?,
-		 * Y SI CREO LA FUNCIÓN ACÁ, TENDRIA QUE TENER UNA REFERENCIA DE 'GameController' EN 'Battery'
-		 * Y SE ROMPERÍA LA ESTRUTURA)*/
-		//POSIBLE SOLUCIÓN: USAR UNA NUEVA CLASE 'DATAMANAGER'
-		 
-		if (PlayerPrefs.GetInt("AlreadyPlayed") == 0) {
-			bat.SetDataInMemory ("AlreadyPlayed", 1);
-			bat.SetDataInMemory ("CurrentBatteries", bat.maxBatteries);
+		if (data.GetDataInMemory("AlreadyPlayed") == 0) {
+			data.SetDataInMemory ("AlreadyPlayed", 1);
+			data.SetDataInMemory ("CurrentBatteries", bat.maxBatteries);
 		}
 	}
 
@@ -99,6 +108,7 @@ public class GameController2 : MonoBehaviour {
 		if (bat.Left ()) {
 
 			bat.Add (-1);
+			display.Battery (bat.Get());
 			timeToNextbat = bat.TimeToNextCharge();
 			display.StartingGame();
 			SetState ("playing");
@@ -112,15 +122,18 @@ public class GameController2 : MonoBehaviour {
 
 	void PlayingState(){
 
-		if (buttons.PausePressed()) {
-			SetState("paused");
-		}
-		display.BatTimeFor(timeToNextbat);
-		display.CurrentScore();
-
 		#if UNITY_EDITOR
 		buttons.KeysController();
 		#endif
+
+		racingTime += Time.deltaTime;
+
+		if (buttons.PausePressed()) {
+			SetState("paused");
+		}
+		display.CurrentScore(score.Distance (lowestSpeed, gameSpeed, racingTime));
+
+		display.BatTimeFor(timeToNextbat);
 
 		if (buttons.Left() && player.CanLeft()) {
 			display.PlayerMove(player.Movement(-1));

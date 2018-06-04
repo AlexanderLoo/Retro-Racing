@@ -6,12 +6,12 @@ public class Display : MonoBehaviour {
 
 	public Draw draw;
 
-	public void MainMenu(int lives, int batteries){
+	public void MainMenu(int batteries, int lives){
 
 		//Función para mostrar las vidas y baterías que nos quedan
 		draw.Console();
 		draw.Lives();
-		draw.Battery();
+		Battery(batteries);
 	}
 
 	public void ShowSplashScreen(){
@@ -25,10 +25,8 @@ public class Display : MonoBehaviour {
 
 	public void PlayerMove(int index){
 
-		foreach (SpriteRenderer player in draw.playerSprites) {
-			player.enabled = false;
-		}
-		draw.playerSprites [index].enabled = true;
+		draw.DisableAllSprites (draw.playerArray);	
+		draw.playerArray [index].enabled = true;
 	}
 
 	public void Enemies(List<SpriteRenderer> arrayOfEnemies){
@@ -36,14 +34,22 @@ public class Display : MonoBehaviour {
 		return;
 	}
 
+	public void Battery(int batteries){
+
+		draw.DisableAllImage (draw.batteryArray);
+		for (int i = 0; i < batteries; i++) {
+			draw.batteryArray [i].enabled = true;
+		}
+	}
+
 	public void NotEnoughtBat(){
 
 		return;
 	}
 
-	public void CurrentScore (){
+	public void CurrentScore (float score){
 
-		return;
+		draw.scoreText.text = score.ToString();
 	}
 
 	public void Crashed(){
