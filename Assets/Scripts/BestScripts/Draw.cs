@@ -18,6 +18,14 @@ public class Draw : MonoBehaviour {
 
 	//UI
 	public Text scoreText;
+	public Text countMinutes;
+	public Text countSeconds;
+
+	public Text hour;
+	public Text minute;
+	public Text amOrPm;
+
+	public GameObject countDown;
 
 //	void Start(){
 //
@@ -51,6 +59,16 @@ public class Draw : MonoBehaviour {
 		foreach (Image image in imageArray) {
 			image.enabled = false;
 		}
+	}
+
+	public void SetActive(GameObject gameObject, bool value){
+
+		gameObject.SetActive (value);
+	}
+
+	public void CountDown(){
+
+		SetActive (countDown, true);
 	}
 
 	public void Console(){

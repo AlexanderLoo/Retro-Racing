@@ -26,8 +26,6 @@ public class GameController2 : MonoBehaviour {
 	//POR QUE TENGO REFERENCIA DE SPRITES ACÁ?
 	private List<SpriteRenderer> arrayOfEnemies;
 
-
-
 	private int timeToNextbat;
 
 	public int gameOverWait;
@@ -50,6 +48,8 @@ public class GameController2 : MonoBehaviour {
 	void Update(){		
 
 		print (globalState);
+
+		display.ShowRealTime (time.hour, time.minute, time.amPm);
 
 		switch (globalState) {
 			

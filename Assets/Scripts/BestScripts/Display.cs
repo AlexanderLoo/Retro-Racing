@@ -42,6 +42,25 @@ public class Display : MonoBehaviour {
 		}
 	}
 
+	public void ShowRealTime(int hour, int minute, string amOrPm){
+
+		if (hour > 12) {
+			hour -= 12;
+			amOrPm = "PM";
+		}
+		if (hour < 10) {
+			draw.hour.text = "0" + hour.ToString ();
+		} else {
+			draw.hour.text = hour.ToString();
+		}
+		if (minute < 10) {
+			draw.minute.text = "0" + minute.ToString ();
+		} else {
+			draw.minute.text = minute.ToString ();
+		}
+		draw.amOrPm.text = amOrPm;
+	}
+
 	public void NotEnoughtBat(){
 
 		return;
