@@ -53,13 +53,13 @@ public class Display : MonoBehaviour {
 		draw.amOrPm.text = amOrPm;
 	}
 
-	public void CountDown(bool value, int timeToNextBat){
+	public void CountDown(bool value, int timeForNextBat = 0){
 
 		draw.SetActive (draw.countDown, value);
 		if (value) {
-			draw.countMinutes.text = AdjustDigits (timeToNextBat/60);
-			draw.countSeconds.text = AdjustDigits(timeToNextBat%60);
-		} 
+			draw.countMinutes.text = AdjustDigits (timeForNextBat / 60);
+			draw.countSeconds.text = AdjustDigits (timeForNextBat % 60);
+		}
 	}
 	//Función para ajustar los dígitos ejemplo: 7:4 --> 07:04
 	private string AdjustDigits(int num){
