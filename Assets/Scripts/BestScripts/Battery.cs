@@ -19,7 +19,7 @@ public class Battery : MonoBehaviour {
 
 	public int Get(){
 	
-		batteries = data.GetDataInMemory ("CurrentBatteries");
+		batteries = data.Get ("CurrentBatteries");
 		print (batteries);
 		return batteries;
 	}
@@ -27,18 +27,20 @@ public class Battery : MonoBehaviour {
 	public void Add(int value){
 
 		batteries += value;
-		data.SetDataInMemory ("CurrentBatteries", batteries);
+		data.Set("CurrentBatteries", batteries);
 	}
 
-	public int TimeToNextCharge(){
-		
-		return 0;
+	public int TimeToNextCharge(int totalTime, int waitingTime){
+
+		return totalTime + waitingTime;
 	}
 
 	public void GameOver(){
 
 		return;
 	}
+
+
 
 
 }

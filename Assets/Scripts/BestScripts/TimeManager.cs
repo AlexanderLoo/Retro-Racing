@@ -8,41 +8,27 @@ public class TimeManager : MonoBehaviour {
 	//Para mostrar la hora actual
 	public int hour;
 	public int minute;
+	public int seconds;
 	public string amPm = "AM";
 
-	public int totalTime;
+	public int totalTime; //tiempo en segundos transcurrido desde las 00:00 horas
 
 	void Update(){
 
-		RealTime ();
+		Time ();
 	}
 
-	public void RealTime(){
+	public void Time(){
 
 		DateTime time = DateTime.Now;
 
 		hour = time.Hour;
 		minute = time.Minute;
+		seconds = time.Second;
 
+		totalTime = (hour * 3600) + (minute * 60) + seconds;
+		//print (totalTime);
 	}
-
-	public int GetTotal(){
-
-		DateTime time = DateTime.Now;
-
-		int day = time.Day;
-		int hour = time.Hour;
-		int minute = time.Minute;
-		int seconds = time.Second;
-
-		//convertimos todo en segundos
-		hour *= 3600;
-		minute *= 60;
-
-		totalTime = hour + minute + seconds;
-		return totalTime;
-	}
-
 
 	public bool EnemiesMoveNow(){
 

@@ -66,11 +66,6 @@ public class Draw : MonoBehaviour {
 		gameObject.SetActive (value);
 	}
 
-	public void CountDown(){
-
-		SetActive (countDown, true);
-	}
-
 	public void Console(){
 		return;
 	}

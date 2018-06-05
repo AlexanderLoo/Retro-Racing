@@ -42,23 +42,33 @@ public class Display : MonoBehaviour {
 		}
 	}
 
-	public void ShowRealTime(int hour, int minute, string amOrPm){
+	public void RealTime(int hour, int minute, string amOrPm){
 
 		if (hour > 12) {
 			hour -= 12;
 			amOrPm = "PM";
 		}
-		if (hour < 10) {
-			draw.hour.text = "0" + hour.ToString ();
-		} else {
-			draw.hour.text = hour.ToString();
-		}
-		if (minute < 10) {
-			draw.minute.text = "0" + minute.ToString ();
-		} else {
-			draw.minute.text = minute.ToString ();
-		}
+		draw.hour.text = AdjustDigits (hour);
+		draw.minute.text = AdjustDigits (minute);
 		draw.amOrPm.text = amOrPm;
+	}
+
+	public void CountDown(bool value, int timeToNextBat){
+
+		draw.SetActive (draw.countDown, value);
+		if (value) {
+			draw.countMinutes.text = AdjustDigits (timeToNextBat/60);
+			draw.countSeconds.text = AdjustDigits(timeToNextBat%60);
+		} 
+	}
+	//Función para ajustar los dígitos ejemplo: 7:4 --> 07:04
+	private string AdjustDigits(int num){
+
+		if (num < 10) {
+			return "0" + num.ToString ();
+		} else {
+			return num.ToString ();
+		}
 	}
 
 	public void NotEnoughtBat(){
@@ -72,11 +82,6 @@ public class Display : MonoBehaviour {
 	}
 
 	public void Crashed(){
-
-		return;
-	}
-
-	public void BatTimeFor(int time){
 
 		return;
 	}

@@ -26,7 +26,10 @@ public class GameController2 : MonoBehaviour {
 	//POR QUE TENGO REFERENCIA DE SPRITES ACÁ?
 	private List<SpriteRenderer> arrayOfEnemies;
 
-	private int timeToNextbat;
+	//variables para controllar las recargas de batería
+	private bool charging;  //Booleano para saber si estabamos esperado una carga
+	public int waitingTime = 60; //segundos de espera para obtener batería
+	private int timeToNextBat; //Variable para saber a que tiempo total debemos llegar para obtener batería
 
 	public int gameOverWait;
 	public float timeToMainMenu;
@@ -35,8 +38,9 @@ public class GameController2 : MonoBehaviour {
 
 	void Start(){
 
+		timeToNextBat = 130;
 		AlreadyPlayed ();
-		print("Primera vez = " + data.GetDataInMemory("AlreadyPlayed"));
+		print("Primera vez = " + data.Get("AlreadyPlayed"));
 
 		display.ShowSplashScreen ();
 
@@ -49,7 +53,10 @@ public class GameController2 : MonoBehaviour {
 
 		print (globalState);
 
-		display.ShowRealTime (time.hour, time.minute, time.amPm);
+		display.RealTime (time.hour, time.minute, time.amPm);
+		display.CountDown (true, timeToNextBat);
+		timeToNextBat -= (int)Time.deltaTime;
+		print (Mathf.Round (Time.deltaTime));
 
 		switch (globalState) {
 			
@@ -79,9 +86,9 @@ public class GameController2 : MonoBehaviour {
 
 	private void AlreadyPlayed(){
 
-		if (data.GetDataInMemory("AlreadyPlayed") == 0) {
-			data.SetDataInMemory ("AlreadyPlayed", 1);
-			data.SetDataInMemory ("CurrentBatteries", bat.maxBatteries);
+		if (data.Get("AlreadyPlayed") == 0) {
+			data.Set ("AlreadyPlayed", 1);
+			data.Set ("CurrentBatteries", bat.maxBatteries);
 		}
 	}
 
@@ -109,7 +116,6 @@ public class GameController2 : MonoBehaviour {
 
 			bat.Add (-1);
 			display.Battery (bat.Get());
-			timeToNextbat = bat.TimeToNextCharge();
 			display.StartingGame();
 			SetState ("playing");
 			pause.BeforeStart();
@@ -133,7 +139,6 @@ public class GameController2 : MonoBehaviour {
 		}
 		display.CurrentScore(score.Distance (lowestSpeed, gameSpeed, racingTime));
 
-		display.BatTimeFor(timeToNextbat);
 
 		if (buttons.Left() && player.CanLeft()) {
 			display.PlayerMove(player.Movement(-1));
