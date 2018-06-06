@@ -37,7 +37,7 @@ public class GameController2 : MonoBehaviour {
 
 
 	void Start(){
-		
+
 		AlreadyPlayed ();
 
 		display.ShowSplashScreen ();
@@ -54,7 +54,12 @@ public class GameController2 : MonoBehaviour {
 		bat.Charging (time.totalTime, waitingTime, ref timeForNextBat);
 		display.RealTime (time.hour, time.minute, time.amPm);
 		//Temporal
-		display.CountDown (true, timeForNextBat);
+		if (timeForNextBat > 0) {
+			display.CountDown (true, timeForNextBat);
+		} else {
+			display.CountDown (false);
+		}
+
 
 		//Temporal
 		if (Input.GetKeyDown(KeyCode.A)) {
