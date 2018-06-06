@@ -11,6 +11,9 @@ public class Battery : MonoBehaviour {
 
 	public int maxBatteries = 3;
 
+	public int timeToReachForBat;
+	public bool charging;
+
 	public bool Left(){
 
 		isbatteryLeft = (Get () > 0) ? true : false;
@@ -40,7 +43,19 @@ public class Battery : MonoBehaviour {
 		return;
 	}
 
+	public void Charging(int totalTime, int waitingTime,ref int timeForNextBat){
 
-
-
+		if (timeToReachForBat > totalTime) {
+			timeForNextBat = timeToReachForBat - totalTime;
+		} else {
+			if (charging) {
+				Add (1);
+				if (Get () != maxBatteries) {
+					timeToReachForBat = totalTime + waitingTime;
+				} else {
+					charging = false;
+				}
+			}
+		}
+	}
 }

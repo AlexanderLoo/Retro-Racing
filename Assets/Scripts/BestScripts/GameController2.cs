@@ -27,8 +27,7 @@ public class GameController2 : MonoBehaviour {
 	private List<SpriteRenderer> arrayOfEnemies;
 
 	//variables para controllar las recargas de batería
-	private bool charging;  //Booleano para saber si estabamos esperado una carga
-	public const int waitingTime = 60; //segundos de espera para obtener una batería(una vez perdida)
+	public const int waitingTime = 10; //segundos de espera para obtener una batería(una vez perdida)
 	private int timeForNextBat; //Variable para saber el tiempo que falta para una batería(mostrada en el display)
 	private int remainingTimeForFullCharge; //Tiempo total para llenar la batería
 
@@ -38,10 +37,8 @@ public class GameController2 : MonoBehaviour {
 
 
 	void Start(){
-		//Temporal
-		timeForNextBat = waitingTime;
+		
 		AlreadyPlayed ();
-		print("Primera vez = " + data.Get("AlreadyPlayed"));
 
 		display.ShowSplashScreen ();
 
@@ -54,6 +51,7 @@ public class GameController2 : MonoBehaviour {
 
 		print (globalState);
 
+		bat.Charging (time.totalTime, waitingTime, ref timeForNextBat);
 		display.RealTime (time.hour, time.minute, time.amPm);
 		//Temporal
 		display.CountDown (true, timeForNextBat);
@@ -120,6 +118,10 @@ public class GameController2 : MonoBehaviour {
 		if (bat.Left ()) {
 
 			bat.Add (-1);
+			if (!bat.charging) {
+				bat.timeToReachForBat = time.totalTime + waitingTime;
+				bat.charging = true;
+			}
 			display.Battery (bat.Get());
 			display.StartingGame();
 			SetState ("playing");
