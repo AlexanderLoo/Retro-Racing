@@ -13,6 +13,11 @@ public class TimeManager : MonoBehaviour {
 
 	public int totalTime; //tiempo en segundos transcurrido desde las 00:00 horas
 
+	void Awake(){
+
+		Time ();
+	}
+
 	void Update(){
 
 		Time ();
@@ -27,7 +32,6 @@ public class TimeManager : MonoBehaviour {
 		seconds = time.Second;
 
 		totalTime = (hour * 3600) + (minute * 60) + seconds;
-		//print (totalTime);
 	}
 
 	public bool EnemiesMoveNow(){

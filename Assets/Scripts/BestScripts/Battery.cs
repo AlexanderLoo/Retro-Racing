@@ -11,8 +11,8 @@ public class Battery : MonoBehaviour {
 
 	public int maxBatteries = 3;
 
-	public int timeToReachForBat;
-	public bool charging;
+	//public int timeToReachForBat;
+	//public bool charging;
 
 	public bool Left(){
 
@@ -33,29 +33,25 @@ public class Battery : MonoBehaviour {
 		data.Set("CurrentBatteries", batteries);
 	}
 
-	public int TimeToNextCharge(int totalTime, int waitingTime){
-
-		return totalTime + waitingTime;
-	}
-
 	public void GameOver(){
 
 		return;
 	}
-
-	public void Charging(int totalTime, int waitingTime,ref int timeForNextBat){
-
-		if (timeToReachForBat > totalTime) {
-			timeForNextBat = timeToReachForBat - totalTime;
-		} else {
-			if (charging) {
-				Add (1);
-				if (Get () != maxBatteries) {
-					timeToReachForBat = totalTime + waitingTime;
-				} else {
-					charging = false;
-				}
-			}
-		}
-	}
+//	//Temporal
+//	public void Charging(int totalTime, int waitingTime,ref int timeForNextBat){
+//
+//		if (timeToReachForBat > totalTime) {
+//			timeForNextBat = timeToReachForBat - totalTime;
+//		} else {
+//			timeForNextBat = 0;
+//			if (charging) {
+//				Add (1);
+//				if (Get () != maxBatteries) {
+//					timeToReachForBat = totalTime + waitingTime;
+//				} else {
+//					charging = false;
+//				}
+//			}
+//		}
+//	}
 }

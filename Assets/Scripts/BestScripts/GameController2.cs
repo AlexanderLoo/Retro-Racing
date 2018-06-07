@@ -29,7 +29,8 @@ public class GameController2 : MonoBehaviour {
 	//variables para controllar las recargas de batería
 	public const int waitingTime = 10; //segundos de espera para obtener una batería(una vez perdida)
 	private int timeForNextBat; //Variable para saber el tiempo que falta para una batería(mostrada en el display)
-	private int remainingTimeForFullCharge; //Tiempo total para llenar la batería
+	private int timeToReachForBat;//Temporal 
+	private bool charging;//Temporal
 
 	public int gameOverWait;
 	public float timeToMainMenu;
@@ -39,6 +40,7 @@ public class GameController2 : MonoBehaviour {
 	void Start(){
 
 		AlreadyPlayed ();
+		//RemainingCharge ();
 
 		display.ShowSplashScreen ();
 
@@ -51,19 +53,14 @@ public class GameController2 : MonoBehaviour {
 
 		print (globalState);
 
-		bat.Charging (time.totalTime, waitingTime, ref timeForNextBat);
+		//bat.Charging (time.totalTime, waitingTime, ref timeForNextBat);
+		Charging();
 		display.RealTime (time.hour, time.minute, time.amPm);
 		//Temporal
 		if (timeForNextBat > 0) {
 			display.CountDown (true, timeForNextBat);
 		} else {
 			display.CountDown (false);
-		}
-
-
-		//Temporal
-		if (Input.GetKeyDown(KeyCode.A)) {
-			timeForNextBat -= 1;
 		}
 
 		switch (globalState) {
@@ -123,10 +120,16 @@ public class GameController2 : MonoBehaviour {
 		if (bat.Left ()) {
 
 			bat.Add (-1);
-			if (!bat.charging) {
-				bat.timeToReachForBat = time.totalTime + waitingTime;
-				bat.charging = true;
+//			if (!bat.charging) {
+//				bat.timeToReachForBat = time.totalTime + waitingTime;
+//				bat.charging = true;
+//			}
+			//temporal
+			if (!charging) {
+				timeToReachForBat = time.totalTime + waitingTime;
+				charging = true;
 			}
+
 			display.Battery (bat.Get());
 			display.StartingGame();
 			SetState ("playing");
@@ -206,4 +209,43 @@ public class GameController2 : MonoBehaviour {
 			SetState ("mainMenu");
 		}
 	}
+	//Temporal
+	public void Charging(){
+
+		if (timeToReachForBat > time.totalTime) {
+			timeForNextBat = timeToReachForBat - time.totalTime;
+		} else {
+			timeForNextBat = 0;
+			if (charging) {
+				bat.Add (1);
+				display.Battery (bat.Get());
+				if (bat.Get () != bat.maxBatteries) {
+					timeToReachForBat = time.totalTime + waitingTime;
+				} else {
+					charging = false;
+				}
+			}
+		}
+	}
+
+//	public void RemainingCharge(){
+//
+//		int reachTimeForFullCharge = data.Get ("LastTimePlayed") + data.Get ("RemainingTime");
+//
+//		if (time.totalTime >= reachTimeForFullCharge) {
+//			bat.Add (bat.maxBatteries - bat.Get ());
+//		} else {
+//			int offLineTime = reachTimeForFullCharge - time.totalTime;
+//			bat.Add (offLineTime / waitingTime);
+//			timeToReachForBat = (offLineTime % waitingTime) + time.totalTime;
+//			charging = true;
+//		}
+//	}
+//	//Temporal
+//	private void OnDisable(){
+//
+//		int remainingTimeForFullCharge = (bat.maxBatteries - bat.Get ()) * waitingTime -(waitingTime - timeForNextBat);
+//		data.Set("RemainingTime", remainingTimeForFullCharge);
+//		data.Set ("LastTimePlayed", time.totalTime);
+//	}
 }
