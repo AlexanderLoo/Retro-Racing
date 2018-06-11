@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DataManager2 : MonoBehaviour {
+public class Preference : MonoBehaviour {
 
 	public int Get(string name){
 

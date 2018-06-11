@@ -4,27 +4,47 @@ using UnityEngine;
 
 public class GameController2 : MonoBehaviour {
 
-	public Battery bat;
-	public Lives2 lives;
-	public DataManager2 data;
-	public ScoreManager score;
-	public TimeManager time;
+	public Display display;
+	public Sound sound; 
+	public Buttons buttons;
+
 	public Player player;
 	public Enemies enemies;
-	public Display display;
-	public Buttons buttons;
-	public Pause pause;
 	public Colision colision;
-	public Sound sound;
+
+	public Preference pref;
+
+	public Battery bat;
+	public ScoreManager score;
+	public TimeManager time;
+
+	public Pause pause;
+
+	public Lives2 lives;
+
+	public class State
+	{
+		public string name;
+		public float score;
+		public int[] enemies;
+		public int playerPos;
+		public float gameSpeed;
+		public float racingTime;
+
+	}
 
 	private string globalState;
 
+	// Constantes
 	public float lowestSpeed = 16.6f; //16.6 m/s
+
+
+
 	public int gameSpeed = 1; //Velocidad del juego donde 1 es normal
 	public float racingTime = 0; //Tiempo en carrera
 
 	//POR QUE TENGO REFERENCIA DE SPRITES ACÁ?
-	private List<SpriteRenderer> arrayOfEnemies;
+	// private List<SpriteRenderer> arrayOfEnemies;
 
 	//variables para controllar las recargas de batería
 	public const int waitingTime = 10; //segundos de espera para obtener una batería(una vez perdida)
@@ -39,14 +59,25 @@ public class GameController2 : MonoBehaviour {
 
 	void Start(){
 
-		AlreadyPlayed ();
+		if (StartingFromInterupted ()) {
+			State = pref.loadState ();
+		
+		} else {
+
+			// prepare for new game
+			State = firstEverRunState ();
+			display.ShowSplashScreen ();
+
+			display.MainMenu (bat.Get(),lives.Get());
+
+			SetState ("mainMenu");
+		}
+
+
+		AlreadyPlayed ()) ;
 		//RemainingCharge ();
 
-		display.ShowSplashScreen ();
-
-		display.MainMenu (bat.Get(),lives.Get());
-
-		SetState ("mainMenu");
+	
 	}
 
 	void Update(){		
@@ -57,6 +88,9 @@ public class GameController2 : MonoBehaviour {
 		Charging();
 		display.RealTime (time.hour, time.minute, time.amPm);
 		//Temporal
+
+
+
 		if (timeForNextBat > 0) {
 			display.CountDown (true, timeForNextBat);
 		} else {
@@ -91,9 +125,9 @@ public class GameController2 : MonoBehaviour {
 
 	private void AlreadyPlayed(){
 
-		if (data.Get("AlreadyPlayed") == 0) {
-			data.Set ("AlreadyPlayed", 1);
-			data.Set ("CurrentBatteries", bat.maxBatteries);
+		if (pref.Get("AlreadyPlayed") == 0) {
+			pref.Set ("AlreadyPlayed", 1);
+			pref.Set ("CurrentBatteries", bat.maxBatteries);
 		}
 	}
 
@@ -209,6 +243,7 @@ public class GameController2 : MonoBehaviour {
 			SetState ("mainMenu");
 		}
 	}
+
 	//Temporal
 	public void Charging(){
 
@@ -230,7 +265,7 @@ public class GameController2 : MonoBehaviour {
 
 //	public void RemainingCharge(){
 //
-//		int reachTimeForFullCharge = data.Get ("LastTimePlayed") + data.Get ("RemainingTime");
+//		int reachTimeForFullCharge = pref.Get ("LastTimePlayed") + pref.Get ("RemainingTime");
 //
 //		if (time.totalTime >= reachTimeForFullCharge) {
 //			bat.Add (bat.maxBatteries - bat.Get ());
@@ -245,7 +280,27 @@ public class GameController2 : MonoBehaviour {
 //	private void OnDisable(){
 //
 //		int remainingTimeForFullCharge = (bat.maxBatteries - bat.Get ()) * waitingTime -(waitingTime - timeForNextBat);
-//		data.Set("RemainingTime", remainingTimeForFullCharge);
-//		data.Set ("LastTimePlayed", time.totalTime);
+//		pref.Set("RemainingTime", remainingTimeForFullCharge);
+//		pref.Set ("LastTimePlayed", time.totalTime);
 //	}
+}
+
+
+pref.saveState {
+
+
+	string tosavejson = JsonUtility.ToJson(myObject);
+
+	magia para guardar tosavejson
+}
+
+
+
+pref.loadState {
+
+	loadjson = load pref
+
+		loadedState = JsonUtility.FromJson<State>(loadjson);
+
+	return loadedState;
 }

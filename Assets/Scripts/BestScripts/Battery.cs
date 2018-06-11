@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Battery : MonoBehaviour {
 
-	public DataManager2 data;
+	public Preference pref;
 
 	private bool isbatteryLeft = true;
 	private int batteries;
@@ -22,7 +22,7 @@ public class Battery : MonoBehaviour {
 
 	public int Get(){
 	
-		batteries = data.Get ("CurrentBatteries");
+		batteries = pref.Get ("CurrentBatteries");
 		print (batteries);
 		return batteries;
 	}
@@ -30,7 +30,7 @@ public class Battery : MonoBehaviour {
 	public void Add(int value){
 
 		batteries += value;
-		data.Set("CurrentBatteries", batteries);
+		pref.Set("CurrentBatteries", batteries);
 	}
 
 	public void GameOver(){
