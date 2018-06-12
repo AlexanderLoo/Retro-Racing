@@ -53,19 +53,18 @@ public class GameController : MonoBehaviour {
 
 	void Start(){
 
-//		if (StartingFromInterupted ()) {
-//			State = pref.loadState ();
-//		
-//		} else {
-//
-//			// prepare for new game
-//			State = firstEverRunState ();
+		if (StartingFromInterupted ()) {
+			LoadState ();
+
+		} else {
+			// prepare for new game
+			AlreadyPlayed();
 			display.ShowSplashScreen ();
 			bat.batteries = pref.Get ("CurrentBatteries");
 			display.MainMenu (bat.Get(),lives.Get());
 
 			SetState ("mainMenu");
-//		}
+		}
 
 		AlreadyPlayed ();
 		//RemainingCharge ();
@@ -111,6 +110,17 @@ public class GameController : MonoBehaviour {
 			break;
 		}
 	}
+
+	private bool StartingFromInterupted(){
+		//Acceder a un prefs
+		return false;
+	}
+
+	private void LoadState(){
+		//Accedemos a la variables de la clase State y los asignamos al juego
+		return;
+	}
+
 
 	private void AlreadyPlayed(){
 
