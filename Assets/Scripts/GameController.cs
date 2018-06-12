@@ -1,318 +1,293 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour {
 
-	public static GameController gameController;
-	public BatteryDisplay batteryDisplay;
-	public BatteryManager batteryManager;
-	public Lives lives;
-	private ScoreDisplay scoreDisplay;
-	//Lista de los sprites de enemigos que estan en la misma fila que el player
-	public SpriteRenderer[] enemyCollision;
-	public SpriteRenderer[] player;
-	//Lista de sprites del choque
-	public SpriteRenderer[] collision;
-	//Velocidad 1 que equivale a 16.6 m/s
-	public float speed = 1;
-	public GameObject startButton;
-	[HideInInspector]
-	public bool startGame;
+	public Display display;
+	public Sound sound; 
+	public Buttons buttons;
 
-	void Awake(){
-		//Singleton
-		if (gameController == null) {
-			gameController = this;
-		} else if (gameController != this) {
-			Destroy (gameObject);
-		}
-		scoreDisplay = GetComponent<ScoreDisplay> ();
+	public Player player;
+	public Enemies enemies;
+	public Colision colision;
+
+	public Preference pref;
+
+	public Battery bat;
+	public ScoreManager score;
+	public TimeManager time;
+
+	public Pause pause;
+
+	public Lives lives;
+
+	public class State
+	{
+		public string name;
+		public float score;
+		public int[] enemies;
+		public int playerPos;
+		public float gameSpeed;
+		public float racingTime;
 	}
+
+	private string globalState;
+
+	// Constantes
+	public float lowestSpeed = 16.6f; //16.6 m/s
+
+	public int gameSpeed = 1; //Velocidad del juego donde 1 es normal
+	public float racingTime = 0; //Tiempo en carrera
+
+	//variables para controllar las recargas de batería
+	public const int waitingTime = 10; //segundos de espera para obtener una batería(una vez perdida)
+	private int timeForNextBat; //Variable para saber el tiempo que falta para una batería(mostrada en el display)
+	private int timeToReachForBat;//Temporal 
+	private bool charging;//Temporal
+
+	public int gameOverWait;
+	public float timeToMainMenu;
+
+
 
 	void Start(){
-		
-		batteryDisplay.ShowCurrentLives ();
-		if (lives.GetCurrentLives() <= 0) {
-			CanPlay (false);
+
+//		if (StartingFromInterupted ()) {
+//			State = pref.loadState ();
+//		
+//		} else {
+//
+//			// prepare for new game
+//			State = firstEverRunState ();
+			display.ShowSplashScreen ();
+			bat.batteries = pref.Get ("CurrentBatteries");
+			display.MainMenu (bat.Get(),lives.Get());
+
+			SetState ("mainMenu");
+//		}
+
+		AlreadyPlayed ();
+		//RemainingCharge ();
+
+	}
+
+	void Update(){		
+
+		print (globalState);
+
+		Charging();
+		display.RealTime (time.hour, time.minute, time.amPm);
+
+		//Temporal
+		if (timeForNextBat > 0) {
+			display.CountDown (true, timeForNextBat);
 		} else {
-			CanPlay (true);
-		}
-		speed = 1;
-		Time.timeScale = 0;
-	}
-	//Función que se llama cuando salimos del juego
-	void OnDisable(){
-
-		batteryManager.SaveLastTotalTime ();
-		batteryManager.SaveLastTimeRemaining ();
-	}
-
-	void Update(){
-
-		if (startGame) {
-			CarCollision ();
-			scoreDisplay.Distance ();
+			display.CountDown (false);
 		}
 
-		if (Input.GetKeyDown(KeyCode.Escape)) {
-			#if UNITY_EDITOR
-			UnityEditor.EditorApplication.isPlaying = false;
-			#endif
-			Application.Quit();
+		switch (globalState) {
+			
+		case "mainMenu":
+			MainMenuState ();
+			break;
+		case "startGame":
+			StartGameState ();
+			break;
+		case "playing":
+			PlayingState ();
+			break;
+		case "crashed":
+			CrashedState ();
+			break;
+		case "paused":
+			PausedState ();
+			break;
+		case "gameOver":
+			GameOverState ();
+			break;
+		default:
+			Debug.Log ("No se encuentra en ningún estado");	
+			break;
 		}
 	}
 
-	public void CanPlay(bool b){
+	private void AlreadyPlayed(){
 
-		startButton.SetActive (b);
+		if (pref.Get("AlreadyPlayed") == 0) {
+			pref.Set ("AlreadyPlayed", 1);
+			pref.Set ("CurrentBatteries", bat.maxBatteries);
+		}
 	}
 
-	//Lógica de colisión
-	void CarCollision(){
-		//Si el índice del sprite activo del player encaja con el del enemigo, significa que colisionaron; por lo tanto detenemos el juego
-		for (int i = 0; i < player.Length; i++) {
-			if (enemyCollision[i].enabled && player[i].enabled) {
-				startGame = false;
-				//mostramos la colisión
-				//collision[i].enabled = true;
-				//removemos una vida
-				batteryDisplay.RemoveLife ();
-				Time.timeScale = 0;
+	//states: mainMenu, startGame, playing, crashed, paused, gameover
+	void SetState(string state){
 
-				//**********
-				enemyCollision[i].enabled = false;
-				player[i].GetComponent<Animator>().enabled = true;
-				collision [i].GetComponent<Animator> ().enabled = true;
+		globalState = state;
+	}
+
+	string GetState(){
+
+		return globalState;
+	}
+
+	void MainMenuState(){
+
+		if (buttons.StartPressed ()) {
+			SetState ("startGame");
+		} 
+	}
+
+	void StartGameState(){
+
+		if (bat.Left ()) {
+
+			bat.Add (-1);
+			pref.Set ("CurrentBatteries", bat.batteries);
+			//temporal
+			if (!charging) {
+				timeToReachForBat = time.totalTime + waitingTime;
+				charging = true;
+			}
+
+			display.Battery (bat.Get());
+			display.StartingGame();
+			SetState ("playing");
+			pause.BeforeStart();
+		} else {
+			display.NotEnoughtBat ();
+			sound.BadLuck();
+			SetState("mainMenu");
+		}
+	}
+
+	void PlayingState(){
+
+		#if UNITY_EDITOR
+		buttons.KeysController();
+		#endif
+
+		racingTime += Time.deltaTime;
+
+		if (buttons.PausePressed()) {
+			SetState("paused");
+		}
+		display.CurrentScore(score.Distance (lowestSpeed, gameSpeed, racingTime));
+
+
+		if (buttons.Left() && player.CanLeft()) {
+			display.PlayerMove(player.Movement(-1));
+		}
+		if (buttons.Right() && player.CanRight()) {
+			display.PlayerMove(player.Movement(1));
+		}
+
+//		if (time.EnemiesMoveNow()) {
+//			arrayOfEnemies = enemies.MoveDown();
+//			display.Enemies(arrayOfEnemies);
+//		}
+//
+//		if(colision.Crashed(player.currentIndex, arrayOfEnemies )){
+//
+//			SetState("crashed");
+//		}
+	}
+
+	void PausedState(){
+
+		display.ShowExit ();
+
+		if (buttons.StartPressed()) {
+			SetState ("playing");
+		}
+	}
+
+	void CrashedState(){
+
+		lives.Decrease (1);
+		display.Crashed ();
+		sound.Crashed();
+		pause.Crashed();
+		enemies.Reset();
+		if (lives.Left ()) {
+			SetState ("playing");
+		} else {
+			bat.GameOver();
+			display.GameOver();
+			sound.GameOver();
+			SetState("gameOver");
+			timeToMainMenu = time.Now () + gameOverWait;
+		}
+	}
+
+	void GameOverState(){
+
+		if (buttons.StartPressed()) {
+			SetState ("mainMenu");
+		}
+		else if (time.Now() < timeToMainMenu) {
+			SetState ("mainMenu");
+		}
+	}
+
+	//Temporal
+	public void Charging(){
+
+		if (timeToReachForBat > time.totalTime) {
+			timeForNextBat = timeToReachForBat - time.totalTime;
+		} else {
+			timeForNextBat = 0;
+			if (charging) {
+				bat.Add (1);
+				pref.Set ("CurrentBatteries", bat.batteries);
+				display.Battery (bat.Get());
+				if (bat.Get () != bat.maxBatteries) {
+					timeToReachForBat = time.totalTime + waitingTime;
+				} else {
+					charging = false;
+				}
 			}
 		}
 	}
-}
 
-
-/*void Start(){
-
-	FirstTimePlaying(); //Funciòn que se encarga de verificar si es la primera vez que se juega
-	battery.GetCurrentBatteries(); //Verificamos cuantas vidas tenemos en la memoria(Quizas mejor este dentro de display)
-	display.DisplayLives(); //mostramos las vidas en el UI;
-}
-
-void Update(){
-
-	if (buttons.StartButtonPressed() && !inGame) { //Si podemos jugar y ser presiono el boton de 'Start' y no estamos en otro juego
-		battery.RemoveBattery(); //removemos una baterìa
-		UIanimations.StartCountDown(); //Iniciamos una animaciòn para el conteo, al terminar la animaciòn se llama la funciòn 'GameStart'
-	}
-//	if (inGame && PauseButtonPressed()) {
-//		PauseGame();
-//		inGame = false;
-//	}
-//	else if (!inGame && UnPauseButtonPressed()) {
-//		StarGame();
-//		inGame = true;
-//	}
-	if (inGame) {
-		CollisionDetector(); //Funciòn para detectar si hay colisiòn
-		scoreManager.GetScore(); //Funciòn para calcular el puntaje(Quizas este mejor dentro de display)
-		display.ShowScore(); //mostramos el score
-	}
-	if (buttons.BackButtonPressed()) {
-		PauseGame();          //Si se presiona la tecla de atras, pausamos el juego y mostramos la opciòn de salida
-		display.ShowExit();
-	}
-}
-
-public void StartGame(){ //Esta funciòn se llama desde afuera al final de una animaciòn de 'CountDown'
-
-	inGame = true; //activamos el estado 'En Juego'
-	enemiesController.SpawnEnemies(); //Comenzamos a crear enemigos
-	player.canControl = true; //Podemos controlar al jugador
-}
-
-void CanIPlay(){ //Funciòn que pregunta si podemos jugar
-
-	if (battery.GetCurrentBatteries() > 0) {  //La siguiente lògica verifica si se puede jugar segùn si tenemos vidas suficientes
-		buttons.ShowStartButton.SetActive(true); //CanPlay(true);
-	}else{
-		buttons.ShowStartButton.SetActive(false);//CanPlay(false);
-	}
-
-}
-
-public void PauseGame(){ //Esta funciòn pùblica esta atada en los botones de pausa y restablecer el juego
-
-	inGame = !inGame; //cambiamos el estado de juego
-	time.timeScale = (time.timeScale == 0)?1:0; //si estaba en pausa, restablecemos el juego; caso contrario, pausamos el juego
-	player.canControl = !player.canControl; //bloqueamos el control del player o desbloqueamos segùn el estado anterior
-	enemies.StopSpawningEnemies(); //Quizas no sea necesario para la salida de màs enemigos por que al pausar el juego, los enemigos no se mueven
-}
-
-void CollisionDetector(){ //Funciòn que maneja la colisiòn
-
-	for (int i = 0; i < playerSprite.length; i++) {
-		if (playerSprite[i].enable == enemySprite[i].enable) {
-			Crash(1);//Funciòn para avisar al juego que hubo colisiòn
-		}
-	}
-}
-
-void Crash(int value){
-
-	scoreManager.SaveScore();
-	player.lives -= value; //Restamos vida al player
-	if (player.lives <= 0) { //Si nos quedamos sin vida se acaba el juego
-		GameOver();
-	}else{
-		PauseGame(0); //pausamos el juego por un momento
-		Invoke(PauseGame(1),2); //reanudamos automàticamente el juego despuès de un breve periodo de tiempo
-	}
-}
-
-void GameOver(){
-				//Al acabar el juego preguntamos si nos queda baterìa para volver a jugar, y asì activar el botòn de inicio de juego
-	CanIPlay();
-	}
-}*/
-
-//--> import bat from batteryManager
-//--> import lives from livesManager
+//	public void RemainingCharge(){
 //
-//void Start(){
+//		int reachTimeForFullCharge = pref.Get ("LastTimePlayed") + pref.Get ("RemainingTime");
 //
-//	display.showSplashScreen(); // aunque este vacio y no haga nada
-//
-//	// generalmente aqui se cargan lo assets (en muchos frameworks)    
-//	// incluyendo el que se viene.
-//
-//	display.mainmenu( lives.left(), bat.left() );
-//
-//	setState(‘mainMenu’);
-//
-//}
-//
-//void display.mainmenu( lives, bateries ){
-//
-//	draw.console();
-//	draw.lives(lives);
-//	draw.bateries(bateries);
-//
-//}
-//
-//
-//void setState(state) {
-//	GlobalState = state
-//}
-//
-//void getState() {
-//	return GlobalState
-//	}
-//
-//
-//
-//// states: mainmenu, startgame, playing, crashed, paused, gameover
-//
-//
-//void Update(){
-//
-//	if  (state == ‘mainMenu’) {
-//		if (buttons.StartButtonPressed()) {
-//			setState(‘startGame’); 
-//		}
-//	}
-//
-//	if (state == ‘startGame’) {
-//		if (bat.left?() == true) {
-//			bat.remove();
-//			timeToNextBattery = bat.timeToNextCharge();
-//			display.startingGame();
-//			setState(playing);
-//			pause.beforeStart();
-//			return
+//		if (time.totalTime >= reachTimeForFullCharge) {
+//			bat.Add (bat.maxBatteries - bat.Get ());
 //		} else {
-//			display.notEnoughtBattery();
-//			sound.badLuck();
-//			setState(‘mainMenu’);
+//			int offLineTime = reachTimeForFullCharge - time.totalTime;
+//			bat.Add (offLineTime / waitingTime);
+//			timeToReachForBat = (offLineTime % waitingTime) + time.totalTime;
+//			charging = true;
 //		}
 //	}
+//	//Temporal
+//	private void OnDisable(){
 //
-//
-//
-//	if  (state == ‘playing’) {
-//		if (buttons.StartButtonPressed()) { 
-//			setState(‘paused);
-//			return; //  <---- para no continuar lo de abajo
-//		}
-//
-//		display.batteryTimerFor(timeToNextBattery);
-//
-//		display.currentScore;
-//
-//		if (keys.left() && player.canleft?()) {
-//			display.player( player.moveLeft() );
-//			// donde player.moveLeft retorna (de 1 a 3) la nueva posición del player y display.player se encarga de dibujar.
-//
-//		}
-//
-//		if (keys.right() && player.canright?()) {
-//			display.player( player.moveRight() );
-//			// donde player.moveLeft retorna (de 1 a 3) la nueva posición del player y display.player se encarga de dibujar.
-//
-//		}
-//
-//		if (time.OtherCarsMoveNow()) {
-//			arrayOfCars = otherCars.moveDown();
-//			// donde otherCars.moveDown retorna un array con la posicion de los otros autos DESPUES de haberlos hecho bajar a todos.
-//
-//			display.otherCars(arrayOfCars)
-//		}
-//
-//		if (colision.crashed()) {
-//			setState(‘crashed’)
-//		}
+//		int remainingTimeForFullCharge = (bat.maxBatteries - bat.Get ()) * waitingTime -(waitingTime - timeForNextBat);
+//		pref.Set("RemainingTime", remainingTimeForFullCharge);
+//		pref.Set ("LastTimePlayed", time.totalTime);
 //	}
-//
-//	if (state == ‘paused’) {
-//		display.ShowExit();
-//
-//		if (buttons.StartButtonPressed()) {
-//			state == ‘playing’;
-//			return
-//			}
-//
-//		return
-//		}
-//
-//
-//	if (state == ‘crashed’) {
-//		if (lives.left()) {
-//			lives.decrease();
-//			display.crashed();
-//			sound.crashed();
-//			pause.crashed();
-//			otherCars.reset();
-//			setState(‘playing’)
-//			return;
-//		}else{
-//			bat.gameover();
-//			display.gameover();
-//			sound.gameover();
-//			setState(‘gameoverStart’);
-//			timeForMainMenu = now() + gameOverWait;
-//		}
-//	}
-//
-//	if (state == ‘gameover’) {
-//		if (buttons.StartButtonPressed()) {
-//			setState(‘mainmenu’);
-//			return
-//			}
-//		if (now() < timeForMainMenu) {
-//			setState(‘mainmenu’);
-//			return
-//
-//			}
-//	}
+}
 
 
+//pref.saveState {
+//
+//
+//	string tosavejson = JsonUtility.ToJson(myObject);
+//
+//	magia para guardar tosavejson
+//}
+//
+//
+//
+//pref.loadState {
+//
+//	loadjson = load pref
+//
+//		loadedState = JsonUtility.FromJson<State>(loadjson);
+//
+//	return loadedState;
+//}
