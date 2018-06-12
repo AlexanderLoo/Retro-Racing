@@ -6,6 +6,11 @@ public class Display : MonoBehaviour {
 
 	public Draw draw;
 
+	public void GetCurrentScreen(){
+
+		//mandar todo las proporciones, pantalla, etc.
+	}
+
 	public void MainMenu(int batteries, int lives){
 
 		//Función para mostrar las vidas y baterías que nos quedan

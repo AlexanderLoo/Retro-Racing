@@ -53,12 +53,14 @@ public class GameController : MonoBehaviour {
 
 	void Start(){
 
+		display.GetCurrentScreen ();
+
 		if (StartingFromInterupted ()) {
 			LoadState ();
 
 		} else {
 			// prepare for new game
-			AlreadyPlayed();
+			PrepareForNew();
 			display.ShowSplashScreen ();
 			bat.batteries = pref.Get ("CurrentBatteries");
 			display.MainMenu (bat.Get(),lives.Get());
@@ -66,7 +68,7 @@ public class GameController : MonoBehaviour {
 			SetState ("mainMenu");
 		}
 
-		AlreadyPlayed ();
+		PrepareForNew ();
 		//RemainingCharge ();
 
 	}
@@ -122,12 +124,14 @@ public class GameController : MonoBehaviour {
 	}
 
 
-	private void AlreadyPlayed(){
+	private void PrepareForNew(){
 
-		if (pref.Get("AlreadyPlayed") == 0) {
-			pref.Set ("AlreadyPlayed", 1);
+		if (pref.Get("PrepareForNew") == 0) {
+			pref.Set ("PrepareForNew", 1);
 			pref.Set ("CurrentBatteries", bat.maxBatteries);
 		}
+
+		//state.enemies = enemyPrepareForNew();
 	}
 
 	//states: mainMenu, startGame, playing, crashed, paused, gameover
@@ -177,7 +181,8 @@ public class GameController : MonoBehaviour {
 		buttons.KeysController();
 		#endif
 
-		racingTime += Time.deltaTime;
+		//racingTime += Time.deltaTime;
+		//socreSec = acumulate + (now() -starttime);
 
 		if (buttons.PausePressed()) {
 			SetState("paused");
