@@ -75,6 +75,9 @@ public class GameController : MonoBehaviour {
 
 	void Update(){		
 
+		//Test
+		TestingGetcurrentScreen();
+
 		print (globalState);
 
 		Charging();
@@ -262,6 +265,14 @@ public class GameController : MonoBehaviour {
 					charging = false;
 				}
 			}
+		}
+	}
+
+	//Temporal
+	void TestingGetcurrentScreen(){
+
+		if (Input.GetKeyDown(KeyCode.Space)) {
+			display.GetCurrentScreen ();
 		}
 	}
 

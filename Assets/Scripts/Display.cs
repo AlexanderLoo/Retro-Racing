@@ -6,9 +6,24 @@ public class Display : MonoBehaviour {
 
 	public Draw draw;
 
+	public class Screen
+	{
+		public int screenWith;
+		public int screenHeight;
+
+		public Screen(int screenWith, int screenHeight){
+
+			this.screenWith = screenWith;
+			this.screenHeight = screenHeight;
+		}
+	}
+
 	public void GetCurrentScreen(){
 
-		return;
+		Screen newScreen = new Screen (draw.GetScreenWidth(), draw.GetScreenHeight());
+		//temporal
+		print(newScreen.screenWith);
+		print (newScreen.screenHeight);
 		//mandar todo las proporciones, pantalla, etc.
 	}
 

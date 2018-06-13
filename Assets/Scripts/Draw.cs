@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 public class Draw : MonoBehaviour {
 
-	public float screenWidth, screenHeight; //Tamaños de la pantalla en pixel
-
 	//Sprite personalizables del juego
 	public Sprite car;
 	public Sprite battery;
@@ -33,8 +31,6 @@ public class Draw : MonoBehaviour {
 
 	void Awake(){
 
-		ScreenSize ();
-
 		FindSpriteRendererArray (playerArray, "Player");
 		FindSpriteRendererArray (enemiesArray, "Enemy");
 		FindSpriteRendererArray (enemiesBackgroundArray, "EnemyBackground");
@@ -43,12 +39,13 @@ public class Draw : MonoBehaviour {
 	}
 
 	//Función para acceder al tamaño de la pantalla
-	public void ScreenSize(){
+	public int GetScreenWidth(){
 
-		screenWidth = Screen.width;
-		screenHeight = Screen.height;
-		print (screenWidth);
-		print (screenHeight);
+		return Screen.width;
+	}
+	public int GetScreenHeight(){
+
+		return Screen.height;
 	}
 
 	//Funciones para buscar las listas en la escena según su tag
