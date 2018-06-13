@@ -5,16 +5,20 @@ using UnityEngine.UI;
 
 public class Draw : MonoBehaviour {
 
+	public float screenWidth, screenHeight; //Tamaños de la pantalla en pixel
+
 	//Sprite personalizables del juego
-	public Sprite player;
-	public Sprite enemy;
-	public Sprite live;
+	public Sprite car;
 	public Sprite battery;
+	public Sprite live;
 
 	//Listas de Imagenes
 	public List<SpriteRenderer> playerArray;
 	public List<SpriteRenderer> enemiesArray;
+	public List<SpriteRenderer> enemiesBackgroundArray;
 	public List<Image> batteryArray;
+	public List<Image> batteryBackgroundArray;
+	public List<Image> livesArray;
 
 	//UI
 	public Text scoreText;
@@ -27,12 +31,52 @@ public class Draw : MonoBehaviour {
 
 	public GameObject countDown;
 
-//	void Start(){
-//
-//		FillSpriteArray (playerArray, player);
-//		FillSpriteArray (enemiesArray, enemy);
-//		FillImageArray (batteryArray, battery);
-//	}
+	void Awake(){
+
+		ScreenSize ();
+
+		FindSpriteRendererArray (playerArray, "Player");
+		FindSpriteRendererArray (enemiesArray, "Enemy");
+		FindSpriteRendererArray (enemiesBackgroundArray, "EnemyBackground");
+		FindImageArray (batteryArray, "Battery");
+		FindImageArray (batteryBackgroundArray, "BatteryBackground");
+	}
+
+	//Función para acceder al tamaño de la pantalla
+	public void ScreenSize(){
+
+		screenWidth = Screen.width;
+		screenHeight = Screen.height;
+		print (screenWidth);
+		print (screenHeight);
+	}
+
+	//Funciones para buscar las listas en la escena según su tag
+	void FindSpriteRendererArray(List<SpriteRenderer> array, string tag){
+
+		GameObject[] goArray = GameObject.FindGameObjectsWithTag (tag);
+		foreach (GameObject go in goArray) {
+			array.Add (go.GetComponent<SpriteRenderer>());
+		}
+	}
+
+	void FindImageArray(List<Image> array, string tag){
+
+		GameObject[] goArray = GameObject.FindGameObjectsWithTag (tag);
+		foreach (GameObject go in goArray) {
+			array.Add (go.GetComponent<Image>());
+		}
+	}
+
+	void Start(){
+
+		FillSpriteArray (playerArray, car);
+		FillSpriteArray (enemiesArray, car);
+		FillSpriteArray (enemiesBackgroundArray, car);
+		FillImageArray (batteryArray, battery);
+		FillImageArray (batteryBackgroundArray, battery);
+//		FillImageArray (livesArray, live);
+	}
 
 	public void FillSpriteArray(List<SpriteRenderer> spriteArray, Sprite sprite){
 

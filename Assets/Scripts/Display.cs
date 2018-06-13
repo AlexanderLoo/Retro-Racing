@@ -8,6 +8,7 @@ public class Display : MonoBehaviour {
 
 	public void GetCurrentScreen(){
 
+		return;
 		//mandar todo las proporciones, pantalla, etc.
 	}
 
