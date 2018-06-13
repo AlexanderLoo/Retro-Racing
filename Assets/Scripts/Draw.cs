@@ -102,7 +102,7 @@ public class Draw : MonoBehaviour {
 		}
 	}
 
-	public void SetActive(GameObject gameObject, bool value){
+	public void ObjectShown(GameObject gameObject, bool value){
 
 		gameObject.SetActive (value);
 	}

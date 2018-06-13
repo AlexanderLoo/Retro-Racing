@@ -37,8 +37,9 @@ public class GameController : MonoBehaviour {
 	// Constantes
 	public float lowestSpeed = 16.6f; //16.6 m/s
 
-	public int gameSpeed = 1; //Velocidad del juego donde 1 es normal
+	public int gameSpeed = 1; //Velocidad del juego donde 1 es normal(para animaciones)
 	public float racingTime = 0; //Tiempo en carrera
+	private int startingTime;
 
 	//variables para controllar las recargas de batería
 	public const int waitingTime = 10; //segundos de espera para obtener una batería(una vez perdida)
@@ -163,13 +164,14 @@ public class GameController : MonoBehaviour {
 			pref.Set ("CurrentBatteries", bat.batteries);
 			//temporal
 			if (!charging) {
-				timeToReachForBat = time.totalTime + waitingTime;
+				timeToReachForBat = time.currentTime + waitingTime;
 				charging = true;
 			}
 
 			display.Battery (bat.Get());
 			display.StartingGame();
 			SetState ("playing");
+			startingTime = time.currentTime;
 			pause.BeforeStart();
 		} else {
 			display.NotEnoughtBat ();
@@ -184,9 +186,8 @@ public class GameController : MonoBehaviour {
 		buttons.KeysController();
 		#endif
 
+		racingTime = time.currentTime - startingTime; 
 		//racingTime += Time.deltaTime;
-		//socreSec = acumulate + (now() -starttime);
-
 		if (buttons.PausePressed()) {
 			SetState("paused");
 		}
@@ -251,8 +252,8 @@ public class GameController : MonoBehaviour {
 	//Temporal
 	public void Charging(){
 
-		if (timeToReachForBat > time.totalTime) {
-			timeForNextBat = timeToReachForBat - time.totalTime;
+		if (timeToReachForBat > time.currentTime) {
+			timeForNextBat = timeToReachForBat - time.currentTime;
 		} else {
 			timeForNextBat = 0;
 			if (charging) {
@@ -260,7 +261,7 @@ public class GameController : MonoBehaviour {
 				pref.Set ("CurrentBatteries", bat.batteries);
 				display.Battery (bat.Get());
 				if (bat.Get () != bat.maxBatteries) {
-					timeToReachForBat = time.totalTime + waitingTime;
+					timeToReachForBat = time.currentTime + waitingTime;
 				} else {
 					charging = false;
 				}
@@ -280,12 +281,12 @@ public class GameController : MonoBehaviour {
 //
 //		int reachTimeForFullCharge = pref.Get ("LastTimePlayed") + pref.Get ("RemainingTime");
 //
-//		if (time.totalTime >= reachTimeForFullCharge) {
+//		if (time.currentTime >= reachTimeForFullCharge) {
 //			bat.Add (bat.maxBatteries - bat.Get ());
 //		} else {
-//			int offLineTime = reachTimeForFullCharge - time.totalTime;
+//			int offLineTime = reachTimeForFullCharge - time.currentTime;
 //			bat.Add (offLineTime / waitingTime);
-//			timeToReachForBat = (offLineTime % waitingTime) + time.totalTime;
+//			timeToReachForBat = (offLineTime % waitingTime) + time.currentTime;
 //			charging = true;
 //		}
 //	}
@@ -294,7 +295,7 @@ public class GameController : MonoBehaviour {
 //
 //		int remainingTimeForFullCharge = (bat.maxBatteries - bat.Get ()) * waitingTime -(waitingTime - timeForNextBat);
 //		pref.Set("RemainingTime", remainingTimeForFullCharge);
-//		pref.Set ("LastTimePlayed", time.totalTime);
+//		pref.Set ("LastTimePlayed", time.currentTime);
 //	}
 }
 
