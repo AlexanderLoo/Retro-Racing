@@ -50,7 +50,7 @@ public class Display : MonoBehaviour {
 		draw.playerArray [index].enabled = true;
 	}
 
-	public void Enemies(List<SpriteRenderer> arrayOfEnemies){
+	public void Enemies(string[] enemiesArray){
 
 		return;
 	}
@@ -76,7 +76,7 @@ public class Display : MonoBehaviour {
 
 	public void CountDown(bool value, int timeForNextBat = 0){
 
-		draw.SetActive (draw.countDown, value);
+		draw.ObjectShown (draw.countDown, value);
 		if (value) {
 			draw.countMinutes.text = AdjustDigits (timeForNextBat / 60);
 			draw.countSeconds.text = AdjustDigits (timeForNextBat % 60);

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class GameController : MonoBehaviour {
 
@@ -16,7 +17,6 @@ public class GameController : MonoBehaviour {
 
 	public Battery bat;
 	public ScoreManager score;
-	public TimeManager time;
 
 	public Pause pause;
 
@@ -26,7 +26,7 @@ public class GameController : MonoBehaviour {
 	{
 		public string name;
 		public float score;
-		public int[] enemies;
+		public string[] enemiesArray; //array de enemigos
 		public int playerPos;
 		public float gameSpeed;
 		public float racingTime;
@@ -38,8 +38,10 @@ public class GameController : MonoBehaviour {
 	public float lowestSpeed = 16.6f; //16.6 m/s
 
 	public int gameSpeed = 1; //Velocidad del juego donde 1 es normal(para animaciones)
-	public float racingTime = 0; //Tiempo en carrera
+	private float racingTime = 0; //Tiempo en carrera
 	private int startingTime;
+
+	private string[] arrayOfEnemies;
 
 	//variables para controllar las recargas de batería
 	public const int waitingTime = 10; //segundos de espera para obtener una batería(una vez perdida)
@@ -47,10 +49,19 @@ public class GameController : MonoBehaviour {
 	private int timeToReachForBat;//Temporal 
 	private bool charging;//Temporal
 
-	public int gameOverWait;
-	public float timeToMainMenu;
+	private int gameOverWait;
+	private float timeToMainMenu;
 
+	//Para mostrar la hora actual(local)
+	private int hour, minute, seconds;
+	private string amPm = "AM";
 
+	private int currentTime; //Tiempo total en segundos desde 1970
+
+	void Awake(){
+
+		Time ();
+	}
 
 	void Start(){
 
@@ -68,8 +79,6 @@ public class GameController : MonoBehaviour {
 
 			SetState ("mainMenu");
 		}
-
-		PrepareForNew ();
 		//RemainingCharge ();
 
 	}
@@ -78,11 +87,11 @@ public class GameController : MonoBehaviour {
 
 		//Test
 		TestingGetcurrentScreen();
-
+		Time ();
 		print (globalState);
 
 		Charging();
-		display.RealTime (time.hour, time.minute, time.amPm);
+		display.RealTime (hour, minute, amPm);
 
 		//Temporal
 		if (timeForNextBat > 0) {
@@ -127,7 +136,6 @@ public class GameController : MonoBehaviour {
 		return;
 	}
 
-
 	private void PrepareForNew(){
 
 		if (pref.Get("PrepareForNew") == 0) {
@@ -164,14 +172,14 @@ public class GameController : MonoBehaviour {
 			pref.Set ("CurrentBatteries", bat.batteries);
 			//temporal
 			if (!charging) {
-				timeToReachForBat = time.currentTime + waitingTime;
+				timeToReachForBat = currentTime + waitingTime;
 				charging = true;
 			}
 
 			display.Battery (bat.Get());
 			display.StartingGame();
 			SetState ("playing");
-			startingTime = time.currentTime;
+			startingTime = currentTime;
 			pause.BeforeStart();
 		} else {
 			display.NotEnoughtBat ();
@@ -186,7 +194,7 @@ public class GameController : MonoBehaviour {
 		buttons.KeysController();
 		#endif
 
-		racingTime = time.currentTime - startingTime; 
+		racingTime = currentTime - startingTime; 
 		//racingTime += Time.deltaTime;
 		if (buttons.PausePressed()) {
 			SetState("paused");
@@ -201,15 +209,15 @@ public class GameController : MonoBehaviour {
 			display.PlayerMove(player.Movement(1));
 		}
 
-//		if (time.EnemiesMoveNow()) {
-//			arrayOfEnemies = enemies.MoveDown();
-//			display.Enemies(arrayOfEnemies);
-//		}
-//
-//		if(colision.Crashed(player.currentIndex, arrayOfEnemies )){
-//
-//			SetState("crashed");
-//		}
+		if (EnemiesMoveNow()) {
+			arrayOfEnemies = enemies.MoveDown();
+			display.Enemies(arrayOfEnemies);
+		}
+
+		if(colision.Crashed(player.currentIndex, enemies.crashable)){
+
+			SetState("crashed");
+		}
 	}
 
 	void PausedState(){
@@ -235,7 +243,7 @@ public class GameController : MonoBehaviour {
 			display.GameOver();
 			sound.GameOver();
 			SetState("gameOver");
-			timeToMainMenu = time.Now () + gameOverWait;
+			timeToMainMenu = currentTime + gameOverWait;
 		}
 	}
 
@@ -244,16 +252,33 @@ public class GameController : MonoBehaviour {
 		if (buttons.StartPressed()) {
 			SetState ("mainMenu");
 		}
-		else if (time.Now() < timeToMainMenu) {
+		else if (currentTime < timeToMainMenu) {
 			SetState ("mainMenu");
 		}
 	}
 
-	//Temporal
-	public void Charging(){
+	private void Time(){
 
-		if (timeToReachForBat > time.currentTime) {
-			timeForNextBat = timeToReachForBat - time.currentTime;
+		DateTime epochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
+		currentTime = (int)(DateTime.UtcNow - epochStart).TotalSeconds;
+
+		DateTime time = DateTime.Now; //Tiempo local
+
+		hour = time.Hour;
+		minute = time.Minute;
+		seconds = time.Second;
+	}
+
+	private bool EnemiesMoveNow(){
+		return false;
+	}
+
+
+	//Temporal
+	private void Charging(){
+
+		if (timeToReachForBat > currentTime) {
+			timeForNextBat = timeToReachForBat - currentTime;
 		} else {
 			timeForNextBat = 0;
 			if (charging) {
@@ -261,7 +286,7 @@ public class GameController : MonoBehaviour {
 				pref.Set ("CurrentBatteries", bat.batteries);
 				display.Battery (bat.Get());
 				if (bat.Get () != bat.maxBatteries) {
-					timeToReachForBat = time.currentTime + waitingTime;
+					timeToReachForBat = currentTime + waitingTime;
 				} else {
 					charging = false;
 				}

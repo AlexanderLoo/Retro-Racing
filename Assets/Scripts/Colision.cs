@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Colision : MonoBehaviour {
 
-	public bool Crashed(int playerIndex, List<SpriteRenderer> arrayOfEnemies){
+	public bool Crashed(int playerIndex, int crashableEnemy){
 
 		return false;
 	}
