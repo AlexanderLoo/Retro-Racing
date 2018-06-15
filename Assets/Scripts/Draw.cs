@@ -108,7 +108,7 @@ public class Draw : MonoBehaviour {
 		sr.enabled = value;
 	}
 
-	public GameObject FindName(string name){  //Buscamos un GameObject por su nombre
+	public GameObject FindName(string name){  //Buscamos un GameObject por sunombre
 
 		GameObject go = GameObject.Find (name);
 		return go;

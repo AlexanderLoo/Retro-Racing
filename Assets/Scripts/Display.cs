@@ -51,9 +51,12 @@ public class Display : MonoBehaviour {
 	}
 
 	public void Enemies(string[] enemiesArray){  //<--- paso como argumentos el arreglo de strings en forma binaria "000","101",....
-		
-		for (int i = 0; i < enemiesArray.Length; i++) {
-			for (int j= 0; j < enemiesArray[0].Length; j++) {
+
+		int arrayLength = enemiesArray.Length;
+		int rowlength = enemiesArray [0].Length;
+
+		for (int i = 0; i < arrayLength; i++) {
+			for (int j= 0; j < rowlength; j++) {
 				string name = "e" + i.ToString () + "-" + j.ToString ();
 				draw.EnemyEnable (name, ConvertCharToBool(enemiesArray[i][j]));
 			}

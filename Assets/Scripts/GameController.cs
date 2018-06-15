@@ -42,6 +42,8 @@ public class GameController : MonoBehaviour {
 	private int startingTime;
 
 	private string[] arrayOfEnemies;
+	//private List<string> arrayOfEnemies;
+	public string newEnemiesSpawn; //timeToNextWave
 
 	//variables para controllar las recargas de batería
 	public const int waitingTime = 10; //segundos de espera para obtener una batería(una vez perdida)
@@ -195,7 +197,7 @@ public class GameController : MonoBehaviour {
 		#endif
 
 		racingTime = currentTime - startingTime; 
-		//racingTime += Time.deltaTime;
+		//racingTime += Time.deltaTime; //Esta lógica hace que el score corra más rápido
 		if (buttons.PausePressed()) {
 			SetState("paused");
 		}
@@ -210,7 +212,7 @@ public class GameController : MonoBehaviour {
 		}
 
 		if (EnemiesMoveNow()) {
-			arrayOfEnemies = enemies.MoveDown();
+			arrayOfEnemies = enemies.MoveDown(newEnemiesSpawn);
 			display.Enemies(arrayOfEnemies);
 		}
 
