@@ -102,6 +102,19 @@ public class Draw : MonoBehaviour {
 		}
 	}
 
+	public void EnemyEnable(string name, bool value){
+
+		SpriteRenderer sr = FindName(name).GetComponent<SpriteRenderer>();
+		sr.enabled = value;
+	}
+
+	public GameObject FindName(string name){  //Buscamos un GameObject por su nombre
+
+		GameObject go = GameObject.Find (name);
+		return go;
+	}
+
+
 	public void ObjectShown(GameObject gameObject, bool value){
 
 		gameObject.SetActive (value);

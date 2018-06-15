@@ -270,7 +270,12 @@ public class GameController : MonoBehaviour {
 	}
 
 	private bool EnemiesMoveNow(){
-		return false;
+
+		bool pressed = Input.GetKeyDown(KeyCode.A);
+		if (pressed)
+			return true;
+		else
+			return false;
 	}
 
 
@@ -299,6 +304,7 @@ public class GameController : MonoBehaviour {
 
 		if (Input.GetKeyDown(KeyCode.Space)) {
 			display.GetCurrentScreen ();
+			PlayerPrefs.DeleteAll ();
 		}
 	}
 
