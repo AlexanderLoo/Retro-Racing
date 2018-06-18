@@ -6,7 +6,6 @@ public class Enemies : MonoBehaviour {
 
 	//public List<string> array = new List<string>(4){"000","000","000","000"};
 	public string[] array = new string[4]{"000","000","000","000"};
-	public int crashable; //indice del enemigo que el player puede chocar
 
 //	//Función que hace uso de la librería system.collectios.generic
 //	public List<string> MoveDown(string newSpawn = "000"){

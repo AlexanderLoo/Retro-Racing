@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
+//using System; //comento la librería system por que se crea un conflicto con la clase random de unity y la clase random de system.
 
 public class GameController : MonoBehaviour {
 
@@ -213,6 +213,7 @@ public class GameController : MonoBehaviour {
 		}
 
 		if (EnemiesMoveNow()) {
+			NewSpawn ();
 			arrayOfEnemies = enemies.MoveDown(newEnemiesSpawn);
 			display.Enemies(arrayOfEnemies);
 		}
@@ -262,10 +263,10 @@ public class GameController : MonoBehaviour {
 
 	private void Time(){
 
-		DateTime epochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
-		currentTime = (DateTime.UtcNow - epochStart).TotalSeconds;
+		System.DateTime epochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
+		currentTime = (System.DateTime.UtcNow - epochStart).TotalSeconds;
 
-		DateTime time = DateTime.Now; //Tiempo local
+		System.DateTime time = System.DateTime.Now; //Tiempo local
 
 		hour = time.Hour;
 		minute = time.Minute;
@@ -280,6 +281,13 @@ public class GameController : MonoBehaviour {
 		} else {
 			return false;
 		}
+	}	
+
+	private void NewSpawn(char c = '1', string array = "000"){
+
+		int i = new System.Random ().Next (0, array.Length);
+		//pendiente ver la forma de incrustar un '1' en el arreglo del string
+		newEnemiesSpawn = array;
 	}
 
 	//Temporal
