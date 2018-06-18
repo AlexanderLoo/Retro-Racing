@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class Colision : MonoBehaviour {
 
-	public bool Crashed(int playerIndex, int crashableEnemy){
+	public bool Crashed(string[]enemiesArray, int playerIndex){
 
-		return false;
+		if (enemiesArray [enemiesArray.Length - 1] [playerIndex] == '1') {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

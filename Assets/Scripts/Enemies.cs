@@ -15,6 +15,14 @@ public class Enemies : MonoBehaviour {
 //		return array;
 //	}
 
+//	public void SetRowLength(int rowLength){
+//
+//		array = new string[rowLength];
+//		for (int i = 0; i < rowLength; i++) {
+//			array [i] = "000"; //<---Quizas no sea necesario
+//		}
+//	}
+
 	//Función para hacer Insert() a una array que no use la librería system(List)
 	public string[] MoveDown(string newSpawn){
 

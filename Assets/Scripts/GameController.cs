@@ -41,9 +41,10 @@ public class GameController : MonoBehaviour {
 	private int startingTime;
 
 	private string[] arrayOfEnemies;
+	//public int enemiesRowLength = 4;
 	//private List<string> arrayOfEnemies;
 	public string newEnemiesSpawn = "000"; //el nuevo spawn de los enemigos expresado en un string binario
-	private float timeToNextEnemyMove;
+	private double timeToNextEnemyMove;
 	public float enemySpeed = 1f;
 
 	//variables para controllar las recargas de batería
@@ -59,7 +60,7 @@ public class GameController : MonoBehaviour {
 	private int hour, minute, seconds;
 	private string amPm = "AM";
 
-	private int currentTime; //Tiempo total en segundos desde 1970
+	private double currentTime; //Tiempo total en segundos desde 1970
 
 	void Awake(){
 
@@ -83,7 +84,6 @@ public class GameController : MonoBehaviour {
 			SetState ("mainMenu");
 		}
 		//RemainingCharge ();
-
 	}
 
 	void Update(){		
@@ -175,14 +175,14 @@ public class GameController : MonoBehaviour {
 			pref.Set ("CurrentBatteries", bat.batteries);
 			//temporal
 			if (!charging) {
-				timeToReachForBat = currentTime + waitingTime;
+				timeToReachForBat = (int)currentTime + waitingTime;
 				charging = true;
 			}
 
 			display.Battery (bat.Get());
 			display.StartingGame();
 			SetState ("playing");
-			startingTime = currentTime;
+			startingTime = (int)currentTime;
 			pause.BeforeStart();
 		} else {
 			display.NotEnoughtBat ();
@@ -197,7 +197,7 @@ public class GameController : MonoBehaviour {
 		buttons.KeysController();
 		#endif
 
-		racingTime = currentTime - startingTime; 
+		racingTime = (int)currentTime - startingTime; 
 		//racingTime += Time.deltaTime; //Esta lógica hace que el score corra más rápido
 		if (buttons.PausePressed()) {
 			SetState("paused");
@@ -217,7 +217,7 @@ public class GameController : MonoBehaviour {
 			display.Enemies(arrayOfEnemies);
 		}
 
-		if(colision.Crashed(player.currentIndex, enemies.crashable)){
+		if(colision.Crashed(arrayOfEnemies, player.currentIndex)){
 
 			SetState("crashed");
 		}
@@ -246,7 +246,7 @@ public class GameController : MonoBehaviour {
 			display.GameOver();
 			sound.GameOver();
 			SetState("gameOver");
-			timeToMainMenu = currentTime + gameOverWait;
+			timeToMainMenu = (int)currentTime + gameOverWait;
 		}
 	}
 
@@ -255,7 +255,7 @@ public class GameController : MonoBehaviour {
 		if (buttons.StartPressed()) {
 			SetState ("mainMenu");
 		}
-		else if (currentTime > timeToMainMenu) {
+		else if ((int)currentTime > timeToMainMenu) {
 			SetState ("mainMenu");
 		}
 	}
@@ -263,7 +263,7 @@ public class GameController : MonoBehaviour {
 	private void Time(){
 
 		DateTime epochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
-		currentTime = (int)(DateTime.UtcNow - epochStart).TotalSeconds;
+		currentTime = (DateTime.UtcNow - epochStart).TotalSeconds;
 
 		DateTime time = DateTime.Now; //Tiempo local
 
@@ -282,12 +282,11 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-
 	//Temporal
 	private void Charging(){
 
-		if (timeToReachForBat > currentTime) {
-			timeForNextBat = timeToReachForBat - currentTime;
+		if (timeToReachForBat > (int)currentTime) {
+			timeForNextBat = timeToReachForBat - (int)currentTime;
 		} else {
 			timeForNextBat = 0;
 			if (charging) {
@@ -295,7 +294,7 @@ public class GameController : MonoBehaviour {
 				pref.Set ("CurrentBatteries", bat.batteries);
 				display.Battery (bat.Get());
 				if (bat.Get () != bat.maxBatteries) {
-					timeToReachForBat = currentTime + waitingTime;
+					timeToReachForBat = (int)currentTime + waitingTime;
 				} else {
 					charging = false;
 				}
@@ -316,12 +315,12 @@ public class GameController : MonoBehaviour {
 //
 //		int reachTimeForFullCharge = pref.Get ("LastTimePlayed") + pref.Get ("RemainingTime");
 //
-//		if (time.currentTime >= reachTimeForFullCharge) {
+//		if (time.(int)currentTime >= reachTimeForFullCharge) {
 //			bat.Add (bat.maxBatteries - bat.Get ());
 //		} else {
-//			int offLineTime = reachTimeForFullCharge - time.currentTime;
+//			int offLineTime = reachTimeForFullCharge - time.(int)currentTime;
 //			bat.Add (offLineTime / waitingTime);
-//			timeToReachForBat = (offLineTime % waitingTime) + time.currentTime;
+//			timeToReachForBat = (offLineTime % waitingTime) + time.(int)currentTime;
 //			charging = true;
 //		}
 //	}
@@ -330,7 +329,7 @@ public class GameController : MonoBehaviour {
 //
 //		int remainingTimeForFullCharge = (bat.maxBatteries - bat.Get ()) * waitingTime -(waitingTime - timeForNextBat);
 //		pref.Set("RemainingTime", remainingTimeForFullCharge);
-//		pref.Set ("LastTimePlayed", time.currentTime);
+//		pref.Set ("LastTimePlayed", time.(int)currentTime);
 //	}
 }
 
