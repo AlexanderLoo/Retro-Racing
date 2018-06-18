@@ -34,19 +34,20 @@ public class GameController : MonoBehaviour {
 
 	private string globalState;
 
-	// Constantes
 	public float lowestSpeed = 16.6f; //16.6 m/s
 
-	public int gameSpeed = 1; //Velocidad del juego donde 1 es normal(para animaciones)
+	public float gameSpeed = 1f; //Velocidad del juego donde 1 es normal(para animaciones)
 	private float racingTime = 0; //Tiempo en carrera
 	private int startingTime;
 
 	private string[] arrayOfEnemies;
 	//private List<string> arrayOfEnemies;
-	public string newEnemiesSpawn; //timeToNextWave
+	public string newEnemiesSpawn = "000"; //el nuevo spawn de los enemigos expresado en un string binario
+	private float timeToNextEnemyMove;
+	public float enemySpeed = 1f;
 
 	//variables para controllar las recargas de batería
-	public const int waitingTime = 10; //segundos de espera para obtener una batería(una vez perdida)
+	public int waitingTime = 10; //segundos de espera para obtener una batería(una vez perdida)
 	private int timeForNextBat; //Variable para saber el tiempo que falta para una batería(mostrada en el display)
 	private int timeToReachForBat;//Temporal 
 	private bool charging;//Temporal
@@ -254,7 +255,7 @@ public class GameController : MonoBehaviour {
 		if (buttons.StartPressed()) {
 			SetState ("mainMenu");
 		}
-		else if (currentTime < timeToMainMenu) {
+		else if (currentTime > timeToMainMenu) {
 			SetState ("mainMenu");
 		}
 	}
@@ -272,12 +273,13 @@ public class GameController : MonoBehaviour {
 	}
 
 	private bool EnemiesMoveNow(){
-
-		bool pressed = Input.GetKeyDown(KeyCode.A);
-		if (pressed)
+		 
+		if (currentTime >= timeToNextEnemyMove) {
+			timeToNextEnemyMove = currentTime + enemySpeed * gameSpeed;
 			return true;
-		else
+		} else {
 			return false;
+		}
 	}
 
 

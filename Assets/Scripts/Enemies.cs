@@ -16,24 +16,30 @@ public class Enemies : MonoBehaviour {
 //	}
 
 	//Función para hacer Insert() a una array que no use la librería system(List)
-	public string[] MoveDown(string newSpawn = "000"){
+	public string[] MoveDown(string newSpawn){
 
-		//PENDIENTE
-//		int arrayLength = array.Length;
-//		string newValue = newSpawn;
-//
-//		for (int i = 0; i < arrayLength; i++) {
-//			array [i] = newValue;
-//		}
+		int arrayLength = array.Length;
+		string newValue = array [0];
+		string oldValue;
 
-		for (int i = array.Length -1; i > -1; i--) {
-			if (i == 0)
-				array [i] = newSpawn;
-			else
-				array [i] = array [i - 1];
+		for (int i = 1; i < arrayLength; i++) {
+			oldValue = array [i];
+			array [i] = newValue;
+			newValue = oldValue;
 		}
+		array[0] = newSpawn;
+
 		return array;
 	}
+
+//		for (int i = array.Length -1; i > -1; i--) { <-- Otra alternativa pero quizas consuma más memoria
+//			if (i == 0)
+//				array [i] = newSpawn;
+//			else
+//				array [i] = array [i - 1];
+//		}
+//		return array;
+//	}
 
 	public void Reset(){
 
