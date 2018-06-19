@@ -17,7 +17,7 @@ public class GameController : MonoBehaviour {
 
 	public Battery bat;
 	public ScoreManager score;
-
+							
 	public Pause pause;
 
 	public Lives lives;
@@ -53,8 +53,8 @@ public class GameController : MonoBehaviour {
 	private int timeToReachForBat;//Temporal 
 	private bool charging;//Temporal
 
-	private int gameOverWait;
-	private float timeToMainMenu;
+	public int gameOverWait = 5;
+	private int timeToMainMenu;
 
 	//Para mostrar la hora actual(local)
 	private int hour, minute, seconds;
@@ -265,10 +265,7 @@ public class GameController : MonoBehaviour {
 
 	void GameOverState(){
 
-		if (buttons.StartPressed()) {
-			SetState ("mainMenu");
-		}
-		else if ((int)currentTime > timeToMainMenu) {
+		 if ((int)currentTime > timeToMainMenu) {
 			SetState ("mainMenu");
 		}
 	}
