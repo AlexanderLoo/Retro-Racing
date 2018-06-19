@@ -44,8 +44,8 @@ public class GameController : MonoBehaviour {
 	//public int enemiesRowLength = 4;
 	//private List<string> arrayOfEnemies;
 	public string newEnemiesSpawn = "000"; //el nuevo spawn de los enemigos expresado en un string binario
-	private double timeToNextEnemyMove;
 	public float enemySpeed = 1f;
+	private double timeToNextEnemyMove;
 
 	//variables para controllar las recargas de batería
 	public int waitingTime = 10; //segundos de espera para obtener una batería(una vez perdida)
@@ -61,6 +61,11 @@ public class GameController : MonoBehaviour {
 	private string amPm = "AM";
 
 	private double currentTime; //Tiempo total en segundos desde 1970
+
+	//TEST
+	public bool level2;
+	public int space = 1; //<--Con level design establecemos el espacio de spawneo
+	private int spaceCounter;
 
 	void Awake(){
 
@@ -88,7 +93,7 @@ public class GameController : MonoBehaviour {
 
 	void Update(){		
 
-		//Test
+		//TEST
 		TestingGetcurrentScreen();
 		Time ();
 		print (globalState);
@@ -213,7 +218,14 @@ public class GameController : MonoBehaviour {
 		}
 
 		if (EnemiesMoveNow()) {
-			NewSpawn ();
+			if (CanSpawn ()) {
+				if (level2)
+					NewSpawn (1,0);
+				else
+					NewSpawn (0,1);
+			} else {
+				newEnemiesSpawn = "000";
+			}
 			arrayOfEnemies = enemies.MoveDown(newEnemiesSpawn);
 			display.Enemies(arrayOfEnemies);
 		}
@@ -281,13 +293,35 @@ public class GameController : MonoBehaviour {
 		} else {
 			return false;
 		}
-	}	
+	}
+	//TEST
+	private bool CanSpawn(){
+		
+		if (spaceCounter == 0) {
+			spaceCounter = space;
+			return true;
+		} else {
+			spaceCounter--;
+			return false;
+		}
+	}
 
-	private void NewSpawn(char c = '1', string array = "000"){
+	//Función par crear los waves, manipula si se spawnea 1 ò 2 enemigos por fila
+	//para un enemigo por fila --> setup:0 , chosenOne:1 --> NewSpawn(0,1);
+	//para dos enemigos por fila --> setup:1, chosenOne:0 ---> NewSpawn(1,0);
+	private void NewSpawn(int setup = 0, int chosenOne = 1){
 
-		int i = new System.Random ().Next (0, array.Length);
-		//pendiente ver la forma de incrustar un '1' en el arreglo del string
-		newEnemiesSpawn = array;
+		int arrayLength = newEnemiesSpawn.Length;
+		int [] temporalArray = new int[arrayLength];
+
+		for (int i = 0; i < arrayLength; i++) {
+			temporalArray [i] = setup;
+		}
+		int randomIndex = new System.Random ().Next (0, arrayLength);
+		temporalArray [randomIndex] = chosenOne;
+		//única solución encontrada...
+		string newString = string.Join("", new List<int>(temporalArray).ConvertAll(i => i.ToString()).ToArray());
+		newEnemiesSpawn = newString;
 	}
 
 	//Temporal
@@ -310,7 +344,7 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-	//Temporal
+	//TEST
 	void TestingGetcurrentScreen(){
 
 		if (Input.GetKeyDown(KeyCode.Space)) {
