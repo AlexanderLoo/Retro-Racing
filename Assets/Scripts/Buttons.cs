@@ -5,8 +5,9 @@ using UnityEngine.EventSystems;
 
 public class Buttons : MonoBehaviour/*, IPointerDownHandler, IPointerUpHandler*/{
 
-	public GameObject startButton;
-	private bool leftPressed, rightPressed;
+	public GameObject startButton, playButton, pauseButton;
+	private bool leftPressed = false; 
+	private bool rightPressed = false;
 	private bool start = false;
 	private bool pause = false;
 
@@ -29,11 +30,28 @@ public class Buttons : MonoBehaviour/*, IPointerDownHandler, IPointerUpHandler*/
 
 		return rightPressed;
 	}
-
-	public void ButtonPressed(){
-		//Lógica temporal
-		start = !start;
+	//TEST
+	public void SetStart(bool value){
+		start = value;
 	}
+
+	public void SetPause(bool value){
+		pause = value;
+	}
+	//TEST
+	public void SetLeft(bool value){
+		leftPressed = value;
+	}
+
+	public void SetRight(bool value){
+		rightPressed = value;
+	}
+
+	public void Show(GameObject button, bool value){
+
+		button.SetActive (value);
+	}
+	//TEST
 	//Función para controllador usando teclas
 	public void KeysController(){
 

@@ -23,6 +23,7 @@ public class Battery : MonoBehaviour {
 	public void Add(int value){
 
 		batteries += value;
+		batteries = (batteries > maxBatteries) ? maxBatteries : batteries;
 	}
 
 	public void GameOver(){
