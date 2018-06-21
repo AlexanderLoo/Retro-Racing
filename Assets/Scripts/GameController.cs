@@ -22,6 +22,7 @@ public class GameController : MonoBehaviour {
 
 	public Lives lives;
 
+	[SerializeField]
 	public class State
 	{
 		public string name;
@@ -32,7 +33,7 @@ public class GameController : MonoBehaviour {
 		public float racingTime;
 	}
 
-	private string globalState;
+	private string globalState = "mainMenu";
 
 	public float lowestSpeed = 16.6f; //16.6 m/s
 
@@ -67,6 +68,8 @@ public class GameController : MonoBehaviour {
 	public int space = 1; //<--Con level design establecemos el espacio de spawneo
 	private int spaceCounter;
 
+	private bool interupted = false;
+
 	void Awake(){
 
 		Time ();
@@ -75,21 +78,21 @@ public class GameController : MonoBehaviour {
 	void Start(){
 
 		display.GetCurrentScreen ();
+		FirstTimePlaying();
+		bat.batteries = pref.GetInt ("CurrentBatteries");
 
 		if (StartingFromInterupted ()) {
 			LoadState ();
 
 		} else {
 			// prepare for new game
-			PrepareForNew();
 			display.ShowSplashScreen ();
-			bat.batteries = pref.Get ("CurrentBatteries");
-			SetState ("mainMenu");
 		}
 		if (bat.Get() != bat.maxBatteries) {
 			RemainingCharge ();
 		}					
 		display.MainMenu (bat.Get(),lives.Get());
+		SetState (globalState);
 	}
 
 	void Update(){		
@@ -136,23 +139,22 @@ public class GameController : MonoBehaviour {
 	}
 
 	private bool StartingFromInterupted(){
-		//Acceder a un prefs
-		return false;
+
+		if (pref.GetInt ("Interupted") == 1) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
-	private void LoadState(){
-		//Accedemos a la variables de la clase State y los asignamos al juego
-		return;
-	}
+	private void FirstTimePlaying(){
 
-	private void PrepareForNew(){
-
-		if (pref.Get("PrepareForNew") == 0) {
-			pref.Set ("PrepareForNew", 1);
-			pref.Set ("CurrentBatteries", bat.maxBatteries);
+		if (pref.GetInt("FirstTimePlaying") == 0) {
+			pref.SetInt ("FirstTimePlaying", 1);
+			pref.SetInt ("CurrentBatteries", bat.maxBatteries);
 		}
 
-		//state.enemies = enemyPrepareForNew();
+		//state.enemies = enemyFirstTimePlaying();
 	}
 
 	//states: mainMenu, startGame, playing, crashed, paused, gameover
@@ -181,7 +183,7 @@ public class GameController : MonoBehaviour {
 		if (bat.Left ()) {
 
 			bat.Add (-1);
-			pref.Set ("CurrentBatteries", bat.batteries);
+			pref.SetInt ("CurrentBatteries", bat.batteries);
 			buttons.Show (buttons.startButton, false);
 			buttons.Show (buttons.playButton, false);	
 			buttons.Show (buttons.pauseButton, true);
@@ -205,10 +207,11 @@ public class GameController : MonoBehaviour {
 
 	void PlayingState(){
 
+		interupted = true;
 		//TEST
-//		#if UNITY_EDITOR
-//		buttons.KeysController();
-//		#endif
+		#if UNITY_EDITOR
+		buttons.KeysController();
+		#endif
 
 		racingTime = (int)currentTime - startingTime; 
 		//racingTime += Time.deltaTime; //Esta lógica hace que el score corra más rápido
@@ -222,6 +225,7 @@ public class GameController : MonoBehaviour {
 		}
 		display.CurrentScore(score.Distance (lowestSpeed, gameSpeed, racingTime));
 
+		display.PlayerMove (player.currentIndex);
 
 		if (buttons.Left() && player.CanLeft()) {
 			display.PlayerMove(player.Movement(-1));
@@ -282,6 +286,7 @@ public class GameController : MonoBehaviour {
 
 	void GameOverState(){
 
+		interupted = false;
 		 if ((int)currentTime > timeToMainMenu) {
 			SetState ("mainMenu");
 		}
@@ -347,7 +352,7 @@ public class GameController : MonoBehaviour {
 			timeForNextBat = 0;
 			if (charging) {
 				bat.Add (1);
-				pref.Set ("CurrentBatteries", bat.batteries);
+				pref.SetInt ("CurrentBatteries", bat.batteries);
 				display.Battery (bat.Get());
 				if (bat.Get () != bat.maxBatteries) {
 					timeToReachForBat = (int)currentTime + waitingTime;
@@ -369,22 +374,22 @@ public class GameController : MonoBehaviour {
 
 	public void RemainingCharge(){
 
-//		int reachTimeForFullCharge = pref.Get ("LastTimePlayed") + pref.Get ("RemainingTime");
+//		int reachTimeForFullCharge = pref.GetInt ("LastTimePlayed") + pref.GetInt ("RemainingTime");
 //
 //		if ((int)currentTime >= reachTimeForFullCharge) {
 //			bat.Add (bat.maxBatteries - bat.Get ());
-//			pref.Set ("CurrentBatteries", bat.batteries);
+//			pref.SetInt ("CurrentBatteries", bat.batteries);
 //		} else {
-//			int offLineTime = (int)currentTime - pref.Get("LastTimePlayed");
-//			bat.Add ((offLineTime + pref.Get("TimeElapsedForBat"))/ waitingTime);
-//			pref.Set ("CurrentBatteries", bat.batteries);
+//			int offLineTime = (int)currentTime - pref.GetInt("LastTimePlayed");
+//			bat.Add ((offLineTime + pref.GetInt("TimeElapsedForBat"))/ waitingTime);
+//			pref.SetInt ("CurrentBatteries", bat.batteries);
 //			timeToReachForBat = ((reachTimeForFullCharge - (int)currentTime) % waitingTime) + (int)currentTime;
 //			charging = true;
 //		}
 
-		int offLineTime = (int)currentTime - pref.Get("LastTimePlayed") + pref.Get("TimeElapsedForBat");
+		int offLineTime = (int)currentTime - pref.GetInt("LastTimePlayed") + pref.GetInt("TimeElapsedForBat");
 		bat.Add (offLineTime / waitingTime);
-		pref.Set ("CurrentBatteries", bat.batteries);
+		pref.SetInt ("CurrentBatteries", bat.batteries);
 		if (bat.Get () == bat.maxBatteries) {
 			timeToReachForBat = 0;
 		} else {
@@ -403,28 +408,43 @@ public class GameController : MonoBehaviour {
 //		} else {
 //			remainingTimeForFullCharge = 0;
 //		}
-//		pref.Set ("RemainingTime", remainingTimeForFullCharge);
-		pref.Set ("LastTimePlayed", (int)currentTime);
-		pref.Set("TimeElapsedForBat",timeElapsedForBat);
+//		pref.SetInt ("RemainingTime", remainingTimeForFullCharge);
+		pref.SetInt ("LastTimePlayed", (int)currentTime);
+		pref.SetInt("TimeElapsedForBat",timeElapsedForBat);
+		SaveState ();
+		//TEST
+		pref.SetInt("Interupted", pref.SetInterupted(interupted));
+	}
+
+	private void SaveState() {
+
+		State myState = new State ();
+		myState.name = globalState;
+		myState.score = score.Distance (lowestSpeed, gameSpeed, racingTime);
+		myState.enemiesArray = arrayOfEnemies;
+		myState.playerPos = player.currentIndex;
+		myState.gameSpeed = gameSpeed;
+		myState.racingTime = racingTime;
+		string toSaveJson = JsonUtility.ToJson(myState);
+		pref.SetString ("CurrentState", toSaveJson);
+	}
+
+	public void LoadState() {
+
+		string loadJson = pref.GetString("CurrentState");
+		State loadedState = JsonUtility.FromJson<State>(loadJson);
+		globalState = loadedState.name;
+		display.CurrentScore(loadedState.score);
+		enemies.array = loadedState.enemiesArray;
+		player.currentIndex = loadedState.playerPos;
+		gameSpeed = loadedState.gameSpeed;
+		racingTime = loadedState.racingTime;
 	}
 }
 
 
-//pref.saveState {
-//
-//
-//	string tosavejson = JsonUtility.ToJson(myObject);
-//
-//	magia para guardar tosavejson
-//}
-//
-//
-//
-//pref.loadState {
-//
-//	loadjson = load pref
-//
-//		loadedState = JsonUtility.FromJson<State>(loadjson);
-//
-//	return loadedState;
-//}
+
+
+
+
+
