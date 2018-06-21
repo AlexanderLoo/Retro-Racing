@@ -83,10 +83,13 @@ public class GameController : MonoBehaviour {
 
 		if (StartingFromInterupted ()) {
 			LoadState ();
+			display.PlayerMove (player.currentIndex);
+			display.Enemies (enemies.array);
 
 		} else {
 			// prepare for new game
 			display.ShowSplashScreen ();
+			display.PlayerMove (player.currentIndex);
 		}
 		if (bat.Get() != bat.maxBatteries) {
 			RemainingCharge ();
@@ -418,14 +421,14 @@ public class GameController : MonoBehaviour {
 
 	private void SaveState() {
 
-		State myState = new State ();
-		myState.name = globalState;
-		myState.score = score.Distance (lowestSpeed, gameSpeed, racingTime);
-		myState.enemiesArray = arrayOfEnemies;
-		myState.playerPos = player.currentIndex;
-		myState.gameSpeed = gameSpeed;
-		myState.racingTime = racingTime;
-		string toSaveJson = JsonUtility.ToJson(myState);
+		State state = new State ();
+		state.name = globalState;
+		state.score = score.Distance (lowestSpeed, gameSpeed, racingTime);
+		state.enemiesArray = arrayOfEnemies;
+		state.playerPos = player.currentIndex;
+		state.gameSpeed = gameSpeed;
+		state.racingTime = racingTime;
+		string toSaveJson = JsonUtility.ToJson(state);
 		pref.SetString ("CurrentState", toSaveJson);
 	}
 
