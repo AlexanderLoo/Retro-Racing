@@ -5,7 +5,7 @@ using UnityEngine;
 public class Enemies : MonoBehaviour {
 
 	//public List<string> array = new List<string>(4){"000","000","000","000"};
-	public string[] array = new string[4]{"000","000","000","000"};
+	public string[] array = new string[4];
 
 //	//Función que hace uso de la librería system.collectios.generic
 //	public List<string> MoveDown(string newSpawn = "000"){
@@ -50,7 +50,11 @@ public class Enemies : MonoBehaviour {
 
 	public void Reset(){
 
-		return;
+		int arrayLength = array.Length;
+
+		for (int i = 0; i < arrayLength; i++) {
+			array [i] = "000";
+		}
 	}
 
 }

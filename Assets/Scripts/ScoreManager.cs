@@ -12,7 +12,7 @@ public class ScoreManager : MonoBehaviour {
 		//dividimos la velocidad(16.6) entre la variable speed por que mientras el speed sea mas bajo, la velocidad es mas alta
 
 		float distance = (lowestSpeed /gameSpeed) * racingTime;
-		float score = Mathf.Round (distance);
+		float score = Mathf.Round (distance); //UNITY
 		return score;
 	}
 }

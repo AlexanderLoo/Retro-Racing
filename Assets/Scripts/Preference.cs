@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Preference : MonoBehaviour {
 
+	//prefs: "FirstTimePlaying","CurrentBatteries","LastTimePlayed","TimeElapsedForBat","Interupted","CurrentState"
+
 	public int GetInt(string name){
 
 		int value = PlayerPrefs.GetInt (name);

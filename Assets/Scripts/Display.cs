@@ -21,7 +21,7 @@ public class Display : MonoBehaviour {
 	public void GetCurrentScreen(){
 
 		Screen newScreen = new Screen (draw.GetScreenWidth(), draw.GetScreenHeight());
-		//temporal
+		//TEST
 		print(newScreen.screenWith);
 		print (newScreen.screenHeight);
 		//mandar todo las proporciones, pantalla, etc.

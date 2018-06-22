@@ -22,7 +22,7 @@ public class GameController : MonoBehaviour {
 
 	public Lives lives;
 
-	[SerializeField]
+	[SerializeField] //UNITY
 	public class State
 	{
 		public string name;
@@ -33,7 +33,7 @@ public class GameController : MonoBehaviour {
 		public float racingTime;
 	}
 
-	private string globalState = "mainMenu";
+	private string globalState;
 
 	public float lowestSpeed = 16.6f; //16.6 m/s
 
@@ -44,15 +44,15 @@ public class GameController : MonoBehaviour {
 	private string[] arrayOfEnemies;
 	//public int enemiesRowLength = 4;
 	//private List<string> arrayOfEnemies;
-	public string newEnemiesSpawn = "000"; //el nuevo spawn de los enemigos expresado en un string binario
+	private string newEnemiesSpawn = "000"; //el nuevo spawn de los enemigos expresado en un string binario
 	public float enemySpeed = 1f;
 	private double timeToNextEnemyMove;
 
 	//variables para controllar las recargas de batería
-	public int waitingTime = 10; //segundos de espera para obtener una batería(una vez perdida)
+	public int waitingTime = 60; //segundos de espera para obtener una batería(una vez perdida)
 	private int timeForNextBat; //Variable para saber el tiempo que falta para una batería(mostrada en el display)
-	private int timeToReachForBat;//Temporal 
-	private bool charging = false;//Temporal
+	private int timeToReachForBat;
+	private bool charging = false;
 
 	public int gameOverWait = 5;
 	private int timeToMainMenu;
@@ -77,7 +77,7 @@ public class GameController : MonoBehaviour {
 
 	void Start(){
 
-		display.GetCurrentScreen ();
+		display.GetCurrentScreen (); //TEST
 		FirstTimePlaying();
 		bat.batteries = pref.GetInt ("CurrentBatteries");
 
@@ -85,11 +85,13 @@ public class GameController : MonoBehaviour {
 			LoadState ();
 			display.PlayerMove (player.currentIndex);
 			display.Enemies (enemies.array);
+			//startingTime = (int)currentTime;
 
 		} else {
 			// prepare for new game
 			display.ShowSplashScreen ();
 			display.PlayerMove (player.currentIndex);
+			globalState = "mainMenu";
 		}
 		if (bat.Get() != bat.maxBatteries) {
 			RemainingCharge ();
@@ -103,12 +105,12 @@ public class GameController : MonoBehaviour {
 		//TEST
 		TestingGetcurrentScreen();
 		Time ();
-		print (globalState);
+		print (globalState); //TEST
 
 		Charging();
 		display.RealTime (hour, minute, amPm);
 
-		//Temporal
+		//TEST	
 		if (timeForNextBat > 0) {
 			display.CountDown (true, timeForNextBat);
 		} else {
@@ -136,7 +138,7 @@ public class GameController : MonoBehaviour {
 			GameOverState ();
 			break;
 		default:
-			Debug.Log ("No se encuentra en ningún estado");	
+			Debug.Log ("No se encuentra en ningún estado");	//TEST
 			break;
 		}
 	}
@@ -156,8 +158,6 @@ public class GameController : MonoBehaviour {
 			pref.SetInt ("FirstTimePlaying", 1);
 			pref.SetInt ("CurrentBatteries", bat.maxBatteries);
 		}
-
-		//state.enemies = enemyFirstTimePlaying();
 	}
 
 	//states: mainMenu, startGame, playing, crashed, paused, gameover
@@ -165,7 +165,7 @@ public class GameController : MonoBehaviour {
 
 		globalState = state;
 	}
-
+	//TEST, SIN UTILIDAD POR AHORA
 	string GetState(){
 
 		return globalState;
@@ -175,6 +175,9 @@ public class GameController : MonoBehaviour {
 
 		buttons.Show (buttons.startButton, true);
 		buttons.Show (buttons.pauseButton, false);
+		buttons.Show (buttons.playButton, false);
+		enemies.Reset ();
+		display.Enemies (enemies.array);
 		if (buttons.StartPressed ()) {
 			SetState ("startGame");
 			buttons.SetStart (false);
@@ -190,13 +193,12 @@ public class GameController : MonoBehaviour {
 			buttons.Show (buttons.startButton, false);
 			buttons.Show (buttons.playButton, false);	
 			buttons.Show (buttons.pauseButton, true);
-			//temporal
+			//TEST
 			if (!charging) {
 				timeToReachForBat = (int)currentTime + waitingTime;
 				charging = true;
 			}
-
-			display.Battery (bat.Get());
+			display.Battery (bat.Get ());
 			display.StartingGame();
 			SetState ("playing");
 			startingTime = (int)currentTime;
@@ -275,7 +277,7 @@ public class GameController : MonoBehaviour {
 		display.Crashed ();
 		sound.Crashed();
 		pause.Crashed();
-		enemies.Reset();
+		enemies.Reset(); //TEST QUIZAS NO SE DEBA RESETEAR
 		if (lives.Left ()) {
 			SetState ("playing");
 		} else {
@@ -346,7 +348,7 @@ public class GameController : MonoBehaviour {
 		newEnemiesSpawn = newString;
 	}
 
-	//Temporal
+	//TEST
 	private void Charging(){
 
 		if (timeToReachForBat > (int)currentTime) {
@@ -423,21 +425,21 @@ public class GameController : MonoBehaviour {
 
 		State state = new State ();
 		state.name = globalState;
-		state.score = score.Distance (lowestSpeed, gameSpeed, racingTime);
+		state.score = score.Distance (lowestSpeed, gameSpeed, racingTime); //TEST
 		state.enemiesArray = arrayOfEnemies;
 		state.playerPos = player.currentIndex;
 		state.gameSpeed = gameSpeed;
 		state.racingTime = racingTime;
-		string toSaveJson = JsonUtility.ToJson(state);
+		string toSaveJson = JsonUtility.ToJson(state); //UNITY
 		pref.SetString ("CurrentState", toSaveJson);
 	}
 
 	public void LoadState() {
 
 		string loadJson = pref.GetString("CurrentState");
-		State loadedState = JsonUtility.FromJson<State>(loadJson);
+		State loadedState = JsonUtility.FromJson<State>(loadJson); //UNITY
 		globalState = loadedState.name;
-		display.CurrentScore(loadedState.score);
+		display.CurrentScore(loadedState.score); //TEST
 		enemies.array = loadedState.enemiesArray;
 		player.currentIndex = loadedState.playerPos;
 		gameSpeed = loadedState.gameSpeed;
