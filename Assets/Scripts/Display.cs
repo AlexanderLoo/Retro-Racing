@@ -110,7 +110,7 @@ public class Display : MonoBehaviour {
 		return;
 	}
 
-	public void CurrentScore (float score){
+	public void CurrentScore (int score){
 
 		draw.scoreText.text = score.ToString();
 	}

@@ -26,7 +26,6 @@ public class GameController : MonoBehaviour {
 	public class State
 	{
 		public string name;
-		public float score;
 		public string[] enemiesArray; //array de enemigos
 		public int playerPos;
 		public float gameSpeed;
@@ -39,7 +38,7 @@ public class GameController : MonoBehaviour {
 
 	public float gameSpeed = 1f; //Velocidad del juego donde 1 es normal(para animaciones)
 	private float racingTime = 0; //Tiempo en carrera
-	private int startingTime;
+	private int startingTime; //TEST, se piensa cambiar el nombre de la variable
 
 	private string[] arrayOfEnemies;
 	//public int enemiesRowLength = 4;
@@ -72,7 +71,7 @@ public class GameController : MonoBehaviour {
 
 	void Awake(){
 
-		Time ();
+		TimeManager ();
 	}
 
 	void Start(){
@@ -85,7 +84,8 @@ public class GameController : MonoBehaviour {
 			LoadState ();
 			display.PlayerMove (player.currentIndex);
 			display.Enemies (enemies.array);
-			//startingTime = (int)currentTime;
+			startingTime = (int)currentTime;
+			display.CurrentScore (score.Distance(lowestSpeed, gameSpeed,racingTime));
 
 		} else {
 			// prepare for new game
@@ -104,7 +104,7 @@ public class GameController : MonoBehaviour {
 
 		//TEST
 		TestingGetcurrentScreen();
-		Time ();
+		TimeManager ();
 		print (globalState); //TEST
 
 		Charging();
@@ -178,6 +178,7 @@ public class GameController : MonoBehaviour {
 		buttons.Show (buttons.playButton, false);
 		enemies.Reset ();
 		display.Enemies (enemies.array);
+		racingTime = 0;
 		if (buttons.StartPressed ()) {
 			SetState ("startGame");
 			buttons.SetStart (false);
@@ -201,7 +202,6 @@ public class GameController : MonoBehaviour {
 			display.Battery (bat.Get ());
 			display.StartingGame();
 			SetState ("playing");
-			startingTime = (int)currentTime;
 			pause.BeforeStart();
 		} else {
 			display.NotEnoughtBat ();
@@ -218,9 +218,6 @@ public class GameController : MonoBehaviour {
 		buttons.KeysController();
 		#endif
 
-		racingTime = (int)currentTime - startingTime; 
-		//racingTime += Time.deltaTime; //Esta lógica hace que el score corra más rápido
-
 		buttons.Show (buttons.pauseButton, true);
 		buttons.Show (buttons.playButton, false);
 
@@ -228,6 +225,11 @@ public class GameController : MonoBehaviour {
 			SetState("paused");
 			buttons.SetPause (false);
 		}
+		//TEST, buscando la mejor manera de manejar los segundos
+		racingTime += (int)currentTime - startingTime;
+		startingTime = (int)currentTime;
+		//racingTime += Time.deltaTime; //Esta lógica hace que el score corra más rápido
+
 		display.CurrentScore(score.Distance (lowestSpeed, gameSpeed, racingTime));
 
 		display.PlayerMove (player.currentIndex);
@@ -268,6 +270,7 @@ public class GameController : MonoBehaviour {
 		if (buttons.StartPressed()) {
 			SetState ("playing");
 			buttons.SetStart (false);
+			startingTime = (int)currentTime;
 		}
 	}
 
@@ -292,12 +295,13 @@ public class GameController : MonoBehaviour {
 	void GameOverState(){
 
 		interupted = false;
+		buttons.Show (buttons.pauseButton, false);
 		 if ((int)currentTime > timeToMainMenu) {
 			SetState ("mainMenu");
 		}
 	}
 
-	private void Time(){
+	private void TimeManager(){
 
 		System.DateTime epochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
 		currentTime = (System.DateTime.UtcNow - epochStart).TotalSeconds;
@@ -307,6 +311,7 @@ public class GameController : MonoBehaviour {
 		hour = time.Hour;
 		minute = time.Minute;
 		seconds = time.Second;
+
 	}
 
 	private bool EnemiesMoveNow(){
@@ -425,7 +430,6 @@ public class GameController : MonoBehaviour {
 
 		State state = new State ();
 		state.name = globalState;
-		state.score = score.Distance (lowestSpeed, gameSpeed, racingTime); //TEST
 		state.enemiesArray = arrayOfEnemies;
 		state.playerPos = player.currentIndex;
 		state.gameSpeed = gameSpeed;
@@ -439,7 +443,6 @@ public class GameController : MonoBehaviour {
 		string loadJson = pref.GetString("CurrentState");
 		State loadedState = JsonUtility.FromJson<State>(loadJson); //UNITY
 		globalState = loadedState.name;
-		display.CurrentScore(loadedState.score); //TEST
 		enemies.array = loadedState.enemiesArray;
 		player.currentIndex = loadedState.playerPos;
 		gameSpeed = loadedState.gameSpeed;
