@@ -16,8 +16,7 @@ public class GameController : MonoBehaviour {
 	public Preference pref;
 
 	public Battery bat;
-	public ScoreManager score;
-							
+
 	public Pause pause;
 
 	public Lives lives;
@@ -29,7 +28,7 @@ public class GameController : MonoBehaviour {
 		public string[] enemiesArray; //array de enemigos
 		public int playerPos;
 		public float gameSpeed;
-		public float racingTime;
+		public int racingTime;
 	}
 
 	private string globalState;
@@ -37,7 +36,7 @@ public class GameController : MonoBehaviour {
 	public float lowestSpeed = 16.6f; //16.6 m/s
 
 	public float gameSpeed = 1f; //Velocidad del juego donde 1 es normal(para animaciones)
-	private float racingTime = 0; //Tiempo en carrera
+	private int racingTime = 0; //Tiempo en carrera
 	private int startingTime; //TEST, se piensa cambiar el nombre de la variable
 
 	private string[] arrayOfEnemies;
@@ -62,6 +61,7 @@ public class GameController : MonoBehaviour {
 
 	private double currentTime; //Tiempo total en segundos desde 1970
 
+    private int score;
 	//TEST
 	public bool level2;
 	public int space = 1; //<--Con level design establecemos el espacio de spawneo
@@ -85,8 +85,7 @@ public class GameController : MonoBehaviour {
 			display.PlayerMove (player.currentIndex);
 			display.Enemies (enemies.array);
 			startingTime = (int)currentTime;
-			display.CurrentScore (score.Distance(lowestSpeed, gameSpeed,racingTime));
-
+            display.CurrentScore (Distance());
 		} else {
 			// prepare for new game
 			display.ShowSplashScreen ();
@@ -203,6 +202,7 @@ public class GameController : MonoBehaviour {
 			display.StartingGame();
 			SetState ("playing");
 			pause.BeforeStart();
+            startingTime = (int)currentTime;
 		} else {
 			display.NotEnoughtBat ();
 			sound.BadLuck();
@@ -226,11 +226,11 @@ public class GameController : MonoBehaviour {
 			buttons.SetPause (false);
 		}
 		//TEST, buscando la mejor manera de manejar los segundos
-		racingTime += (int)currentTime - startingTime;
+        racingTime += ((int)currentTime - startingTime);
 		startingTime = (int)currentTime;
 		//racingTime += Time.deltaTime; //Esta lógica hace que el score corra más rápido
 
-		display.CurrentScore(score.Distance (lowestSpeed, gameSpeed, racingTime));
+		display.CurrentScore(Distance ());
 
 		display.PlayerMove (player.currentIndex);
 
@@ -353,6 +353,19 @@ public class GameController : MonoBehaviour {
 		newEnemiesSpawn = newString;
 	}
 
+    public int Distance()
+    {
+        //Usando como parámetro mínimo de velocidad 60 km/h ---> 16.6 m/s(velocidad normal)
+        //Aplicamos la siguiente fórmula para hallar la distancia ---> d = v*t
+        //distance = (16.6 / speed) * racingTime
+        //dividimos la velocidad(16.6) entre la variable speed por que mientras el speed sea mas bajo, la velocidad es mas alta
+
+        float distance = (lowestSpeed / gameSpeed) * racingTime;
+        score = (int)(distance);
+        return score;
+    }
+
+
 	//TEST
 	private void Charging(){
 
@@ -408,7 +421,7 @@ public class GameController : MonoBehaviour {
 		}
 	}
 	//TEST(cuando salimos de la aplicación)
-	private void OnDisable(){
+    private void OnApplicationPause(){  
 
 //		int remainingTimeForFullCharge;
 		int timeElapsedForBat = waitingTime - timeForNextBat;

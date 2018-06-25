@@ -11,10 +11,10 @@ public class Draw : MonoBehaviour {
 	public Sprite live;
 
 	//Listas de Imagenes
-	public List<SpriteRenderer> playerArray;
+	public List<SpriteRenderer> playerArray; //Buscamos las referencias en el editor para no perder el orden
 	public List<SpriteRenderer> enemiesArray;
 	public List<SpriteRenderer> enemiesBackgroundArray;
-	public List<Image> batteryArray;
+	public List<Image> batteryArray; //Buscamos las referencias en el editor para no perder el orden
 	public List<Image> batteryBackgroundArray;
 	public List<Image> livesArray;
 
@@ -31,10 +31,8 @@ public class Draw : MonoBehaviour {
 
 	void Awake(){
 
-		FindSpriteRendererArray (playerArray, "Player");
 		FindSpriteRendererArray (enemiesArray, "Enemy");
 		FindSpriteRendererArray (enemiesBackgroundArray, "EnemyBackground");
-		FindImageArray (batteryArray, "Battery");
 		FindImageArray (batteryBackgroundArray, "BatteryBackground");
 	}
 
