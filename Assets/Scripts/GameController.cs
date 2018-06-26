@@ -84,7 +84,7 @@ public class GameController : MonoBehaviour {
 		bat.batteries = pref.GetInt ("CurrentBatteries");
 
 		if (StartingFromInterupted ()) {
-			//LoadState ();
+			LoadState ();
 			display.PlayerMove (player.currentIndex);
 			display.Enemies (enemies.array);
 			startingTime = (int)currentTime;
@@ -181,6 +181,7 @@ public class GameController : MonoBehaviour {
 		buttons.Show (buttons.playButton, false);
 		enemies.Reset ();
 		display.Enemies (enemies.array);
+        display.DisableAllColision();
 		racingTime = 0;
 		if (buttons.StartPressed ()) {
 			buttons.SetStart (false);
@@ -284,7 +285,7 @@ public class GameController : MonoBehaviour {
 	void CrashedState(){
 
 		lives.Decrease (1);
-		display.Crashed ();
+		display.Crashed (player.currentIndex);
 		sound.Crashed();
 		pause.Crashed();
 		enemies.Reset(); //TEST QUIZAS NO SE DEBA RESETEAR
@@ -407,6 +408,9 @@ public class GameController : MonoBehaviour {
                 break;
             case 8:
                 ChangeLevel(0.5f,RandomInt(1,3),true);
+                break;
+            case 9:
+                ChangeLevel(0.4f,1,RandomBool());
                 break;
         }
     }

@@ -7,11 +7,13 @@ public class Draw : MonoBehaviour {
 
 	//Sprite personalizables del juego
 	public Sprite car;
+    public Sprite colision;
 	public Sprite battery;
 	public Sprite live;
 
 	//Listas de Imagenes
 	public List<SpriteRenderer> playerArray; //Buscamos las referencias en el editor para no perder el orden
+    public List<SpriteRenderer> colisionArray;
 	public List<SpriteRenderer> enemiesArray;
 	public List<SpriteRenderer> enemiesBackgroundArray;
 	public List<Image> batteryArray; //Buscamos las referencias en el editor para no perder el orden
@@ -66,6 +68,7 @@ public class Draw : MonoBehaviour {
 	void Start(){
 
 		FillSpriteArray (playerArray, car);
+        FillSpriteArray(colisionArray, colision);
 		FillSpriteArray (enemiesArray, car);
 		FillSpriteArray (enemiesBackgroundArray, car);
 		FillImageArray (batteryArray, battery);

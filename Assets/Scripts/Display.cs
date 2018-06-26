@@ -114,10 +114,14 @@ public class Display : MonoBehaviour {
 
 		draw.scoreText.text = score.ToString();
 	}
+    public void DisableAllColision(){
 
-	public void Crashed(){
+        draw.DisableAllSprites(draw.colisionArray);
+    }
 
-		return;
+	public void Crashed(int index){
+
+        draw.colisionArray[index].enabled = true;
 	}
 
 	public void ShowExit(){
