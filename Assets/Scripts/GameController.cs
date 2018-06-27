@@ -151,10 +151,11 @@ public class GameController : MonoBehaviour {
 	private bool StartingFromInterupted(){
 
 		if (pref.GetInt ("Interupted") == 1) {
-			return true;
+            interupted = true;
 		} else {
-			return false;
+			interupted = false;
 		}
+        return interupted;
 	}
 
 	private void FirstTimePlaying(){
@@ -503,8 +504,7 @@ public class GameController : MonoBehaviour {
 		}
 	}
 	//TEST(cuando salimos de la aplicación)
-    private void OnDisable(){  
-
+    private void OnDisable(){
 //		int remainingTimeForFullCharge;
 		int timeElapsedForBat = waitingTime - timeForNextBat;
 //		if (bat.Get () != bat.maxBatteries) {
@@ -525,7 +525,7 @@ public class GameController : MonoBehaviour {
 
 		State state = new State ();
 		state.name = globalState;
-		state.enemiesArray = arrayOfEnemies;
+		state.enemiesArray = enemies.array;
 		state.playerPos = player.currentIndex;
         state.level = level;
 		state.racingTime = racingTime;
