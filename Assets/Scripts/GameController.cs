@@ -504,7 +504,7 @@ public class GameController : MonoBehaviour {
 		}
 	}
 	//TEST(cuando salimos de la aplicación)
-    private void OnDisable(){
+    private void SavePrefs(){
 //		int remainingTimeForFullCharge;
 		int timeElapsedForBat = waitingTime - timeForNextBat;
 //		if (bat.Get () != bat.maxBatteries) {
@@ -543,6 +543,25 @@ public class GameController : MonoBehaviour {
         level = loadedState.level;
 		racingTime = loadedState.racingTime;
 	}
+
+    //FUNCIONES DE SALIDA DEL JUEGO
+
+    private void OnDisable()
+    {
+        SavePrefs();
+    }
+    private void OnApplicationQuit()
+    {
+        SavePrefs();
+    }
+    private void OnApplicationPause(bool pause)
+    {
+        SavePrefs();
+    }
+    private void OnApplicationFocus(bool focus)
+    { 
+        SavePrefs();
+    }
 }
 
 
