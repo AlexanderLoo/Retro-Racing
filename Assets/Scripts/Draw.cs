@@ -29,7 +29,8 @@ public class Draw : MonoBehaviour {
 	public Text minute;
 	public Text amOrPm;
 
-	public GameObject countDown;
+    public Text playCountDown;
+	public GameObject batCountDown;
 
 	void Awake(){
 

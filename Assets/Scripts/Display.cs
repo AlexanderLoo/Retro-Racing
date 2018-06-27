@@ -39,10 +39,11 @@ public class Display : MonoBehaviour {
 
 		return;
 	}
-	public void StartingGame(){
+	public void StartCountDown(int count){
 
-		return;
-	}
+        draw.playCountDown.text = count.ToString();
+        if (count <= 0) draw.playCountDown.text = null;
+    }
 
 	public void PlayerMove(int index){
 
@@ -87,9 +88,9 @@ public class Display : MonoBehaviour {
 		draw.amOrPm.text = amOrPm;
 	}
 
-	public void CountDown(bool value, int timeForNextBat = 0){
+	public void BatCountDown(bool value, int timeForNextBat = 0){
 
-		draw.ObjectShown (draw.countDown, value);
+		draw.ObjectShown (draw.batCountDown, value);
 		if (value) {
 			draw.countMinutes.text = AdjustDigits (timeForNextBat / 60);
 			draw.countSeconds.text = AdjustDigits (timeForNextBat % 60);

@@ -17,8 +17,6 @@ public class GameController : MonoBehaviour {
 
 	public Battery bat;
 
-	public Pause pause;
-
 	public Lives lives;
 
 	[SerializeField] //UNITY
@@ -52,6 +50,7 @@ public class GameController : MonoBehaviour {
 	private int timeToReachForBat;
 	private bool charging = false;
 
+    public int timeToStartGame;
 	public int gameOverWait = 5;
 	private int timeToMainMenu;
 
@@ -115,9 +114,9 @@ public class GameController : MonoBehaviour {
 
 		//TEST	
 		if (timeForNextBat > 0) {
-			display.CountDown (true, timeForNextBat);
+			display.BatCountDown (true, timeForNextBat);
 		} else {
-			display.CountDown (false);
+			display.BatCountDown (false);
 		}
 
 		switch (globalState) {
@@ -128,6 +127,9 @@ public class GameController : MonoBehaviour {
 		case "startGame":
 			StartGameState ();
 			break;
+        case "playCountDown":
+            PlayCountDown();
+            break;
 		case "playing":
 			PlayingState ();
 			break;
@@ -196,26 +198,37 @@ public class GameController : MonoBehaviour {
 			bat.Add (-1);
 			pref.SetInt ("CurrentBatteries", bat.batteries);
 			buttons.Show (buttons.startButton, false);
-			buttons.Show (buttons.playButton, false);	
-			buttons.Show (buttons.pauseButton, true);
 			//TEST
 			if (!charging) {
 				timeToReachForBat = (int)currentTime + waitingTime;
 				charging = true;
 			}
 			display.Battery (bat.Get ());
-			display.StartingGame();
-			pause.BeforeStart();
-            startingTime = (int)currentTime;
+            display.CurrentScore(0);
             level = 0;
             scoreForNextLevel = levelScore[0];
-            SetState("playing");
+            timeToStartGame = (int)currentTime + 3; 
+            SetState("playCountDown");
 		} else {
-			display.NotEnoughtBat ();
+			display.NotEnoughtBat (); //Posible animacion de la batería
 			sound.BadLuck();
 			SetState("mainMenu");
 		}
 	}
+
+    void PlayCountDown(){
+
+        buttons.Show(buttons.pauseButton, false);
+        buttons.Show(buttons.playButton, false);
+        buttons.Show(buttons.startButton, false);
+
+        display.StartCountDown(timeToStartGame - (int)currentTime);
+        if (currentTime >= timeToStartGame)
+        {
+            startingTime = (int)currentTime;
+            SetState("playing");
+        }
+    }
 
 	void PlayingState(){
 
@@ -226,7 +239,6 @@ public class GameController : MonoBehaviour {
 		#endif
 
 		buttons.Show (buttons.pauseButton, true);
-		buttons.Show (buttons.playButton, false);
 
 		if (buttons.PausePressed()) {
 			buttons.SetPause (false);
@@ -277,8 +289,10 @@ public class GameController : MonoBehaviour {
 		buttons.Show (buttons.playButton, true);
 		if (buttons.StartPressed()) {
 			buttons.SetStart (false);
-			startingTime = (int)currentTime;
-            SetState("playing");
+            timeToStartGame = (int)currentTime + 3;
+            SetState("playCountDown");
+			//startingTime = (int)currentTime;
+            //SetState("playing");
 		}
 	}
 
@@ -287,8 +301,7 @@ public class GameController : MonoBehaviour {
 		lives.Decrease (1);
 		display.Crashed (player.currentIndex);
 		sound.Crashed();
-		pause.Crashed();
-		enemies.Reset(); //TEST QUIZAS NO SE DEBA RESETEAR
+		//kenemies.Reset(); //TEST QUIZAS NO SE DEBA RESETEAR
 		if (lives.Left ()) {
 			SetState ("playing");
 		} else {
@@ -490,7 +503,7 @@ public class GameController : MonoBehaviour {
 		}
 	}
 	//TEST(cuando salimos de la aplicación)
-    private void OnApplicationQuit(){  
+    private void OnDisable(){  
 
 //		int remainingTimeForFullCharge;
 		int timeElapsedForBat = waitingTime - timeForNextBat;
