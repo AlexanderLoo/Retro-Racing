@@ -30,6 +30,7 @@ public class GameController : MonoBehaviour {
 	}
 
 	private string globalState;
+    private bool stateFirstRun = true;
 
 	public float lowestSpeed = 16.6f; //16.6 m/s
 
@@ -62,7 +63,7 @@ public class GameController : MonoBehaviour {
 
     private int score;
     private int scoreForNextLevel;
-    public int[] levelScore;
+    public int[] levelScore;//PENDIENTE crear array
     public int level; //indice de levelScore
 	//TEST
 	public bool doubleSpawn;
@@ -168,10 +169,11 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-	//states: mainMenu, startGame, playing, crashed, paused, gameover
+    //states: mainMenu, startGame,playCountDown, playing, crashed, paused, gameover
 	void SetState(string state){
 
 		globalState = state;
+        stateFirstRun = true;
 	}
 	//TEST, SIN UTILIDAD POR AHORA
 	string GetState(){
@@ -181,13 +183,17 @@ public class GameController : MonoBehaviour {
 
 	void MainMenuState(){
 
-		buttons.Show (buttons.startButton, true);
-		buttons.Show (buttons.pauseButton, false);
-		buttons.Show (buttons.playButton, false);
-		enemies.Reset ();
-		display.Enemies (enemies.array);
-        display.DisableAllColision();
-		racingTime = 0;
+        if (stateFirstRun)
+        {
+            buttons.Show(buttons.startButton, true);
+            buttons.Show(buttons.pauseButton, false);
+            buttons.Show(buttons.playButton, false);
+            enemies.Reset();
+            display.Enemies(enemies.array);
+            display.DisableAllColision();
+            racingTime = 0;
+            stateFirstRun = false;
+        }
 		if (buttons.StartPressed ()) {
 			buttons.SetStart (false);
             SetState("startGame");
@@ -221,10 +227,13 @@ public class GameController : MonoBehaviour {
 
     void PlayCountDown(){
 
-        buttons.Show(buttons.pauseButton, false);
-        buttons.Show(buttons.playButton, false);
-        buttons.Show(buttons.startButton, false);
-
+        if (stateFirstRun)
+        {
+            buttons.Show(buttons.pauseButton, false);
+            buttons.Show(buttons.playButton, false);
+            buttons.Show(buttons.startButton, false);
+            stateFirstRun = false;
+        }
         display.StartCountDown(timeToStartGame - (int)currentTime);
         if (currentTime >= timeToStartGame)
         {
@@ -234,14 +243,19 @@ public class GameController : MonoBehaviour {
     }
 
 	void PlayingState(){
-
-		interupted = true;
+        
 		//TEST
 		#if UNITY_EDITOR
 		buttons.KeysController();
 		#endif
 
-		buttons.Show (buttons.pauseButton, true);
+        if (stateFirstRun)
+        {
+            interupted = true;
+            buttons.Show(buttons.pauseButton, true);
+            display.PlayerMove(player.currentIndex);
+            stateFirstRun = false;
+        }
 
 		if (buttons.PausePressed()) {
 			buttons.SetPause (false);
@@ -254,8 +268,6 @@ public class GameController : MonoBehaviour {
 
 		display.CurrentScore(Distance ());
         LevelManager();
-
-		display.PlayerMove (player.currentIndex);
 
 		if (buttons.Left() && player.CanLeft()) {
 			display.PlayerMove(player.Movement(-1));
@@ -287,9 +299,14 @@ public class GameController : MonoBehaviour {
 
 	void PausedState(){
 
-		display.ShowExit ();
-		buttons.Show (buttons.pauseButton, false);
-		buttons.Show (buttons.playButton, true);
+        if (stateFirstRun)
+        {
+            display.ShowExit();
+            buttons.Show(buttons.pauseButton, false);
+            buttons.Show(buttons.playButton, true);
+            stateFirstRun = false;
+        }
+       
 		if (buttons.StartPressed()) {
 			buttons.SetStart (false);
             timeToStartGame = (int)currentTime + 3;
@@ -318,8 +335,13 @@ public class GameController : MonoBehaviour {
 
 	void GameOverState(){
 
-		interupted = false;
-		buttons.Show (buttons.pauseButton, false);
+        if (stateFirstRun)
+        {
+            interupted = false;
+            buttons.Show(buttons.pauseButton, false);
+            stateFirstRun = false;
+        }
+       
 		 if ((int)currentTime > timeToMainMenu) {
 			SetState ("mainMenu");
 		}
@@ -539,7 +561,7 @@ public class GameController : MonoBehaviour {
 
 		string loadJson = pref.GetString("CurrentState");
 		State loadedState = JsonUtility.FromJson<State>(loadJson); //UNITY
-		globalState = loadedState.name;
+        SetState(loadedState.name);
 		enemies.array = loadedState.enemiesArray;
 		player.currentIndex = loadedState.playerPos;
         level = loadedState.level;
@@ -547,25 +569,22 @@ public class GameController : MonoBehaviour {
 	}
 
     //FUNCIONES DE SALIDA DEL JUEGO
-
-    private void OnApplicationFocus(bool focus)
-    {
-        SavePrefs();
-    }
-    private void OnDisable()
-    {
-        SavePrefs();
-    }
+    //private void OnApplicationPause(bool pause)
+    //{
+    //    SavePrefs();
+    //}
+    //private void OnApplicationFocus(bool focus)
+    //{
+    //    SavePrefs();
+    //}
+    //private void OnDisable()
+    //{
+    //    SavePrefs();
+    //}
     private void OnApplicationQuit()
     {
         SavePrefs();
     }
-    //private void OnApplicationPause(bool pause)
-    //{
-    //    print("pause");
-    //    SavePrefs();
-    //}
-
 }
 
 

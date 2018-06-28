@@ -51,6 +51,7 @@ public class Buttons : MonoBehaviour/*, IPointerDownHandler, IPointerUpHandler*/
 
 		button.SetActive (value);
 	}
+    //TEST
     //Si presionamos el botón de atrás del celular
     public void Back(){
 
@@ -59,6 +60,7 @@ public class Buttons : MonoBehaviour/*, IPointerDownHandler, IPointerUpHandler*/
             Application.Quit();
         }
     }
+
 	//TEST
 	//Función para controllador usando teclas
 	public void KeysController(){
