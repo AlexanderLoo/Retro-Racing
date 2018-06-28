@@ -89,6 +89,7 @@ public class GameController : MonoBehaviour {
 			startingTime = (int)currentTime;
             display.CurrentScore (Distance());
             scoreForNextLevel = levelScore[level];
+            spaceCounter = space;
 		} else {
 			// prepare for new game
 			display.ShowSplashScreen ();
@@ -111,6 +112,7 @@ public class GameController : MonoBehaviour {
 
 		Charging();
 		display.RealTime (hour, minute, amPm);
+        buttons.Back();
 
 		//TEST	
 		if (timeForNextBat > 0) {
@@ -546,6 +548,10 @@ public class GameController : MonoBehaviour {
 
     //FUNCIONES DE SALIDA DEL JUEGO
 
+    private void OnApplicationFocus(bool focus)
+    {
+        SavePrefs();
+    }
     private void OnDisable()
     {
         SavePrefs();
@@ -554,14 +560,12 @@ public class GameController : MonoBehaviour {
     {
         SavePrefs();
     }
-    private void OnApplicationPause(bool pause)
-    {
-        SavePrefs();
-    }
-    private void OnApplicationFocus(bool focus)
-    { 
-        SavePrefs();
-    }
+    //private void OnApplicationPause(bool pause)
+    //{
+    //    print("pause");
+    //    SavePrefs();
+    //}
+
 }
 
 

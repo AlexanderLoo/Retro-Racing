@@ -51,6 +51,14 @@ public class Buttons : MonoBehaviour/*, IPointerDownHandler, IPointerUpHandler*/
 
 		button.SetActive (value);
 	}
+    //Si presionamos el botón de atrás del celular
+    public void Back(){
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+    }
 	//TEST
 	//Función para controllador usando teclas
 	public void KeysController(){
