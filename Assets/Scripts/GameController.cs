@@ -25,8 +25,8 @@ public class GameController : MonoBehaviour {
 	public class State
 	{
 		public string name;
-		public string[] enemiesArray; //array de enemigos
-		public int playerPos;
+        public string[] enemiesArray = new string[]{"000", "000", "000", "000"}; 
+		public int playerPos = 1;
 		public int level = 0;
 		public int racingTime = 0;
         public int spaceCounter = 0;
@@ -40,7 +40,7 @@ public class GameController : MonoBehaviour {
 
 	//public int enemiesRowLength = 4;
 	//private List<string> arrayOfEnemies;
-	private string newEnemiesSpawn = "000"; //el nuevo spawn de los enemigos expresado en un string binario
+	private string newEnemiesWave = "000"; //el nuevo spawn de los enemigos expresado en un string binario
 	public float enemySpeed = 1f;
 	private double timeToNextEnemyMove;
 
@@ -82,8 +82,8 @@ public class GameController : MonoBehaviour {
 
 		if (StartingFromInterupted ()) {
 			LoadState ();
-			display.PlayerMove (player.currentIndex);
-			display.Enemies (enemies.array);
+			display.PlayerMove (_state.playerPos);
+			display.Enemies (_state.enemiesArray);
 			startingTime = (int)currentTime;
             display.CurrentScore (Distance());
             scoreForNextLevel = levelScore[_state.level];
@@ -91,7 +91,7 @@ public class GameController : MonoBehaviour {
             // prepare for new game
             _state = new State();
 			display.ShowSplashScreen ();
-			display.PlayerMove (player.currentIndex);
+			display.PlayerMove (_state.playerPos);
 			_state.name = "mainMenu";
 		}
 		if (bat.Get() != bat.maxBatteries) {
@@ -185,8 +185,8 @@ public class GameController : MonoBehaviour {
             buttons.Show(buttons.startButton, true);
             buttons.Show(buttons.pauseButton, false);
             buttons.Show(buttons.playButton, false);
-            enemies.Reset();
-            display.Enemies(enemies.array);
+            enemies.Reset(_state.enemiesArray);
+            display.Enemies(_state.enemiesArray);
             display.DisableAllColision();
             _state.racingTime = 0;
             stateFirstRun = false;
@@ -250,7 +250,7 @@ public class GameController : MonoBehaviour {
         {
             interupted = true;
             buttons.Show(buttons.pauseButton, true);
-            display.PlayerMove(player.currentIndex);
+            display.PlayerMove(_state.playerPos);
             stateFirstRun = false;
         }
 
@@ -266,12 +266,12 @@ public class GameController : MonoBehaviour {
 		display.CurrentScore(Distance ());
         LevelManager();
 
-		if (buttons.Left() && player.CanLeft()) {
-			display.PlayerMove(player.Movement(-1));
+		if (buttons.Left() && player.CanLeft(_state.level)) {
+			display.PlayerMove(player.Movement(_state.playerPos, -1));
 			buttons.SetLeft (false);
 		}
-		if (buttons.Right() && player.CanRight()) {
-			display.PlayerMove(player.Movement(1));
+		if (buttons.Right() && player.CanRight(_state.playerPos)) {
+			display.PlayerMove(player.Movement(_state.playerPos, 1));
 			buttons.SetRight (false);
 		}
 
@@ -282,13 +282,13 @@ public class GameController : MonoBehaviour {
 				else
 					NewSpawn (0,1);
 			} else {
-				newEnemiesSpawn = "000";
+				newEnemiesWave = "000";
 			}
-			_state.enemiesArray = enemies.MoveDown(newEnemiesSpawn);
+			_state.enemiesArray = enemies.MoveDown(newEnemiesWave, _state.enemiesArray);
 			display.Enemies(_state.enemiesArray);
 		}
 
-		if(colision.Crashed(_state.enemiesArray, player.currentIndex)){
+		if(colision.Crashed(_state.enemiesArray, _state.playerPos)){
 
 			SetState("crashed");
 		}
@@ -316,7 +316,7 @@ public class GameController : MonoBehaviour {
 	void CrashedState(){
 
 		lives.Decrease (1);
-		display.Crashed (player.currentIndex);
+		display.Crashed (_state.playerPos);
 		sound.Crashed();
 		//kenemies.Reset(); //TEST QUIZAS NO SE DEBA RESETEAR
 		if (lives.Left ()) {
@@ -383,7 +383,7 @@ public class GameController : MonoBehaviour {
 	//para dos enemigos por fila --> setup:1, chosenOne:0 ---> NewSpawn(1,0);
 	private void NewSpawn(int setup = 0, int chosenOne = 1){
 
-		int arrayLength = newEnemiesSpawn.Length;
+		int arrayLength = newEnemiesWave.Length;
 		int [] temporalArray = new int[arrayLength];
 
 		for (int i = 0; i < arrayLength; i++) {
@@ -393,7 +393,7 @@ public class GameController : MonoBehaviour {
 		temporalArray [randomIndex] = chosenOne;
 		//única solución encontrada...
 		string newString = string.Join("", new List<int>(temporalArray).ConvertAll(i => i.ToString()).ToArray());
-		newEnemiesSpawn = newString;
+		newEnemiesWave = newString;
 	}
 
     private int Distance()
@@ -544,8 +544,6 @@ public class GameController : MonoBehaviour {
 
 	private void SaveState() {
 		
-		_state.enemiesArray = enemies.array;
-		_state.playerPos = player.currentIndex;
 		string toSaveJson = JsonUtility.ToJson(_state); //UNITY
 		pref.SetString ("CurrentState", toSaveJson);
 	}
@@ -554,9 +552,6 @@ public class GameController : MonoBehaviour {
 
 		string loadJson = pref.GetString("CurrentState");
 		_state = JsonUtility.FromJson<State>(loadJson); //UNITY
-        SetState(_state.name);
-		enemies.array = _state.enemiesArray;
-		player.currentIndex = _state.playerPos;
 	}
 
     //FUNCIONES DE SALIDA DEL JUEGO

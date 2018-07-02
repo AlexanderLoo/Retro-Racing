@@ -5,12 +5,12 @@ using UnityEngine;
 public class Enemies : MonoBehaviour {
 
 	//public List<string> array = new List<string>(4){"000","000","000","000"};
-	public string[] array = new string[4];
+	//public string[] array = new string[4];
 
 //	//Función que hace uso de la librería system.collectios.generic
-//	public List<string> MoveDown(string newSpawn = "000"){
+//	public List<string> MoveDown(string newWave = "000"){
 //
-//		array.Insert (0, newSpawn);
+//		array.Insert (0, newWave);
 //		return array;
 //	}
 
@@ -23,7 +23,7 @@ public class Enemies : MonoBehaviour {
 //	}
 
 	//Función para hacer Insert() a una array que no use la librería system(List)
-	public string[] MoveDown(string newSpawn){
+	public string[] MoveDown(string newWave, string[] array){
 
 		int arrayLength = array.Length;
 		string newValue = array [0];
@@ -34,21 +34,21 @@ public class Enemies : MonoBehaviour {
 			array [i] = newValue;
 			newValue = oldValue;
 		}
-		array[0] = newSpawn;
+		array[0] = newWave;
 
 		return array;
 	}
 
 //		for (int i = array.Length -1; i > -1; i--) { <-- Otra alternativa pero quizas consuma más memoria
 //			if (i == 0)
-//				array [i] = newSpawn;
+//				array [i] = newWave;
 //			else
 //				array [i] = array [i - 1];
 //		}
 //		return array;
 //	}
 
-	public void Reset(){
+	public void Reset(string[] array){
 
 		int arrayLength = array.Length;
 
