@@ -19,26 +19,25 @@ public class GameController : MonoBehaviour {
 
 	public Lives lives;
 
+    private State _state;
+
 	[SerializeField] //UNITY
 	public class State
 	{
 		public string name;
 		public string[] enemiesArray; //array de enemigos
 		public int playerPos;
-		public int level;
-		public int racingTime;
+		public int level = 0;
+		public int racingTime = 0;
+        public int spaceCounter = 0;
 	}
 
-	private string globalState;
     private bool stateFirstRun = true;
 
 	public float lowestSpeed = 16.6f; //16.6 m/s
-
 	public float gameSpeed = 1f; //Velocidad del juego donde 1 es normal(para animaciones)
-	private int racingTime = 0; //Tiempo en carrera
 	private int startingTime; //TEST, se piensa cambiar el nombre de la variable
 
-	private string[] arrayOfEnemies;
 	//public int enemiesRowLength = 4;
 	//private List<string> arrayOfEnemies;
 	private string newEnemiesSpawn = "000"; //el nuevo spawn de los enemigos expresado en un string binario
@@ -63,12 +62,10 @@ public class GameController : MonoBehaviour {
 
     private int score;
     private int scoreForNextLevel;
-    public int[] levelScore;//PENDIENTE crear array
-    public int level; //indice de levelScore
+    private int[] levelScore = new int[] { 200, 300, 500, 800, 1300, 2100, 3400, 5500, 8900, 14400 };
 	//TEST
 	public bool doubleSpawn;
 	public int space = 1; //<--Con level design establecemos el espacio de spawneo
-	private int spaceCounter;
 
 	private bool interupted = false;
 
@@ -89,19 +86,19 @@ public class GameController : MonoBehaviour {
 			display.Enemies (enemies.array);
 			startingTime = (int)currentTime;
             display.CurrentScore (Distance());
-            scoreForNextLevel = levelScore[level];
-            spaceCounter = space;
+            scoreForNextLevel = levelScore[_state.level];
 		} else {
-			// prepare for new game
+            // prepare for new game
+            _state = new State();
 			display.ShowSplashScreen ();
 			display.PlayerMove (player.currentIndex);
-			globalState = "mainMenu";
+			_state.name = "mainMenu";
 		}
 		if (bat.Get() != bat.maxBatteries) {
 			RemainingCharge ();
 		}					
 		display.MainMenu (bat.Get(),lives.Get());
-		SetState (globalState);
+		SetState (_state.name);
 	}
 
 	void Update(){		
@@ -109,7 +106,7 @@ public class GameController : MonoBehaviour {
 		//TEST
 		TestingGetcurrentScreen();
 		TimeManager ();
-		print (globalState); //TEST
+		print (_state.name); //TEST
 
 		Charging();
 		display.RealTime (hour, minute, amPm);
@@ -122,7 +119,7 @@ public class GameController : MonoBehaviour {
 			display.BatCountDown (false);
 		}
 
-		switch (globalState) {
+		switch (_state.name) {
 			
 		case "mainMenu":
 			MainMenuState ();
@@ -172,13 +169,13 @@ public class GameController : MonoBehaviour {
     //states: mainMenu, startGame,playCountDown, playing, crashed, paused, gameover
 	void SetState(string state){
 
-		globalState = state;
+		_state.name = state;
         stateFirstRun = true;
 	}
 	//TEST, SIN UTILIDAD POR AHORA
 	string GetState(){
 
-		return globalState;
+		return _state.name;
 	}
 
 	void MainMenuState(){
@@ -191,7 +188,7 @@ public class GameController : MonoBehaviour {
             enemies.Reset();
             display.Enemies(enemies.array);
             display.DisableAllColision();
-            racingTime = 0;
+            _state.racingTime = 0;
             stateFirstRun = false;
         }
 		if (buttons.StartPressed ()) {
@@ -214,7 +211,7 @@ public class GameController : MonoBehaviour {
 			}
 			display.Battery (bat.Get ());
             display.CurrentScore(0);
-            level = 0;
+            _state.level = 0;
             scoreForNextLevel = levelScore[0];
             timeToStartGame = (int)currentTime + 3; 
             SetState("playCountDown");
@@ -262,7 +259,7 @@ public class GameController : MonoBehaviour {
             SetState("paused");
 		}
 		//TEST, buscando la mejor manera de manejar los segundos
-        racingTime += ((int)currentTime - startingTime);
+        _state.racingTime += ((int)currentTime - startingTime);
 		startingTime = (int)currentTime;
 		//racingTime += Time.deltaTime; //Esta lógica hace que el score corra más rápido
 
@@ -287,11 +284,11 @@ public class GameController : MonoBehaviour {
 			} else {
 				newEnemiesSpawn = "000";
 			}
-			arrayOfEnemies = enemies.MoveDown(newEnemiesSpawn);
-			display.Enemies(arrayOfEnemies);
+			_state.enemiesArray = enemies.MoveDown(newEnemiesSpawn);
+			display.Enemies(_state.enemiesArray);
 		}
 
-		if(colision.Crashed(arrayOfEnemies, player.currentIndex)){
+		if(colision.Crashed(_state.enemiesArray, player.currentIndex)){
 
 			SetState("crashed");
 		}
@@ -372,11 +369,11 @@ public class GameController : MonoBehaviour {
 	//TEST
 	private bool CanSpawn(){
 		
-		if (spaceCounter == 0) {
-			spaceCounter = space;
+		if (_state.spaceCounter == 0) {
+			_state.spaceCounter = space;
 			return true;
 		} else {
-			spaceCounter--;
+			_state.spaceCounter--;
 			return false;
 		}
 	}
@@ -406,7 +403,7 @@ public class GameController : MonoBehaviour {
         //distance = (16.6 / speed) * racingTime
         //dividimos la velocidad(16.6) entre la variable speed por que mientras el speed sea mas bajo, la velocidad es mas alta
 
-        float distance = (lowestSpeed / gameSpeed) * racingTime;
+        float distance = (lowestSpeed / gameSpeed) * _state.racingTime;
         score = (int)(distance);
         return score;
     }
@@ -415,10 +412,10 @@ public class GameController : MonoBehaviour {
 
         if (score >= scoreForNextLevel)
         {
-            level++;
-            scoreForNextLevel = levelScore[level];
+            _state.level++;
+            scoreForNextLevel = levelScore[_state.level];
         }
-        switch (level)
+        switch (_state.level)
         {
             case 0:
                 ChangeLevel(1,4,false);
@@ -546,26 +543,20 @@ public class GameController : MonoBehaviour {
 	}
 
 	private void SaveState() {
-
-		State state = new State ();
-		state.name = globalState;
-		state.enemiesArray = enemies.array;
-		state.playerPos = player.currentIndex;
-        state.level = level;
-		state.racingTime = racingTime;
-		string toSaveJson = JsonUtility.ToJson(state); //UNITY
+		
+		_state.enemiesArray = enemies.array;
+		_state.playerPos = player.currentIndex;
+		string toSaveJson = JsonUtility.ToJson(_state); //UNITY
 		pref.SetString ("CurrentState", toSaveJson);
 	}
 
 	public void LoadState() {
 
 		string loadJson = pref.GetString("CurrentState");
-		State loadedState = JsonUtility.FromJson<State>(loadJson); //UNITY
-        SetState(loadedState.name);
-		enemies.array = loadedState.enemiesArray;
-		player.currentIndex = loadedState.playerPos;
-        level = loadedState.level;
-		racingTime = loadedState.racingTime;
+		_state = JsonUtility.FromJson<State>(loadJson); //UNITY
+        SetState(_state.name);
+		enemies.array = _state.enemiesArray;
+		player.currentIndex = _state.playerPos;
 	}
 
     //FUNCIONES DE SALIDA DEL JUEGO
