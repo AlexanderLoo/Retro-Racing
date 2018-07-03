@@ -58,8 +58,6 @@ public class GameController : MonoBehaviour {
 	private int hour, minute, seconds;
 	private string amPm = "AM";
 
-	private double currentTime; //Tiempo total en segundos desde 1970
-
     private int score;
     private int scoreForNextLevel;
     private int[] levelScore = new int[] { 200, 300, 500, 800, 1300, 2100, 3400, 5500, 8900, 14400 };
@@ -68,11 +66,6 @@ public class GameController : MonoBehaviour {
 	public int space = 1; //<--Con level design establecemos el espacio de spawneo
 
 	private bool interupted = false;
-
-	void Awake(){
-
-		TimeManager ();
-	}
 
 	void Start(){
 
@@ -84,7 +77,7 @@ public class GameController : MonoBehaviour {
 			LoadState ();
 			display.PlayerMove (_state.playerPos);
 			display.Enemies (_state.enemiesArray);
-			startingTime = (int)currentTime;
+			startingTime = CurrentTime();
             display.CurrentScore (Distance());
             scoreForNextLevel = levelScore[_state.level];
 		} else {
@@ -105,10 +98,10 @@ public class GameController : MonoBehaviour {
 
 		//TEST
 		TestingGetcurrentScreen();
-		TimeManager ();
 		print (_state.name); //TEST
 
 		Charging();
+        LocalTime();
 		display.RealTime (hour, minute, amPm);
         buttons.Back();
 
@@ -206,14 +199,14 @@ public class GameController : MonoBehaviour {
 			buttons.Show (buttons.startButton, false);
 			//TEST
 			if (!charging) {
-				timeToReachForBat = (int)currentTime + waitingTime;
+				timeToReachForBat = CurrentTime() + waitingTime;
 				charging = true;
 			}
 			display.Battery (bat.Get ());
             display.CurrentScore(0);
             _state.level = 0;
             scoreForNextLevel = levelScore[0];
-            timeToStartGame = (int)currentTime + 3; 
+            timeToStartGame = CurrentTime() + 3; 
             SetState("playCountDown");
 		} else {
 			display.NotEnoughtBat (); //Posible animacion de la batería
@@ -231,10 +224,10 @@ public class GameController : MonoBehaviour {
             buttons.Show(buttons.startButton, false);
             stateFirstRun = false;
         }
-        display.StartCountDown(timeToStartGame - (int)currentTime);
-        if (currentTime >= timeToStartGame)
+        display.StartCountDown(timeToStartGame - CurrentTime());
+        if (Now() >= timeToStartGame)
         {
-            startingTime = (int)currentTime;
+            startingTime = CurrentTime();
             SetState("playing");
         }
     }
@@ -259,8 +252,8 @@ public class GameController : MonoBehaviour {
             SetState("paused");
 		}
 		//TEST, buscando la mejor manera de manejar los segundos
-        _state.racingTime += ((int)currentTime - startingTime);
-		startingTime = (int)currentTime;
+        _state.racingTime += (CurrentTime() - startingTime);
+		startingTime = CurrentTime();
 		//racingTime += Time.deltaTime; //Esta lógica hace que el score corra más rápido
 
 		display.CurrentScore(Distance ());
@@ -306,9 +299,9 @@ public class GameController : MonoBehaviour {
        
 		if (buttons.StartPressed()) {
 			buttons.SetStart (false);
-            timeToStartGame = (int)currentTime + 3;
+            timeToStartGame = CurrentTime() + 3;
             SetState("playCountDown");
-			//startingTime = (int)currentTime;
+			//startingTime = CurrentTime();
             //SetState("playing");
 		}
 	}
@@ -325,7 +318,7 @@ public class GameController : MonoBehaviour {
 			bat.GameOver();
 			display.GameOver();
 			sound.GameOver();
-			timeToMainMenu = (int)currentTime + gameOverWait;
+			timeToMainMenu = CurrentTime() + gameOverWait;
             SetState("gameOver");
 		}
 	}
@@ -339,15 +332,24 @@ public class GameController : MonoBehaviour {
             stateFirstRun = false;
         }
        
-		 if ((int)currentTime > timeToMainMenu) {
+		 if (CurrentTime() > timeToMainMenu) {
 			SetState ("mainMenu");
 		}
 	}
 
-	private void TimeManager(){
+    private double Now(){
 
-		System.DateTime epochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
-		currentTime = (System.DateTime.UtcNow - epochStart).TotalSeconds;
+        System.DateTime epochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
+        double time = (System.DateTime.UtcNow - epochStart).TotalSeconds;
+        return time;
+    }
+
+    private int CurrentTime(){
+
+        return (int)Now();
+    }
+
+	private void LocalTime(){
 
 		System.DateTime time = System.DateTime.Now; //Tiempo local
 
@@ -359,8 +361,8 @@ public class GameController : MonoBehaviour {
 
 	private bool EnemiesMoveNow(){
 		 
-		if (currentTime >= timeToNextEnemyMove) {
-			timeToNextEnemyMove = currentTime + enemySpeed * gameSpeed;
+		if (Now() >= timeToNextEnemyMove) {
+			timeToNextEnemyMove = Now() + enemySpeed * gameSpeed;
 			return true;
 		} else {
 			return false;
@@ -473,8 +475,8 @@ public class GameController : MonoBehaviour {
 	//TEST
 	private void Charging(){
 
-		if (timeToReachForBat > (int)currentTime) {
-			timeForNextBat = timeToReachForBat - (int)currentTime;
+		if (timeToReachForBat > CurrentTime()) {
+			timeForNextBat = timeToReachForBat - CurrentTime();
 		} else {
 			timeForNextBat = 0;
 			if (charging) {
@@ -482,7 +484,7 @@ public class GameController : MonoBehaviour {
 				pref.SetInt ("CurrentBatteries", bat.batteries);
 				display.Battery (bat.Get());
 				if (bat.Get () != bat.maxBatteries) {
-					timeToReachForBat = (int)currentTime + waitingTime;
+					timeToReachForBat = CurrentTime() + waitingTime;
 				} else {
 					charging = false;
 				}
@@ -503,24 +505,24 @@ public class GameController : MonoBehaviour {
 
 //		int reachTimeForFullCharge = pref.GetInt ("LastTimePlayed") + pref.GetInt ("RemainingTime");
 //
-//		if ((int)currentTime >= reachTimeForFullCharge) {
+//		if (CurrentTime() >= reachTimeForFullCharge) {
 //			bat.Add (bat.maxBatteries - bat.Get ());
 //			pref.SetInt ("CurrentBatteries", bat.batteries);
 //		} else {
-//			int offLineTime = (int)currentTime - pref.GetInt("LastTimePlayed");
+//			int offLineTime = CurrentTime() - pref.GetInt("LastTimePlayed");
 //			bat.Add ((offLineTime + pref.GetInt("TimeElapsedForBat"))/ waitingTime);
 //			pref.SetInt ("CurrentBatteries", bat.batteries);
-//			timeToReachForBat = ((reachTimeForFullCharge - (int)currentTime) % waitingTime) + (int)currentTime;
+//			timeToReachForBat = ((reachTimeForFullCharge - CurrentTime()) % waitingTime) + CurrentTime();
 //			charging = true;
 //		}
 
-		int offLineTime = (int)currentTime - pref.GetInt("LastTimePlayed") + pref.GetInt("TimeElapsedForBat");
+		int offLineTime = CurrentTime() - pref.GetInt("LastTimePlayed") + pref.GetInt("TimeElapsedForBat");
 		bat.Add (offLineTime / waitingTime);
 		pref.SetInt ("CurrentBatteries", bat.batteries);
 		if (bat.Get () == bat.maxBatteries) {
 			timeToReachForBat = 0;
 		} else {
-			timeToReachForBat = (int)currentTime + (waitingTime -(offLineTime % waitingTime));
+			timeToReachForBat = CurrentTime() + (waitingTime -(offLineTime % waitingTime));
 			charging = true;
 		}
 	}
@@ -535,7 +537,7 @@ public class GameController : MonoBehaviour {
 //			remainingTimeForFullCharge = 0;
 //		}
 //		pref.SetInt ("RemainingTime", remainingTimeForFullCharge);
-		pref.SetInt ("LastTimePlayed", (int)currentTime);
+		pref.SetInt ("LastTimePlayed", CurrentTime());
 		pref.SetInt("TimeElapsedForBat",timeElapsedForBat);
 		SaveState ();
 		//TEST
