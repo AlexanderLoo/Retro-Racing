@@ -17,6 +17,10 @@ public class Display : MonoBehaviour {
 			this.screenHeight = screenHeight;
 		}
 	}
+    //TEST COLOR TEMAS
+    private Color sky = new Color(154, 202, 231, 255) / 255; //Ford Desert Sky Blue
+    private Color ground = new Color(225, 169, 95, 255) / 255; //Yellow Earth Color
+    private Color road = new Color(132, 115, 90, 255) / 255; //Cement Color
 
 	public void GetCurrentScreen(){
 
