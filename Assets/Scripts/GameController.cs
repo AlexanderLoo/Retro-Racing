@@ -266,12 +266,12 @@ public class GameController : MonoBehaviour {
 		display.CurrentScore(Distance ());
         LevelManager();
 
-		if (buttons.Left() && player.CanLeft(_state.level)) {
-			display.PlayerMove(player.Movement(_state.playerPos, -1));
+		if (buttons.Left() && player.CanLeft(_state.playerPos)) {
+			display.PlayerMove(player.Movement(ref _state.playerPos, -1));
 			buttons.SetLeft (false);
 		}
 		if (buttons.Right() && player.CanRight(_state.playerPos)) {
-			display.PlayerMove(player.Movement(_state.playerPos, 1));
+			display.PlayerMove(player.Movement(ref _state.playerPos, 1));
 			buttons.SetRight (false);
 		}
 

@@ -24,7 +24,7 @@ public class Player : MonoBehaviour {
 		}
 	}
 
-	public int Movement(int currentIndex, int dir){
+	public int Movement(ref int currentIndex, int dir){
 		currentIndex += dir;
 		return currentIndex;
 	}
