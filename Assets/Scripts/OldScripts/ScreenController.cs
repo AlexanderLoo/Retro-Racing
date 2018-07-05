@@ -25,47 +25,38 @@ public class ScreenController : MonoBehaviour {
     //TEST https://answers.unity.com/questions/1411572/how-do-i-draw-simple-shapes.html
     void Start()
     {
-        //Para un cuadrado
-        Vector2[] vertices = new Vector2[] { new Vector2(0, 0), new Vector2(0, 2), new Vector2(2, 2), new Vector2(2, 0), new Vector2(1, 1)};
-        ushort[] triangles = new ushort[] { 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1};
-        DrawPolygon2D(vertices, triangles, Color.red);
+        //Para un rectangulo
+        Vector2[] rectVertices = new Vector2[] { new Vector2(0, 0), new Vector2(0, screenHeight)*2, new Vector2(screenWidth, screenHeight)*2, new Vector2(screenWidth, 0)*2, new Vector2(screenWidth, screenHeight)};
+        //ushort[] rectTriangles = new ushort[] { 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1};
+        ushort[] rectTriangles = new ushort[] { 0, 1, 2, 0, 2, 3 }; //<- otra opción usando 2 triangulos rectangulos
+
+         //TEST COLOR TEMAS
+         Color sky = new Color(154, 202, 231, 255) / 255; //Ford Desert Sky Blue
+         Color ground = new Color(225, 169, 95, 255) / 255; //Yellow Earth Color
+         Color road = new Color(132, 115, 90, 255) / 255; //Cement Color
+
+        DrawPolygon2D(rectVertices, rectTriangles, sky, 0);
     }
 
-    void DrawPolygon2D(Vector2[] vertices, ushort[] triangles, Color color)
+    void DrawPolygon2D(Vector2[] vertices, ushort[] triangles, Color color, int sortingOrder)
     {
-        GameObject polygon = new GameObject(); //create a new game object
-        SpriteRenderer sr = polygon.AddComponent<SpriteRenderer>(); // add a sprite renderer
+        GameObject polygon = new GameObject();
+        SpriteRenderer sr = polygon.AddComponent<SpriteRenderer>();
         sr.sortingLayerName = "Background";
-        Texture2D texture = new Texture2D(1025, 1025); // create a texture larger than your maximum polygon size
+        sr.sortingOrder = sortingOrder;
+        Texture2D texture = new Texture2D(1025, 1025);
 
-        // create an array and fill the texture with your color
         List<Color> cols = new List<Color>();
         for (int i = 0; i < (texture.width * texture.height); i++)
             cols.Add(color);
         texture.SetPixels(cols.ToArray());
         texture.Apply();
 
-        sr.color = color; //you can also add that color to the sprite renderer
+        sr.color = color;
 
-        sr.sprite = Sprite.Create(texture, new Rect(0, 0, 1024, 1024), Vector2.zero, 1); //create a sprite with the texture we just created and colored in
-
-        //convert coordinates to local space
-        float lx = Mathf.Infinity, ly = Mathf.Infinity;
-        foreach (Vector2 vi in vertices)
-        {
-            if (vi.x < lx)
-                lx = vi.x;
-            if (vi.y < ly)
-                ly = vi.y;
-        }
-        Vector2[] localv = new Vector2[vertices.Length];
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            localv[i] = vertices[i] - new Vector2(lx, ly);
-        }
-
-        sr.sprite.OverrideGeometry(localv, triangles); // set the vertices and triangles
-
-        polygon.transform.position = (Vector2)transform.InverseTransformPoint(transform.position) + new Vector2(lx, ly); // return to world space
+        sr.sprite = Sprite.Create(texture, new Rect(0, 0, 1024, 1024), Vector3.zero, 1);
+        sr.sprite.OverrideGeometry(vertices, triangles);
+        Vector2 newPos = new Vector2(-screenWidth, -screenHeight);
+        polygon.transform.position = newPos;
     }
 }
