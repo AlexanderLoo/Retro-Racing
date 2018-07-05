@@ -59,10 +59,8 @@ public class ScreenController : MonoBehaviour {
             cols.Add(color);
         texture.SetPixels(cols.ToArray());
         texture.Apply();
-
-        sr.color = color;
-
         sr.sprite = Sprite.Create(texture, new Rect(0, 0, 1024, 1024), Vector3.zero, 1);
+        //sr.color = color; <--- Al parecer no es necesario ya que duplica el tono del color
         sr.sprite.OverrideGeometry(vertices, triangles);
         Vector2 newPos = new Vector2(-screenWidth, -screenHeight);
         polygon.transform.position = newPos;
