@@ -69,7 +69,7 @@ public class GameController : MonoBehaviour {
 
 	void Start(){
 
-		display.GetCurrentScreen (); //TEST
+		display.NewScreen (); //TEST
 		FirstTimePlaying();
 		bat.batteries = pref.GetInt ("CurrentBatteries");
 
@@ -496,7 +496,7 @@ public class GameController : MonoBehaviour {
 	void TestingGetcurrentScreen(){
 
 		if (Input.GetKeyDown(KeyCode.Space)) {
-			display.GetCurrentScreen ();
+			display.NewScreen ();
 			PlayerPrefs.DeleteAll ();
 		}
 	}

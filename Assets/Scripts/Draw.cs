@@ -39,14 +39,22 @@ public class Draw : MonoBehaviour {
 		FindImageArray (batteryBackgroundArray, "BatteryBackground");
 	}
 
-	//Función para acceder al tamaño de la pantalla
-	public int GetScreenWidth(){
+    public Vector2 GetScreenSizeInPixels(){
 
-		return Screen.width;
+        Vector2 screenSizeInPixels = new Vector2(Screen.width, Screen.height);
+        return screenSizeInPixels;
+    }
+
+	//Función para acceder al tamaño de la pantalla convertidas a unidades de Unity
+	public float GetScreenWidth(){
+
+        Vector2 screenSize = Camera.main.ScreenToWorldPoint(GetScreenSizeInPixels());
+		return screenSize.x;
 	}
-	public int GetScreenHeight(){
+	public float GetScreenHeight(){
 
-		return Screen.height;
+        Vector2 screenSize = Camera.main.ScreenToWorldPoint(GetScreenSizeInPixels());
+        return screenSize.y;
 	}
 
 	//Funciones para buscar las listas en la escena según su tag
@@ -121,6 +129,26 @@ public class Draw : MonoBehaviour {
 
 		gameObject.SetActive (value);
 	}
+    //Función para dibujar poligonos
+    public void Polygon2D(Vector2[] vertices, ushort[] triangles, Color color, int sortingOrder)
+    {
+        GameObject polygon = new GameObject();
+        SpriteRenderer sr = polygon.AddComponent<SpriteRenderer>();
+        sr.sortingLayerName = "Background";
+        sr.sortingOrder = sortingOrder;
+        Texture2D texture = new Texture2D(1025, 1025);
+
+        List<Color> cols = new List<Color>();
+        for (int i = 0; i < (texture.width * texture.height); i++)
+            cols.Add(color);
+        texture.SetPixels(cols.ToArray());
+        texture.Apply();
+        sr.sprite = Sprite.Create(texture, new Rect(0, 0, 1024, 1024), Vector3.zero, 1);
+        //sr.color = color; <--- Al parecer no es necesario ya que duplica el tono del color
+        sr.sprite.OverrideGeometry(vertices, triangles);
+        Vector2 newPos = new Vector2(-GetScreenWidth(),-GetScreenHeight());
+        polygon.transform.position = newPos;
+    }
 
 	public void Console(){
 		return;

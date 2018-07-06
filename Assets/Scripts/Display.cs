@@ -8,23 +8,38 @@ public class Display : MonoBehaviour {
 
 	public class Screen
 	{
-		public int screenWith;
-		public int screenHeight;
+		public float width;
+		public float height;
 
-		public Screen(int screenWith, int screenHeight){
+		public Screen(float screenWidth, float screenHeight){
 
-			this.screenWith = screenWith;
-			this.screenHeight = screenHeight;
+			width = screenWidth;
+			height = screenHeight;
 		}
 	}
+    //TEMAS
+    //Para un rectangulo
+    Vector2[] rectVertices = new Vector2[] { new Vector2(0, 1) * 2, new Vector2(0, screenHeight) * 2, new Vector2(screenWidth, screenHeight) * 2, new Vector2(screenWidth, 1) * 2 };
+    //ushort[] rectTriangles = new ushort[] { 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1}; // usando cuatro triangulos(requiere de otro vertice en el medio del rectangulo --> new Vector2(screenwith, screenHeigth)
+    ushort[] rectTriangles = new ushort[] { 0, 1, 2, 0, 2, 3 }; //<- otra opción usando 2 triangulos rectangulos
 
-	public void GetCurrentScreen(){
+    Vector2[] rectVertices2 = new Vector2[] { new Vector2(0, 1) * 2, new Vector2(0, screenHeight * 0.7f) * 2, new Vector2(screenWidth, screenHeight * 0.7f) * 2, new Vector2(screenWidth, 1) * 2 };
+    Vector2[] trapVertices = new Vector2[] { new Vector2(0, 1) * 2, new Vector2((0.33f * screenWidth), (0.7f * screenHeight)) * 2, new Vector2((0.66f * screenWidth), (0.7f * screenHeight)) * 2, new Vector2(screenWidth, 1) * 2 };
+    //ushort[] trapTriangles = new ushort[]{0,1,2,1,2,3,2,3,4}; <-- opcion con 3 triangulos en el medio
+    ushort[] trapTriangles = new ushort[] { 0, 1, 2, 0, 2, 3 }; //<-- misma que rectangulo
+
+    //TEST COLOR TEMAS
+    Color sky = new Color(154, 202, 231, 255) / 255; //Ford Desert Sky Blue
+    Color ground = new Color(225, 169, 95, 255) / 255; //Yellow Earth Color
+    Color road = new Color(132, 115, 90, 255) / 255; //Cement Color
+
+
+	public void NewScreen(){
 
 		Screen newScreen = new Screen (draw.GetScreenWidth(), draw.GetScreenHeight());
-		//TEST
-		print(newScreen.screenWith);
-		print (newScreen.screenHeight);
-		//mandar todo las proporciones, pantalla, etc.
+        draw.Polygon2D(rectVertices, rectTriangles, sky, 0);
+        draw.Polygon2D(rectVertices2, rectTriangles, ground, 1);
+        draw.Polygon2D(trapVertices, trapTriangles, road, 2);
 	}
 
 	public void MainMenu(int batteries, int lives){
