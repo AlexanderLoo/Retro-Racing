@@ -26,12 +26,12 @@ public class ScreenController : MonoBehaviour {
     void Start()
     {
         //Para un rectangulo
-        Vector2[] rectVertices = new Vector2[] { new Vector2(0, 0), new Vector2(0, screenHeight)*2, new Vector2(screenWidth, screenHeight)*2, new Vector2(screenWidth, 0)*2};
+        Vector2[] rectVertices = new Vector2[] { new Vector2(0, 1)*2, new Vector2(0, screenHeight)*2, new Vector2(screenWidth, screenHeight)*2, new Vector2(screenWidth, 1)*2};
         //ushort[] rectTriangles = new ushort[] { 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1}; // usando cuatro triangulos(requiere de otro vertice en el medio del rectangulo --> new Vector2(screenwith, screenHeigth)
         ushort[] rectTriangles = new ushort[] { 0, 1, 2, 0, 2, 3 }; //<- otra opción usando 2 triangulos rectangulos
 
-        Vector2[] rectVertices2 = new Vector2[] { new Vector2(0, 0), new Vector2(0, screenHeight * 0.7f) * 2, new Vector2(screenWidth, screenHeight * 0.7f) * 2, new Vector2(screenWidth, 0) * 2 };
-		Vector2[] trapVertices = new Vector2[]{new Vector2(0,0), new Vector2((0.33f * screenWidth),(0.7f * screenHeight))*2, new Vector2((0.66f * screenWidth),(0.7f * screenHeight))*2, new Vector2(screenWidth, 0)*2};
+        Vector2[] rectVertices2 = new Vector2[] { new Vector2(0, 1)*2, new Vector2(0, screenHeight * 0.7f) * 2, new Vector2(screenWidth, screenHeight * 0.7f) * 2, new Vector2(screenWidth, 1) * 2 };
+		Vector2[] trapVertices = new Vector2[]{new Vector2(0,1)*2, new Vector2((0.33f * screenWidth),(0.7f * screenHeight))*2, new Vector2((0.66f * screenWidth),(0.7f * screenHeight))*2, new Vector2(screenWidth, 1)*2};
 		//ushort[] trapTriangles = new ushort[]{0,1,2,1,2,3,2,3,4}; <-- opcion con 3 triangulos en el medio
         ushort[] trapTriangles = new ushort[] { 0, 1, 2, 0, 2, 3 }; //<-- misma que rectangulo
 
