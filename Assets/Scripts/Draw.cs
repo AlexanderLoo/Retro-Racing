@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class Draw : MonoBehaviour {
-    
+
+    //TEST Quizas se muevan estas variables al gameController o a una nueva clase Theme
 	//Sprite personalizables del juego
     public Sprite centerCar;
     public Sprite sideCar;
@@ -15,8 +16,6 @@ public class Draw : MonoBehaviour {
 	//Listas de Imagenes
 	public List<SpriteRenderer> playerArray; //Buscamos las referencias en el editor para no perder el orden
     public List<SpriteRenderer> colisionArray;
-	public List<SpriteRenderer> enemiesArray;
-	public List<SpriteRenderer> enemiesBackgroundArray;
 	public List<Image> batteryArray; //Buscamos las referencias en el editor para no perder el orden
 	public List<Image> batteryBackgroundArray;
 	public List<Image> livesArray;
@@ -35,8 +34,6 @@ public class Draw : MonoBehaviour {
 
 	void Awake(){
 
-		FindSpriteRendererArray (enemiesArray, "Enemy");
-		FindSpriteRendererArray (enemiesBackgroundArray, "EnemyBackground");
 		FindImageArray (batteryBackgroundArray, "BatteryBackground");
 	}
 
@@ -57,6 +54,23 @@ public class Draw : MonoBehaviour {
         Vector2 screenSize = Camera.main.ScreenToWorldPoint(GetScreenSizeInPixels());
         return screenSize.y;
 	}
+
+    public void FillEnemiesSprites(Sprite centerSprite, Sprite sideSprite){
+
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+        foreach (GameObject enemy in enemies)
+        {
+            char lastChar = enemy.name[enemy.name.Length - 1];
+            SpriteRenderer sr = enemy.GetComponent<SpriteRenderer>();
+            if (lastChar == '1')
+            {
+                sr.sprite = centerSprite;
+            }else{
+                sr.sprite = sideSprite;
+            }
+        }
+    }
 
 	//Funciones para buscenterCar las listas en la escena según su tag
 	void FindSpriteRendererArray(List<SpriteRenderer> array, string tag){
@@ -79,8 +93,7 @@ public class Draw : MonoBehaviour {
 
 		FillSpriteArray (playerArray, centerCar);
         FillSpriteArray(colisionArray, colision);
-		FillSpriteArray (enemiesArray, centerCar);
-		FillSpriteArray (enemiesBackgroundArray, centerCar);
+        FillEnemiesSprites(centerCar, sideCar);
 		FillImageArray (batteryArray, battery);
 		FillImageArray (batteryBackgroundArray, battery);
 //		FillImageArray (livesArray, live);
