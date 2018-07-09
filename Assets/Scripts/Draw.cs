@@ -4,9 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class Draw : MonoBehaviour {
-
+    
 	//Sprite personalizables del juego
-	public Sprite car;
+    public Sprite centerCar;
+    public Sprite sideCar;
     public Sprite colision;
 	public Sprite battery;
 	public Sprite live;
@@ -21,16 +22,16 @@ public class Draw : MonoBehaviour {
 	public List<Image> livesArray;
 
 	//UI
-	public Text scoreText;
+    public GameObject batCountDown;
 	public Text countMinutes;
 	public Text countSeconds;
+
+    public Text scoreText;
+    public Text playCountDown;
 
 	public Text hour;
 	public Text minute;
 	public Text amOrPm;
-
-    public Text playCountDown;
-	public GameObject batCountDown;
 
 	void Awake(){
 
@@ -57,7 +58,7 @@ public class Draw : MonoBehaviour {
         return screenSize.y;
 	}
 
-	//Funciones para buscar las listas en la escena según su tag
+	//Funciones para buscenterCar las listas en la escena según su tag
 	void FindSpriteRendererArray(List<SpriteRenderer> array, string tag){
 
 		GameObject[] goArray = GameObject.FindGameObjectsWithTag (tag);
@@ -76,10 +77,10 @@ public class Draw : MonoBehaviour {
 
 	void Start(){
 
-		FillSpriteArray (playerArray, car);
+		FillSpriteArray (playerArray, centerCar);
         FillSpriteArray(colisionArray, colision);
-		FillSpriteArray (enemiesArray, car);
-		FillSpriteArray (enemiesBackgroundArray, car);
+		FillSpriteArray (enemiesArray, centerCar);
+		FillSpriteArray (enemiesBackgroundArray, centerCar);
 		FillImageArray (batteryArray, battery);
 		FillImageArray (batteryBackgroundArray, battery);
 //		FillImageArray (livesArray, live);
