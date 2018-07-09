@@ -17,7 +17,6 @@ public class Draw : MonoBehaviour {
 	public List<SpriteRenderer> playerArray; //Buscamos las referencias en el editor para no perder el orden
     public List<SpriteRenderer> colisionArray;
 	public List<Image> batteryArray; //Buscamos las referencias en el editor para no perder el orden
-	public List<Image> batteryBackgroundArray;
 	public List<Image> livesArray;
 
 	//UI
@@ -32,10 +31,6 @@ public class Draw : MonoBehaviour {
 	public Text minute;
 	public Text amOrPm;
 
-	void Awake(){
-
-		FindImageArray (batteryBackgroundArray, "BatteryBackground");
-	}
 
     public Vector2 GetScreenSizeInPixels(){
 
@@ -55,14 +50,14 @@ public class Draw : MonoBehaviour {
         return screenSize.y;
 	}
 
-    public void FillEnemiesSprites(Sprite centerSprite, Sprite sideSprite){
+    public void FillSprites(string tag, Sprite centerSprite, Sprite sideSprite){
 
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        GameObject[] array = GameObject.FindGameObjectsWithTag(tag);
 
-        foreach (GameObject enemy in enemies)
+        foreach (GameObject go in array)
         {
-            char lastChar = enemy.name[enemy.name.Length - 1];
-            SpriteRenderer sr = enemy.GetComponent<SpriteRenderer>();
+            char lastChar = go.name[go.name.Length - 1];
+            SpriteRenderer sr = go.GetComponent<SpriteRenderer>();
             if (lastChar == '1')
             {
                 sr.sprite = centerSprite;
@@ -72,31 +67,27 @@ public class Draw : MonoBehaviour {
         }
     }
 
-	//Funciones para buscenterCar las listas en la escena según su tag
-	void FindSpriteRendererArray(List<SpriteRenderer> array, string tag){
-
-		GameObject[] goArray = GameObject.FindGameObjectsWithTag (tag);
-		foreach (GameObject go in goArray) {
-			array.Add (go.GetComponent<SpriteRenderer>());
-		}
-	}
-
-	void FindImageArray(List<Image> array, string tag){
-
-		GameObject[] goArray = GameObject.FindGameObjectsWithTag (tag);
-		foreach (GameObject go in goArray) {
-			array.Add (go.GetComponent<Image>());
-		}
-	}
+	//Funciones para buscar las listas en la escena según su tag
+	//void FindSpriteRendererArray(List<SpriteRenderer> array, string tag){
+	//	GameObject[] goArray = GameObject.FindGameObjectsWithTag (tag);
+	//	foreach (GameObject go in goArray) {
+	//		array.Add (go.GetComponent<SpriteRenderer>());
+	//	}
+	//}
+    //void FindImageArray(List<Image> array, string tag){
+	//	GameObject[] goArray = GameObject.FindGameObjectsWithTag (tag);
+	//	foreach (GameObject go in goArray) {
+	//		array.Add (go.GetComponent<Image>());
+	//	}
+	//}
 
 	void Start(){
 
-		FillSpriteArray (playerArray, centerCar);
+        FillSprites("Player", centerCar, sideCar);
         FillSpriteArray(colisionArray, colision);
-        FillEnemiesSprites(centerCar, sideCar);
-		FillImageArray (batteryArray, battery);
-		FillImageArray (batteryBackgroundArray, battery);
-//		FillImageArray (livesArray, live);
+        FillSprites("Enemy", centerCar, sideCar);
+		FillImages ("Battery", battery);
+    //	FillImageArray (livesArray, live);
 	}
 
 	public void FillSpriteArray(List<SpriteRenderer> spriteArray, Sprite sprite){
@@ -106,12 +97,16 @@ public class Draw : MonoBehaviour {
 		}
 	}
 
-	public void FillImageArray(List<Image> imageArray, Sprite sprite){
+	public void FillImages(string tag, Sprite sprite){
 
-		foreach (Image image in imageArray) {
-			image.sprite = sprite;
-		}
-	}
+        GameObject[] images = GameObject.FindGameObjectsWithTag(tag);
+
+        foreach (GameObject image in images)
+        {
+            Image i = image.GetComponent<Image>();
+            i.sprite = sprite;
+        }
+    }
 
 	public void DisableAllSprites(List<SpriteRenderer> spriteArray){
 
@@ -126,7 +121,7 @@ public class Draw : MonoBehaviour {
 		}
 	}
 
-	public void EnemyEnable(string name, bool value){
+	public void Enemy(string name, bool value){
 
 		SpriteRenderer sr = FindName(name).GetComponent<SpriteRenderer>();
 		sr.enabled = value;

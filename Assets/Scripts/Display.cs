@@ -87,7 +87,7 @@ public class Display : MonoBehaviour {
 		for (int i = 0; i < arrayLength; i++) {
 			for (int j= 0; j < rowlength; j++) {
 				string name = "e" + i.ToString () + "-" + j.ToString ();
-				draw.EnemyEnable (name, ConvertCharToBool(enemiesArray[i][j]));
+				draw.Enemy (name, ConvertCharToBool(enemiesArray[i][j]));
 			}
 		}
 	}
