@@ -6,18 +6,6 @@ public class Display : MonoBehaviour {
 
 	public Draw draw;
 
-    //TEST
-    //Variables de temas
-    public Vector2[] skyVertices;
-    public ushort[] triangles;
-
-    public Vector2[] groundVertices;
-    public Vector2[] roadVertices;
-
-    public Color sky;
-    public Color ground;
-    public Color road;
-
 	public class _Screen
 	{
 		public float width;
@@ -30,29 +18,9 @@ public class Display : MonoBehaviour {
 		}
 	}
 
-    //TEST
-    void Start()
-    {
-        //TEMAS
-        skyVertices = new Vector2[] { new Vector2(0, 1) * 2, new Vector2(0, draw.GetScreenHeight()) * 2, new Vector2(draw.GetScreenWidth(), draw.GetScreenHeight()) * 2, new Vector2(draw.GetScreenWidth(), 1) * 2 };
-        //ushort[] rectTriangles = new ushort[] { 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1}; // usando cuatro triangulos(requiere de otro vertice en el medio del rectangulo --> new Vector2(screenwith, screenHeigth)
-        triangles = new ushort[] { 0, 1, 2, 0, 2, 3 }; //usando 2 triangulos rectangulos
-
-        groundVertices = new Vector2[] { new Vector2(0, 1) * 2, new Vector2(0, draw.GetScreenHeight() * 0.7f) * 2, new Vector2(draw.GetScreenWidth(), draw.GetScreenHeight() * 0.7f) * 2, new Vector2(draw.GetScreenWidth(), 1) * 2 };
-        roadVertices = new Vector2[] { new Vector2(0, 1) * 2, new Vector2((0.33f * draw.GetScreenWidth()), (0.7f * draw.GetScreenHeight())) * 2, new Vector2((0.66f * draw.GetScreenWidth()), (0.7f * draw.GetScreenHeight())) * 2, new Vector2(draw.GetScreenWidth(), 1) * 2 };
-        //ushort[] trapTriangles = new ushort[]{0,1,2,1,2,3,2,3,4}; <-- opcion con 3 triangulos en el medio
-
-        sky = new Color(154, 202, 231, 255) / 255; //Ford Desert Sky Blue
-        ground = new Color(225, 169, 95, 255) / 255; //Yellow Earth Color
-        road = new Color(132, 115, 90, 255) / 255; //Cement Color
-    }
-
 	public void NewScreen(){
 
 		_Screen newScreen = new _Screen (draw.GetScreenWidth(), draw.GetScreenHeight());
-        draw.Polygon2D(skyVertices, triangles, sky, 0);
-        draw.Polygon2D(groundVertices, triangles, ground, 1);
-        draw.Polygon2D(roadVertices, triangles, road, 2);
 	}
 
 	public void MainMenu(int batteries, int lives){

@@ -33,6 +33,48 @@ public class Draw : MonoBehaviour {
 	public Text amOrPm;
 
 
+    //TEST
+    //Variables de temas
+    public Vector2[] skyVertices;
+    public ushort[] triangles;
+
+    public Vector2[] groundVertices;
+    public Vector2[] roadVertices;
+
+    public Color sky;
+    public Color ground;
+    public Color road;
+
+    //TEST
+    void Awake()
+    {
+        //TEMAS
+        skyVertices = new Vector2[] { new Vector2(0, 1) * 2, new Vector2(0, GetScreenHeight()) * 2, new Vector2(GetScreenWidth(), GetScreenHeight()) * 2, new Vector2(GetScreenWidth(), 1) * 2 };
+        //ushort[] rectTriangles = new ushort[] { 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1}; // usando cuatro triangulos(requiere de otro vertice en el medio del rectangulo --> new Vector2(screenwith, screenHeigth)
+        triangles = new ushort[] { 0, 1, 2, 0, 2, 3 }; //usando 2 triangulos rectangulos
+
+        groundVertices = new Vector2[] { new Vector2(0, 1) * 2, new Vector2(0, GetScreenHeight() * 0.7f) * 2, new Vector2(GetScreenWidth(), GetScreenHeight() * 0.7f) * 2, new Vector2(GetScreenWidth(), 1) * 2 };
+        roadVertices = new Vector2[] { new Vector2(0, 1) * 2, new Vector2((0.33f * GetScreenWidth()), (0.7f * GetScreenHeight())) * 2, new Vector2((0.66f * GetScreenWidth()), (0.7f * GetScreenHeight())) * 2, new Vector2(GetScreenWidth(), 1) * 2 };
+        //ushort[] trapTriangles = new ushort[]{0,1,2,1,2,3,2,3,4}; <-- opcion con 3 triangulos en el medio
+
+        sky = new Color(154, 202, 231, 255) / 255; //Ford Desert Sky Blue
+        ground = new Color(225, 169, 95, 255) / 255; //Yellow Earth Color
+        road = new Color(132, 115, 90, 255) / 255; //Cement Color
+    }
+
+    void Start()
+    {
+        Polygon2D(skyVertices, triangles, sky, 0);
+        Polygon2D(groundVertices, triangles, ground, 1);
+        Polygon2D(roadVertices, triangles, road, 2);
+
+        FillSprites("Player", centerCar, sideCar);
+        FillSprites("Colision", centerColision, sideColision);
+        FillSprites("Enemy", centerCar, sideCar);
+        FillImages("Battery", battery);
+        //  FillImageArray (livesArray, live);
+    }
+
     public Vector2 GetScreenSizeInPixels(){
 
         Vector2 screenSizeInPixels = new Vector2(Screen.width, Screen.height);
@@ -81,16 +123,6 @@ public class Draw : MonoBehaviour {
 	//		array.Add (go.GetComponent<Image>());
 	//	}
 	//}
-
-	void Start(){
-
-        FillSprites("Player", centerCar, sideCar);
-        FillSprites("Colision", centerColision, sideColision);
-        FillSprites("Enemy", centerCar, sideCar);
-		FillImages ("Battery", battery);
-    //	FillImageArray (livesArray, live);
-	}
-
 	//public void FillSpriteArray(List<SpriteRenderer> spriteArray, Sprite sprite){
 	//	foreach (SpriteRenderer _sr in spriteArray) {
 	//		_sr.sprite = sprite;
