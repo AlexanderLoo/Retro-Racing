@@ -9,7 +9,8 @@ public class Draw : MonoBehaviour {
 	//Sprite personalizables del juego
     public Sprite centerCar;
     public Sprite sideCar;
-    public Sprite colision;
+    public Sprite centerColision;
+    public Sprite sideColision;
 	public Sprite battery;
 	public Sprite live;
 
@@ -84,18 +85,17 @@ public class Draw : MonoBehaviour {
 	void Start(){
 
         FillSprites("Player", centerCar, sideCar);
-        FillSpriteArray(colisionArray, colision);
+        FillSprites("Colision", centerColision, sideColision);
         FillSprites("Enemy", centerCar, sideCar);
 		FillImages ("Battery", battery);
     //	FillImageArray (livesArray, live);
 	}
 
-	public void FillSpriteArray(List<SpriteRenderer> spriteArray, Sprite sprite){
-
-		foreach (SpriteRenderer _sr in spriteArray) {
-			_sr.sprite = sprite;
-		}
-	}
+	//public void FillSpriteArray(List<SpriteRenderer> spriteArray, Sprite sprite){
+	//	foreach (SpriteRenderer _sr in spriteArray) {
+	//		_sr.sprite = sprite;
+	//	}
+	//}
 
 	public void FillImages(string tag, Sprite sprite){
 
@@ -127,12 +127,11 @@ public class Draw : MonoBehaviour {
 		sr.enabled = value;
 	}
 
-	public GameObject FindName(string name){  //Buscamos un GameObject por sunombre
+	public GameObject FindName(string name){  //Buscamos un GameObject por su nombre
 
 		GameObject go = GameObject.Find (name);
 		return go;
 	}
-
 
 	public void ObjectShown(GameObject gameObject, bool value){
 
