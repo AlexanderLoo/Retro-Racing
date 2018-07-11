@@ -49,12 +49,12 @@ public class Draw : MonoBehaviour {
     void Awake()
     {
         //TEMAS
-        skyVertices = new Vector2[] { new Vector2(0, 1) * 2, new Vector2(0, GetScreenHeight()) * 2, new Vector2(GetScreenWidth(), GetScreenHeight()) * 2, new Vector2(GetScreenWidth(), 1) * 2 };
+        skyVertices = new Vector2[] { new Vector2(0, 2), new Vector2(0, GetScreenHeight()), new Vector2(GetScreenWidth(), GetScreenHeight()), new Vector2(GetScreenWidth(), 2)};
         //ushort[] rectTriangles = new ushort[] { 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1}; // usando cuatro triangulos(requiere de otro vertice en el medio del rectangulo --> new Vector2(screenwith, screenHeigth)
         triangles = new ushort[] { 0, 1, 2, 0, 2, 3 }; //usando 2 triangulos rectangulos
 
-        groundVertices = new Vector2[] { new Vector2(0, 1) * 2, new Vector2(0, GetScreenHeight() * 0.7f) * 2, new Vector2(GetScreenWidth(), GetScreenHeight() * 0.7f) * 2, new Vector2(GetScreenWidth(), 1) * 2 };
-        roadVertices = new Vector2[] { new Vector2(0, 1) * 2, new Vector2((0.33f * GetScreenWidth()), (0.7f * GetScreenHeight())) * 2, new Vector2((0.66f * GetScreenWidth()), (0.7f * GetScreenHeight())) * 2, new Vector2(GetScreenWidth(), 1) * 2 };
+        groundVertices = new Vector2[] { new Vector2(0, 2), new Vector2(0, GetScreenHeight() * 0.7f), new Vector2(GetScreenWidth(), GetScreenHeight() * 0.7f), new Vector2(GetScreenWidth(), 2)};
+        roadVertices = new Vector2[] { new Vector2(0, 2), new Vector2((0.4f * GetScreenWidth()), (0.7f * GetScreenHeight())), new Vector2((0.6f * GetScreenWidth()), (0.7f * GetScreenHeight())), new Vector2(GetScreenWidth(), 2)};
         //ushort[] trapTriangles = new ushort[]{0,1,2,1,2,3,2,3,4}; <-- opcion con 3 triangulos en el medio
 
         sky = new Color(154, 202, 231, 255) / 255; //Ford Desert Sky Blue
@@ -85,17 +85,20 @@ public class Draw : MonoBehaviour {
 	public float GetScreenWidth(){
 
         Vector2 screenSize = Camera.main.ScreenToWorldPoint(GetScreenSizeInPixels());
-		return screenSize.x;
+		return screenSize.x * 2;
 	}
 	public float GetScreenHeight(){
 
         Vector2 screenSize = Camera.main.ScreenToWorldPoint(GetScreenSizeInPixels());
-        return screenSize.y;
+        return screenSize.y * 2;
 	}
 
     public void FillSprites(string tag, Sprite centerSprite, Sprite sideSprite){
 
         GameObject[] array = GameObject.FindGameObjectsWithTag(tag);
+
+        //TEST
+        ProportionalScale(array);
 
         foreach (GameObject go in array)
         {
@@ -107,6 +110,35 @@ public class Draw : MonoBehaviour {
             }else{
                 sr.sprite = sideSprite;
             }
+        }
+    }
+    //TEST
+    public void ProportionalScale(GameObject[] goArray)
+    {
+        Vector2 normalScale = new Vector2(GetScreenWidth() * 0.1f, GetScreenHeight() * 0.13f);
+        Vector2 newScale;
+        foreach (GameObject go in goArray)
+        {
+            char rowIndex = go.name[1];
+            switch (rowIndex)
+            {
+                case '3':
+                    newScale = normalScale;
+                    break;
+                case '2':
+                    newScale = normalScale * 0.75f;
+                    break;
+                case '1':
+                    newScale = normalScale * 0.5f;
+                    break;
+                case '0':
+                    newScale = normalScale * 0.25f;
+                    break;
+                default:
+                    newScale = normalScale;
+                    break;
+            }
+            go.transform.localScale = newScale;
         }
     }
 
@@ -186,7 +218,7 @@ public class Draw : MonoBehaviour {
         sr.sprite = Sprite.Create(texture, new Rect(0, 0, 1024, 1024), Vector3.zero, 1);
         //sr.color = color; <--- Al parecer no es necesario ya que duplica el tono del color
         sr.sprite.OverrideGeometry(vertices, triangles);
-        Vector2 newPos = new Vector2(-GetScreenWidth(),-GetScreenHeight());
+        Vector2 newPos = new Vector2(-GetScreenWidth(),-GetScreenHeight())/2;
         polygon.transform.position = newPos;
     }
 
