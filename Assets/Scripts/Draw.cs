@@ -78,7 +78,7 @@ public class Draw : MonoBehaviour {
         ProportionalScale("Enemy");
         ProportionalScale("Colision");
 
-        //ProportionalPosition();
+        ProportionalPosition();
     }
 
     public Vector2 GetScreenSizeInPixels(){
@@ -147,23 +147,24 @@ public class Draw : MonoBehaviour {
             go.transform.localScale = newScale;
         }
     }
-    ////TEST
-    //public void ProportionalPosition(){
+    //TEST
+    public void ProportionalPosition()
+    {
+        int rowLen = 4;
+        int columnLen = 3;
 
-    //    GameObject[][] arrayByRows;
+        GameObject[][] array = new GameObject[rowLen][];
 
-    //    int rowLen = 4;
-    //    int columnLen = 3;
-
-    //    for (int i = 0; i < rowLen; i++)
-    //    {
-    //        for (int j = 0; j < columnLen; j++)
-    //        {
-    //            GameObject go = GameObject.Find("e" + i.ToString() + "-" + j.ToString());
-    //            arrayByRows[i][j] = go;
-    //        }
-    //    }
-    //}
+        for (int i = 0; i < rowLen; i++)
+        {
+            array[i] = new GameObject[columnLen];
+            for (int j = 0; j < columnLen; j++)
+            {
+                GameObject go = GameObject.Find("e" + i.ToString() + "-" + j.ToString());
+                array[i][j] = go;
+            }
+        }
+    }
 
 	//Funciones para buscar las listas en la escena según su tag
 	//void FindSpriteRendererArray(List<SpriteRenderer> array, string tag){
