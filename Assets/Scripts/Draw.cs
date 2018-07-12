@@ -69,10 +69,14 @@ public class Draw : MonoBehaviour {
         Polygon2D(roadVertices, triangles, road, 2);
 
         FillSprites("Player", centerCar, sideCar);
-        FillSprites("Colision", centerColision, sideColision);
         FillSprites("Enemy", centerCar, sideCar);
+        FillSprites("Colision", centerColision, sideColision);
         FillImages("Battery", battery);
         //  FillImageArray (livesArray, live);
+
+        ProportionalScale("Player");
+        ProportionalScale("Enemy");
+        ProportionalScale("Colision");
 
         //ProportionalPosition();
     }
@@ -97,11 +101,8 @@ public class Draw : MonoBehaviour {
 
     public void FillSprites(string tag, Sprite centerSprite, Sprite sideSprite){
 
-        GameObject[] array = GameObject.FindGameObjectsWithTag(tag);
-
-        //TEST
-        ProportionalScale(array);
-
+        GameObject[] array = FindGameObjectsByTag(tag);
+       
         foreach (GameObject go in array)
         {
             char lastChar = go.name[go.name.Length - 1];
@@ -115,13 +116,16 @@ public class Draw : MonoBehaviour {
         }
     }
     //TEST
-    public void ProportionalScale(GameObject[] goArray)
+    public void ProportionalScale(string tag)
     {
         Vector2 normalScale = new Vector2(GetScreenWidth() * 0.1f, GetScreenHeight() * 0.13f);
         Vector2 newScale;
-        foreach (GameObject go in goArray)
+
+        GameObject[] array = FindGameObjectsByTag(tag);
+
+        foreach (GameObject go in array)
         {
-            char rowIndex = go.name[1];
+            char rowIndex = go.name[1]; //Segundo caracter del nombre del objeto-->entero que indica la fila
             switch (rowIndex)
             {
                 case '3':
@@ -215,6 +219,12 @@ public class Draw : MonoBehaviour {
 		GameObject go = GameObject.Find (name);
 		return go;
 	}
+
+    public GameObject[] FindGameObjectsByTag(string tag){
+
+        GameObject[] array = GameObject.FindGameObjectsWithTag(tag);
+        return array;
+    }
 
 	public void ObjectShown(GameObject gameObject, bool value){
 
