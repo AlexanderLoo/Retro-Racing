@@ -64,6 +64,10 @@ public class Draw : MonoBehaviour {
 
     void Start()
     {
+        //TEST
+        DrawObjects("b", "Enemy", 0, 20, 4, 3);
+        DrawObjects("e", "Enemy", 1, 255, 4, 3);
+
         Polygon2D(skyVertices, triangles, sky, 0);
         Polygon2D(groundVertices, triangles, ground, 1);
         Polygon2D(roadVertices, triangles, road, 2);
@@ -78,7 +82,7 @@ public class Draw : MonoBehaviour {
         ProportionalScale("Enemy");
         ProportionalScale("Colision");
 
-        ProportionalPosition();
+        //ProportionalPosition();
     }
 
     public Vector2 GetScreenSizeInPixels(){
@@ -98,6 +102,27 @@ public class Draw : MonoBehaviour {
         Vector2 screenSize = Camera.main.ScreenToWorldPoint(GetScreenSizeInPixels());
         return screenSize.y * 2;
 	}
+
+    public void DrawObjects(string name,string tag, int sortingOrder, int alpha, int columnLength , int rowLength){
+
+        for (int i = 0; i < columnLength; i++)
+        {
+            for (int j = 0; j < rowLength; j++)
+            {
+                GameObject go = new GameObject(name + i.ToString() + '-' + j.ToString());
+                go.tag = tag;
+                go.AddComponent<SpriteRenderer>();
+                SpriteRenderer sr = go.GetComponent<SpriteRenderer>();
+                sr.enabled = false;
+                sr.sortingLayerName = tag;
+                sr.sortingOrder = sortingOrder;
+                Color newColor = Color.white;
+                newColor.a = (float)alpha/255;
+                sr.color = newColor;
+                if (j == 0) sr.flipX = true;
+            }
+        }
+    }
 
     public void FillSprites(string tag, Sprite centerSprite, Sprite sideSprite){
 
