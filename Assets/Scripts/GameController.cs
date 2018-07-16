@@ -25,11 +25,16 @@ public class GameController : MonoBehaviour {
 	public class State
 	{
 		public string name;
-        public string[] enemiesArray = new string[]{"000", "000", "000", "000"}; 
+        public string[] enemiesArray; 
 		public int playerPos = 1;
 		public int level = 0;
 		public int racingTime = 0;
         public int spaceCounter = 0;
+
+        public State(){
+            //TEST
+            enemiesArray = new string[]{"000", "000", "000", "000"}; 
+        }
 	}
 
     private bool stateFirstRun = true;
@@ -38,8 +43,9 @@ public class GameController : MonoBehaviour {
 	public float gameSpeed = 1f; //Velocidad del juego donde 1 es normal(para animaciones)
 	private int startingTime; //TEST, se piensa cambiar el nombre de la variable
 
-	//public int enemiesRowLength = 4;
-	//private List<string> arrayOfEnemies;
+    public int rowLength = 3;
+    public int columnLength = 4;
+
 	private string newEnemiesWave = "000"; //el nuevo spawn de los enemigos expresado en un string binario
 	public float enemySpeed = 1f;
 	private double timeToNextEnemyMove;
