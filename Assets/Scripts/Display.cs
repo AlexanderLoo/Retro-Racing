@@ -35,6 +35,13 @@ public class Display : MonoBehaviour {
 
 		return;
 	}
+
+    public void Objects(int columnLength, int rowLength){
+
+        draw.GameObjects("b", "Enemy", 0, 20, columnLength, rowLength);
+        draw.GameObjects("e", "Enemy", 1, 255, columnLength, rowLength);
+    }
+
 	public void StartCountDown(int count){
 
         draw.playCountDown.text = count.ToString();

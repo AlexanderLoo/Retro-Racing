@@ -73,7 +73,13 @@ public class GameController : MonoBehaviour {
 
 	private bool interupted = false;
 
-	void Start(){
+    void Awake()
+    {
+        //TEST
+        display.Objects(columnLength, rowLength);
+    }
+
+    void Start(){
 
 		display.NewScreen (); //TEST
 		FirstTimePlaying();

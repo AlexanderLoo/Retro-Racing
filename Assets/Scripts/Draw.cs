@@ -31,8 +31,6 @@ public class Draw : MonoBehaviour {
 	public Text hour;
 	public Text minute;
 	public Text amOrPm;
-
-
     //TEST
     //Variables de temas
     public Vector2[] skyVertices;
@@ -64,10 +62,6 @@ public class Draw : MonoBehaviour {
 
     void Start()
     {
-        //TEST
-        DrawObjects("b", "Enemy", 0, 20, 4, 3);
-        DrawObjects("e", "Enemy", 1, 255, 4, 3);
-
         Polygon2D(skyVertices, triangles, sky, 0);
         Polygon2D(groundVertices, triangles, ground, 1);
         Polygon2D(roadVertices, triangles, road, 2);
@@ -103,7 +97,7 @@ public class Draw : MonoBehaviour {
         return screenSize.y * 2;
 	}
 
-    public void DrawObjects(string name,string tag, int sortingOrder, int alpha, int columnLength , int rowLength){
+    public void GameObjects(string name,string tag, int sortingOrder, int alpha, int columnLength , int rowLength){
 
         for (int i = 0; i < columnLength; i++)
         {
