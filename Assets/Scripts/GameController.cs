@@ -31,9 +31,13 @@ public class GameController : MonoBehaviour {
 		public int racingTime = 0;
         public int spaceCounter = 0;
 
-        public State(){
-            //TEST
-            enemiesArray = new string[]{"000", "000", "000", "000"}; 
+        public State(int columnLength, string newWave){
+            
+             enemiesArray = new string[columnLength];
+             for (int i = 0; i < columnLength; i++)
+            {
+                enemiesArray[i] = newWave;
+            }
         }
 	}
 
@@ -46,7 +50,8 @@ public class GameController : MonoBehaviour {
     public int rowLength = 3;
     public int columnLength = 4;
 
-	private string newEnemiesWave = "000"; //el nuevo spawn de los enemigos expresado en un string binario
+    private string emptyWave; //string rellenado con ceros
+	private string newEnemiesWave; //el nuevo spawn de los enemigos expresado en un string binario
 	public float enemySpeed = 1f;
 	private double timeToNextEnemyMove;
 
@@ -88,22 +93,26 @@ public class GameController : MonoBehaviour {
 		if (StartingFromInterupted ()) {
 			LoadState ();
 			display.PlayerMove (_state.playerPos);
+            emptyWave = Repeat("0", _state.enemiesArray[0].Length);
 			display.Enemies (_state.enemiesArray);
 			startingTime = CurrentTime();
             display.CurrentScore (Distance());
             scoreForNextLevel = levelScore[_state.level];
 		} else {
-            // prepare for new game
-            _state = new State();
+            //prepare for new game
+            emptyWave = Repeat("0", rowLength);
+            _state = new State(columnLength, emptyWave);
 			display.ShowSplashScreen ();
 			display.PlayerMove (_state.playerPos);
 			_state.name = "mainMenu";
 		}
+        newEnemiesWave = emptyWave;
 		if (bat.Get() != bat.maxBatteries) {
 			RemainingCharge ();
 		}					
 		display.MainMenu (bat.Get(),lives.Get());
 		SetState (_state.name);
+        print(emptyWave);
 	}
 
 	void Update(){		
@@ -183,6 +192,16 @@ public class GameController : MonoBehaviour {
 		return _state.name;
 	}
 
+    string Repeat(string str, int count){
+
+        string newString = "";
+        for (int i = 0; i < count; i++)
+        {
+            newString += str;
+        }
+        return newString;
+    }
+
 	void MainMenuState(){
 
         if (stateFirstRun)
@@ -190,7 +209,7 @@ public class GameController : MonoBehaviour {
             buttons.Show(buttons.startButton, true);
             buttons.Show(buttons.pauseButton, false);
             buttons.Show(buttons.playButton, false);
-            enemies.Reset(_state.enemiesArray);
+            enemies.Reset(_state.enemiesArray, emptyWave);
             display.Enemies(_state.enemiesArray);
             display.DisableAllColision();
             _state.racingTime = 0;
@@ -287,7 +306,7 @@ public class GameController : MonoBehaviour {
 				else
 					NewSpawn (0,1);
 			} else {
-				newEnemiesWave = "000";
+				newEnemiesWave = emptyWave;
 			}
 			_state.enemiesArray = enemies.MoveDown(newEnemiesWave, _state.enemiesArray);
 			display.Enemies(_state.enemiesArray);

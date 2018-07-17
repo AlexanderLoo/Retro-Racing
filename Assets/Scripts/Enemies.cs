@@ -48,12 +48,12 @@ public class Enemies : MonoBehaviour {
 //		return array;
 //	}
 
-	public void Reset(string[] array){
+	public void Reset(string[] array, string emptyWave){
 
 		int arrayLength = array.Length;
 
 		for (int i = 0; i < arrayLength; i++) {
-			array [i] = "000";
+			array [i] = emptyWave;
 		}
 	}
 
