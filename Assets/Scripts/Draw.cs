@@ -76,6 +76,8 @@ public class Draw : MonoBehaviour {
         ProportionalScale("Enemy");
         ProportionalScale("Colision");
 
+
+        print(GetNewSpriteScale(centerCar));
         //ProportionalPosition();
     }
 
@@ -89,7 +91,7 @@ public class Draw : MonoBehaviour {
 	public float GetScreenWidth(){
 
         Vector2 screenSize = Camera.main.ScreenToWorldPoint(GetScreenSizeInPixels());
-		return screenSize.x * 2;
+        return screenSize.x * 2; //<-- para obtener la longitud(unidades de Unity)
 	}
 	public float GetScreenHeight(){
 
@@ -133,6 +135,31 @@ public class Draw : MonoBehaviour {
                 sr.sprite = sideSprite;
             }
         }
+    }
+    //TEST
+    private Vector2 GetNewSpriteScale(Sprite sprite){
+        
+        float width = sprite.rect.width;
+        float height = sprite.rect.height;
+        float p;
+        Vector2 newScale;
+
+        if (width > height)
+        {
+            p = width / height;
+            newScale = new Vector2(GetScreenSizeInPixels().x * 0.1f, (GetScreenSizeInPixels().x * 0.1f) / p);
+        }
+        else if (height > width)
+        {
+            p = height / width;
+            newScale = new Vector2((GetScreenSizeInPixels().y * 0.1f)/p, GetScreenSizeInPixels().y * 0.1f);
+        }
+        else
+        {
+            newScale = new Vector2(GetScreenSizeInPixels().x, GetScreenSizeInPixels().x) * 0.1f;
+        }
+
+        return newScale;
     }
     //TEST
     public void ProportionalScale(string tag)
