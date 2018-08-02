@@ -77,7 +77,6 @@ public class Draw : MonoBehaviour {
         ProportionalScale("Colision");
 
 
-        print(GetNewSpriteScale(centerCar));
         //ProportionalPosition();
     }
 
@@ -159,8 +158,13 @@ public class Draw : MonoBehaviour {
             newScale = new Vector2(GetScreenSizeInPixels().x, GetScreenSizeInPixels().x) * 0.1f;
         }
 
+        //convertimos los pixeles en unidades de unity
+        float pu = sprite.pixelsPerUnit;
+        newScale.x = newScale.x / pu;
+        newScale.y = newScale.y / pu;
         return newScale;
     }
+
     //TEST
     public void ProportionalScale(string tag)
     {
