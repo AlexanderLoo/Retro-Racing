@@ -66,16 +66,11 @@ public class Draw : MonoBehaviour {
         Polygon2D(groundVertices, triangles, ground, 1);
         Polygon2D(roadVertices, triangles, road, 2);
 
-        FillSprites("Player", centerCar, sideCar);
-        FillSprites("Enemy", centerCar, sideCar);
-        FillSprites("Colision", centerColision, sideColision);
+        FillSprites("Player", centerCar, sideCar, 0.1f);
+        FillSprites("Enemy", centerCar, sideCar, 0.1f);
+        //FillSprites("Colision", centerColision, sideColision);
         FillImages("Battery", battery);
         //  FillImageArray (livesArray, live);
-
-        ProportionalScale("Player");
-        ProportionalScale("Enemy");
-        ProportionalScale("Colision");
-
 
         //ProportionalPosition();
     }
@@ -119,9 +114,10 @@ public class Draw : MonoBehaviour {
         }
     }
 
-    public void FillSprites(string tag, Sprite centerSprite, Sprite sideSprite){
+    public void FillSprites(string tag, Sprite centerSprite, Sprite sideSprite, float scaleP){
 
         GameObject[] array = FindGameObjectsByTag(tag);
+        Vector2 normalScale = GetNewSpriteScale(scaleP);
        
         foreach (GameObject go in array)
         {
@@ -130,73 +126,73 @@ public class Draw : MonoBehaviour {
             if (lastChar == '1')
             {
                 sr.sprite = centerSprite;
+                ProportionalScale(go, normalScale);
             }else{
                 sr.sprite = sideSprite;
+                ProportionalScale(go, normalScale);
             }
         }
     }
     //TEST
-    private Vector2 GetNewSpriteScale(Sprite sprite){
-        
-        float width = sprite.rect.width;
-        float height = sprite.rect.height;
-        float p;
-        Vector2 newScale;
+    private Vector2 GetNewSpriteScale(float p){
 
-        if (width > height)
-        {
-            p = width / height;
-            newScale = new Vector2(GetScreenSizeInPixels().x * 0.1f, (GetScreenSizeInPixels().x * 0.1f) / p);
-        }
-        else if (height > width)
-        {
-            p = height / width;
-            newScale = new Vector2((GetScreenSizeInPixels().y * 0.1f)/p, GetScreenSizeInPixels().y * 0.1f);
-        }
-        else
-        {
-            newScale = new Vector2(GetScreenSizeInPixels().x, GetScreenSizeInPixels().x) * 0.1f;
-        }
+        //La siguiente lògica no funciona ya que Unity ignora las proporciones de los sprites
+        //float width = sprite.rect.width;
+        //float height = sprite.rect.height;
+        //float p;
+        //Vector2 newScale;
+        //if (width > height)
+        //{
+        //    p = width / height;
+        //    newScale = new Vector2(GetScreenSizeInPixels().x * 0.1f, (GetScreenSizeInPixels().x * 0.1f) / p);
+        //}
+        //else if (height > width)
+        //{
+        //    p = height / width;
+        //    newScale = new Vector2((GetScreenSizeInPixels().y * 0.1f)/p, GetScreenSizeInPixels().y * 0.1f);
+        //}
+        //else
+        //{
+        //    newScale = new Vector2(GetScreenSizeInPixels().x, GetScreenSizeInPixels().x) * 0.1f;
+        //}
+        ////convertimos los pixeles en unidades de unity
+        //float pu = sprite.pixelsPerUnit;
+        //newScale.x = newScale.x / pu;
+        //newScale.y = newScale.y / pu;
+        //return newScale;
 
-        //convertimos los pixeles en unidades de unity
-        float pu = sprite.pixelsPerUnit;
-        newScale.x = newScale.x / pu;
-        newScale.y = newScale.y / pu;
+        Vector2 newScale = Vector2.one * GetScreenWidth() * p;
+
         return newScale;
     }
 
     //TEST
-    public void ProportionalScale(string tag)
+    public void ProportionalScale(GameObject go, Vector2 normalScale)
     {
-        Vector2 normalScale = new Vector2(GetScreenWidth() * 0.1f, GetScreenHeight() * 0.13f);
         Vector2 newScale;
 
-        GameObject[] array = FindGameObjectsByTag(tag);
-
-        foreach (GameObject go in array)
+        char rowIndex = go.name[1]; //Segundo caracter del nombre del objeto-->entero que indica la fila
+        switch (rowIndex)
         {
-            char rowIndex = go.name[1]; //Segundo caracter del nombre del objeto-->entero que indica la fila
-            switch (rowIndex)
-            {
-                case '3':
-                    newScale = normalScale;
-                    break;
-                case '2':
-                    newScale = normalScale * 0.75f;
-                    break;
-                case '1':
-                    newScale = normalScale * 0.5f;
-                    break;
-                case '0':
-                    newScale = normalScale * 0.25f;
-                    break;
-                default:
-                    newScale = normalScale;
-                    break;
-            }
-            go.transform.localScale = newScale;
+            case '3':
+                newScale = normalScale;
+                break;
+            case '2':
+                newScale = normalScale * 0.75f;
+                break;
+            case '1':
+                newScale = normalScale * 0.5f;
+                break;
+            case '0':
+                newScale = normalScale * 0.25f;
+                break;
+            default:
+                newScale = normalScale;
+                break;
         }
+        go.transform.localScale = newScale; 
     }
+
     //TEST
     public void ProportionalPosition()
     {
