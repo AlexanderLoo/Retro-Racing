@@ -119,6 +119,7 @@ public class GameController : MonoBehaviour {
 
 		//TEST
 		TestingGetcurrentScreen();
+		DeleteAllPrefs();
 		print (_state.name); //TEST
 
 		Charging();
@@ -602,8 +603,14 @@ public class GameController : MonoBehaviour {
     //}
     private void OnApplicationQuit()
     {
-        SavePrefs();
+        SavePrefs(); //TEST en caso de bug con playerPref, comentar esta linea
     }
+	//TEST
+	private void DeleteAllPrefs(){
+		if(Input.GetKeyDown(KeyCode.R)){
+			PlayerPrefs.DeleteAll();
+		}
+	}
 }
 
 
