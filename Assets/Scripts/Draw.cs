@@ -46,7 +46,8 @@ public class Draw : MonoBehaviour {
     //TEST
     void Awake()
     {
-        //TEMAS
+        //TEST 
+		//TEMAS
         skyVertices = new Vector2[] { new Vector2(0, 2), new Vector2(0, GetScreenHeight()), new Vector2(GetScreenWidth(), GetScreenHeight()), new Vector2(GetScreenWidth(), 2)};
         //ushort[] rectTriangles = new ushort[] { 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1}; // usando cuatro triangulos(requiere de otro vertice en el medio del rectangulo --> new Vector2(screenwith, screenHeigth)
         triangles = new ushort[] { 0, 1, 2, 0, 2, 3 }; //usando 2 triangulos rectangulos
