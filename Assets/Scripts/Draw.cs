@@ -56,9 +56,9 @@ public class Draw : MonoBehaviour {
         roadVertices = new Vector2[] { new Vector2(0, 2), new Vector2((0.4f * GetScreenWidth()), (0.7f * GetScreenHeight())), new Vector2((0.6f * GetScreenWidth()), (0.7f * GetScreenHeight())), new Vector2(GetScreenWidth(), 2)};
         //ushort[] trapTriangles = new ushort[]{0,1,2,1,2,3,2,3,4}; <-- opcion con 3 triangulos en el medio
 
-        sky = new Color(154, 202, 231, 255) / 255; //Ford Desert Sky Blue
-        ground = new Color(225, 169, 95, 255) / 255; //Yellow Earth Color
-        road = new Color(132, 115, 90, 255) / 255; //Cement Color
+        sky = new Color(71, 216, 216, 190) / 255;
+        ground = new Color(178, 214, 111, 190) / 255; 
+        road = new Color(186, 159, 122, 190) / 255; 
     }
 
     void Start()
@@ -285,14 +285,14 @@ public class Draw : MonoBehaviour {
         SpriteRenderer sr = polygon.AddComponent<SpriteRenderer>();
         sr.sortingLayerName = "Background";
         sr.sortingOrder = sortingOrder;
-        Texture2D texture = new Texture2D(1025, 1025);
+        Texture2D texture = new Texture2D(Screen.width, Screen.height);
 
         List<Color> cols = new List<Color>();
         for (int i = 0; i < (texture.width * texture.height); i++)
             cols.Add(color);
         texture.SetPixels(cols.ToArray());
         texture.Apply();
-        sr.sprite = Sprite.Create(texture, new Rect(0, 0, 1024, 1024), Vector3.zero, 1);
+        sr.sprite = Sprite.Create(texture, new Rect(0, 0, Screen.width, Screen.height), Vector3.zero, 1);
         //sr.color = color; <--- Al parecer no es necesario ya que duplica el tono del color
         sr.sprite.OverrideGeometry(vertices, triangles);
         Vector2 newPos = new Vector2(-GetScreenWidth(),-GetScreenHeight())/2;

@@ -119,7 +119,6 @@ public class GameController : MonoBehaviour {
 
 		//TEST
 		TestingGetcurrentScreen();
-		DeleteAllPrefs();
 		print (_state.name); //TEST
 
 		Charging();
@@ -423,7 +422,8 @@ public class GameController : MonoBehaviour {
 		for (int i = 0; i < arrayLength; i++) {
 			temporalArray [i] = setup;
 		}
-		int randomIndex = new System.Random ().Next (0, arrayLength);
+		//int randomIndex = new System.Random ().Next (0, arrayLength);
+		int randomIndex = RandomInt(0,arrayLength);
 		temporalArray [randomIndex] = chosenOne;
 		//única solución encontrada...
 		string newString = string.Join("", new List<int>(temporalArray).ConvertAll(i => i.ToString()).ToArray());
@@ -605,12 +605,6 @@ public class GameController : MonoBehaviour {
     {
         SavePrefs(); //TEST en caso de bug con playerPref, comentar esta linea
     }
-	//TEST
-	private void DeleteAllPrefs(){
-		if(Input.GetKeyDown(KeyCode.R)){
-			PlayerPrefs.DeleteAll();
-		}
-	}
 }
 
 
