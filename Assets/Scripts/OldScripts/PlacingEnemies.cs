@@ -45,7 +45,7 @@ public class PlacingEnemies : MonoBehaviour {
 		lastXPos -= actualXProportion;
 
 		float actualYProportion = proportionInY * 5;
-		float lastYPos = -ScreenController.screen.screenHeight / 3 - actualYProportion;
+		float lastYPos = -ScreenController.screen.screenHeight / 1.5f - actualYProportion;
 
 		for (int i = transformList.Length - 1; i > -1; i--) {
 			Vector3 newPos = new Vector3 (lastXPos + actualXProportion,lastYPos + actualYProportion, 0);
