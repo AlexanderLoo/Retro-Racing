@@ -48,12 +48,12 @@ public class Draw : MonoBehaviour {
     {
         //TEST 
 		//TEMAS
-        skyVertices = new Vector2[] { new Vector2(0, 2), new Vector2(0, GetScreenHeight()), new Vector2(GetScreenWidth(), GetScreenHeight()), new Vector2(GetScreenWidth(), 2)};
+        skyVertices = new Vector2[] { new Vector2(0, 0), new Vector2(0, GetScreenHeight()), new Vector2(GetScreenWidth(), GetScreenHeight()), new Vector2(GetScreenWidth(), 0)};
         //ushort[] rectTriangles = new ushort[] { 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1}; // usando cuatro triangulos(requiere de otro vertice en el medio del rectangulo --> new Vector2(screenwith, screenHeigth)
         triangles = new ushort[] { 0, 1, 2, 0, 2, 3 }; //usando 2 triangulos rectangulos
 
-        groundVertices = new Vector2[] { new Vector2(0, 2), new Vector2(0, GetScreenHeight() * 0.7f), new Vector2(GetScreenWidth(), GetScreenHeight() * 0.7f), new Vector2(GetScreenWidth(), 2)};
-        roadVertices = new Vector2[] { new Vector2(0, 2), new Vector2((0.4f * GetScreenWidth()), (0.7f * GetScreenHeight())), new Vector2((0.6f * GetScreenWidth()), (0.7f * GetScreenHeight())), new Vector2(GetScreenWidth(), 2)};
+        groundVertices = new Vector2[] { new Vector2(0, 0), new Vector2(0, GetScreenHeight() * 0.7f), new Vector2(GetScreenWidth(), GetScreenHeight() * 0.7f), new Vector2(GetScreenWidth(), 0)};
+        roadVertices = new Vector2[] { new Vector2(0, 0), new Vector2((0.4f * GetScreenWidth()), (0.7f * GetScreenHeight())), new Vector2((0.6f * GetScreenWidth()), (0.7f * GetScreenHeight())), new Vector2(GetScreenWidth(), 0)};
         //ushort[] trapTriangles = new ushort[]{0,1,2,1,2,3,2,3,4}; <-- opcion con 3 triangulos en el medio
 
         sky = new Color(71, 216, 216, 190) / 255;
