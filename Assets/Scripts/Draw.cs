@@ -75,23 +75,46 @@ public class Draw : MonoBehaviour {
 
         //ProportionalPosition();
     }
-
+	//Obtenemos el tamaño de la pantalla en pixeles	
     public Vector2 GetScreenSizeInPixels(){
 
         Vector2 screenSizeInPixels = new Vector2(Screen.width, Screen.height);
         return screenSizeInPixels;
     }
+	//Convertimos los pixeles en unidades de Unity(retornamos las COORDENADAS)
+	public Vector2 ConvertToUnityUnits(Vector2 v){
 
-	//Función para acceder al tamaño de la pantalla convertidas a unidades de Unity
+		return Camera.main.ScreenToWorldPoint(v);
+	}
+	//Obtenemos el largo de la pantalla en unidades de Unity
 	public float GetScreenWidth(){
 
-        Vector2 screenSize = Camera.main.ScreenToWorldPoint(GetScreenSizeInPixels());
+        Vector2 screenSize = ConvertToUnityUnits(GetScreenSizeInPixels());
         return screenSize.x * 2; //<-- para obtener la longitud(unidades de Unity)
 	}
+	//Obtenemos la altura de la pantalla en unidades de Unity
 	public float GetScreenHeight(){
 
-        Vector2 screenSize = Camera.main.ScreenToWorldPoint(GetScreenSizeInPixels());
+        Vector2 screenSize = ConvertToUnityUnits(GetScreenSizeInPixels());
         return screenSize.y * 2;
+	}
+	//Retornamos la nueva posicion en unidades de Unity, usando como parametro un array con los porcentajes de la ubicacion en la pantalla
+	public Vector2 NewPos(float[] pos){
+
+		Vector2 newPos = GetScreenSizeInPixels();
+		newPos.x *= pos[0];
+		newPos.y *= pos[1];
+		return ConvertToUnityUnits(newPos);
+	}
+	//Ubicamos el elemento del canvas con su respectiva coordenada
+	public void CanvasElementsPos(GameObject go, float[] pos){
+
+		go.transform.position = NewPos(pos);
+	}
+	//Override function
+	public void CanvasElementsPos(Text t, float[] pos){
+
+		t.transform.position = NewPos(pos);
 	}
 
     public void GameObjects(string name,string tag, int sortingOrder, int alpha, int columnLength , int rowLength){
