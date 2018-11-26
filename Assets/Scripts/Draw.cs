@@ -101,7 +101,7 @@ public class Draw : MonoBehaviour {
 	//Retornamos la nueva posicion en unidades de Unity, usando como parametro un array con los porcentajes de la ubicacion en la pantalla
 	public Vector2 NewPos(float[] pos){
 
-		Vector2 newPos = GetScreenSizeInPixels();
+		Vector2 newPos = GetScreenSizeInPixels(); //TEST posiblemente se acceda a una variable para no llamar la funcion a cada rato
 		newPos.x *= pos[0];
 		newPos.y *= pos[1];
 		return ConvertToUnityUnits(newPos);
@@ -330,5 +330,57 @@ public class Draw : MonoBehaviour {
 		return;
 	}
 
+	//TEST
+	//********************************************************************************************************
+	//variables referentes a los elementos del canvas
 
+	public GameObject startGameCountDown, startGameCountDownB;
+	public GameObject bat, batB, batMin, batMinB, batDots, batDotsB, batSec, batSecB;
+	public GameObject bat0, bat0B, bat1, bat1B, bat2, bat2B;
+	public GameObject score, scoreB;
+	public GameObject pause, pauseB, play, playB, start, startB;
+	public GameObject timeHour, timeHourB, timeDots, timeDotsB, timeMinute, timeMinuteB, timeAmOrPm, timeAmrOrPmB;
+
+	public float[] startGameCountDownPos;
+	public float[] batPos, batMinPos, batDotsPos, batSecPos;
+	public float[] bat0Pos, bat1Pos, bat2Pos;
+	public float[] scorePos;
+	public float[] pausePos, playPos, startPos;
+	public float[] timeHourPos, timeDotsPos, timeMinutePos, timeAmOrPmPos;
+
+	void Update(){
+
+		CanvasElementsPos(startGameCountDown, startGameCountDownPos);
+		CanvasElementsPos(startGameCountDownB, startGameCountDownPos);
+		CanvasElementsPos(bat, batPos);
+		CanvasElementsPos(batB, batPos);
+		CanvasElementsPos(batMin, batMinPos);
+		CanvasElementsPos(batMinB, batMinPos);
+		CanvasElementsPos(batDots, batDotsPos);
+		CanvasElementsPos(batDotsB, batDotsPos);
+		CanvasElementsPos(batSec, batSecPos);
+		CanvasElementsPos(batSecB, batSecPos);
+		CanvasElementsPos(bat0, bat0Pos);
+		CanvasElementsPos(bat0B, bat0Pos);
+		CanvasElementsPos(bat1, bat1Pos);
+		CanvasElementsPos(bat1B, bat1Pos);
+		CanvasElementsPos(bat2, bat2Pos);
+		CanvasElementsPos(bat2B, bat2Pos);
+		CanvasElementsPos(score, scorePos);
+		CanvasElementsPos(scoreB, scorePos);
+		CanvasElementsPos(pause, pausePos);
+		CanvasElementsPos(pauseB, pausePos);
+		CanvasElementsPos(play, playPos);
+		CanvasElementsPos(playB, playPos);
+		CanvasElementsPos(start, startPos);
+		CanvasElementsPos(startB, startPos);
+		CanvasElementsPos(timeHour, timeHourPos);
+		CanvasElementsPos(timeHourB, timeHourPos);
+		CanvasElementsPos(timeDots, timeDotsPos);
+		CanvasElementsPos(timeDotsB, timeDotsPos);
+		CanvasElementsPos(timeMinute, timeMinutePos);
+		CanvasElementsPos(timeMinuteB, timeMinutePos);
+		CanvasElementsPos(timeAmOrPm, timeAmOrPmPos);
+		CanvasElementsPos(timeAmrOrPmB, timeAmOrPmPos);
+	}
 }

@@ -113,10 +113,14 @@ public class Display : MonoBehaviour {
 
 		return;
 	}
-
+	//si es de cifra impar, concatenar con un espacio antes del numero (" "), si es menor que 10, concatenamos con un "0"
 	public void CurrentScore (int score){
-
-		draw.scoreText.text = score.ToString();
+		string scoreStr = score.ToString();
+		if(scoreStr.Length%2 != 0){
+			if(score < 10) scoreStr = "0" + scoreStr;
+			else scoreStr = " " + scoreStr;
+		}
+		draw.scoreText.text = scoreStr;
 	}
     public void DisableAllColision(){
 
