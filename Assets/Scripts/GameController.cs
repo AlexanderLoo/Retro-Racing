@@ -109,17 +109,17 @@ public class GameController : MonoBehaviour {
         newEnemiesWave = emptyWave;
 		if (bat.Get() != bat.maxBatteries) {
 			RemainingCharge ();
-		}					
+		}
+		display.UI();					
 		display.MainMenu (bat.Get(),lives.Get());
 		SetState (_state.name);
-        print(emptyWave);
 	}
 
 	void Update(){		
 
 		//TEST
 		TestingGetcurrentScreen();
-		print (_state.name); //TEST
+		//print (_state.name); //TEST
 
 		Charging();
         LocalTime();

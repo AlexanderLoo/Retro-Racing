@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class Draw : MonoBehaviour {
 
+	//TEST
+	public Display display;
     //TEST Quizas se muevan estas variables al gameController o a una nueva clase Theme
 	//Sprite personalizables del juego
     public Sprite centerCar;
@@ -21,6 +23,14 @@ public class Draw : MonoBehaviour {
 	public List<Image> livesArray;
 
 	//UI
+	//variables referentes a los elementos del canvas(para posicionar)
+	public GameObject startGameCountDown, startGameCountDownB;
+	public GameObject bat, batB, batMin, batMinB, batDots, batDotsB, batSec, batSecB;
+	public GameObject bat0, bat0B, bat1, bat1B, bat2, bat2B;
+	public GameObject score, scoreB;
+	public GameObject pause, pauseB, play, playB, start, startB;
+	public GameObject timeHour, timeHourB, timeDots, timeDotsB, timeMinute, timeMinuteB, timeAmOrPm, timeAmrOrPmB;
+	//referencias de elementos de UI para algunas logicas
     public GameObject batCountDown;
 	public Text countMinutes;
 	public Text countSeconds;
@@ -31,8 +41,9 @@ public class Draw : MonoBehaviour {
 	public Text hour;
 	public Text minute;
 	public Text amOrPm;
+
     //TEST
-    //Variables de temas
+    //Variables de temas(background)
     public Vector2[] skyVertices;
     public ushort[] triangles;
 
@@ -106,15 +117,10 @@ public class Draw : MonoBehaviour {
 		newPos.y *= pos[1];
 		return ConvertToUnityUnits(newPos);
 	}
-	//Ubicamos el elemento del canvas con su respectiva coordenada
-	public void CanvasElementsPos(GameObject go, float[] pos){
+	//Ubicamos el elemento del UI con su respectiva coordenada
+	public void UIElementPos(GameObject go, float[] pos){
 
 		go.transform.position = NewPos(pos);
-	}
-	//Override function
-	public void CanvasElementsPos(Text t, float[] pos){
-
-		t.transform.position = NewPos(pos);
 	}
 
     public void GameObjects(string name,string tag, int sortingOrder, int alpha, int columnLength , int rowLength){
@@ -328,59 +334,5 @@ public class Draw : MonoBehaviour {
 
 	public void Lives(){
 		return;
-	}
-
-	//TEST
-	//********************************************************************************************************
-	//variables referentes a los elementos del canvas
-
-	public GameObject startGameCountDown, startGameCountDownB;
-	public GameObject bat, batB, batMin, batMinB, batDots, batDotsB, batSec, batSecB;
-	public GameObject bat0, bat0B, bat1, bat1B, bat2, bat2B;
-	public GameObject score, scoreB;
-	public GameObject pause, pauseB, play, playB, start, startB;
-	public GameObject timeHour, timeHourB, timeDots, timeDotsB, timeMinute, timeMinuteB, timeAmOrPm, timeAmrOrPmB;
-
-	public float[] startGameCountDownPos;
-	public float[] batPos, batMinPos, batDotsPos, batSecPos;
-	public float[] bat0Pos, bat1Pos, bat2Pos;
-	public float[] scorePos;
-	public float[] pausePos, playPos, startPos;
-	public float[] timeHourPos, timeDotsPos, timeMinutePos, timeAmOrPmPos;
-
-	void Update(){
-
-		CanvasElementsPos(startGameCountDown, startGameCountDownPos);
-		CanvasElementsPos(startGameCountDownB, startGameCountDownPos);
-		CanvasElementsPos(bat, batPos);
-		CanvasElementsPos(batB, batPos);
-		CanvasElementsPos(batMin, batMinPos);
-		CanvasElementsPos(batMinB, batMinPos);
-		CanvasElementsPos(batDots, batDotsPos);
-		CanvasElementsPos(batDotsB, batDotsPos);
-		CanvasElementsPos(batSec, batSecPos);
-		CanvasElementsPos(batSecB, batSecPos);
-		CanvasElementsPos(bat0, bat0Pos);
-		CanvasElementsPos(bat0B, bat0Pos);
-		CanvasElementsPos(bat1, bat1Pos);
-		CanvasElementsPos(bat1B, bat1Pos);
-		CanvasElementsPos(bat2, bat2Pos);
-		CanvasElementsPos(bat2B, bat2Pos);
-		CanvasElementsPos(score, scorePos);
-		CanvasElementsPos(scoreB, scorePos);
-		CanvasElementsPos(pause, pausePos);
-		CanvasElementsPos(pauseB, pausePos);
-		CanvasElementsPos(play, playPos);
-		CanvasElementsPos(playB, playPos);
-		CanvasElementsPos(start, startPos);
-		CanvasElementsPos(startB, startPos);
-		CanvasElementsPos(timeHour, timeHourPos);
-		CanvasElementsPos(timeHourB, timeHourPos);
-		CanvasElementsPos(timeDots, timeDotsPos);
-		CanvasElementsPos(timeDotsB, timeDotsPos);
-		CanvasElementsPos(timeMinute, timeMinutePos);
-		CanvasElementsPos(timeMinuteB, timeMinutePos);
-		CanvasElementsPos(timeAmOrPm, timeAmOrPmPos);
-		CanvasElementsPos(timeAmrOrPmB, timeAmOrPmPos);
 	}
 }
