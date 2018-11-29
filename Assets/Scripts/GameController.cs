@@ -71,7 +71,7 @@ public class GameController : MonoBehaviour {
 
     private int score;
     private int scoreForNextLevel;
-    private int[] levelScore = new int[] { 200, 300, 500, 800, 1300, 2100, 3400, 5500, 8900, 14400 };
+    private int[] levelScore = new int[] { 200, 300, 500, 800, 1300, 2100, 3400, 5500, 8900, 14400, 999999999};
 	//TEST
 	public bool doubleSpawn;
 	public int space = 1; //<--Con level design establecemos el espacio de spawneo
@@ -298,6 +298,8 @@ public class GameController : MonoBehaviour {
 			display.PlayerMove(player.Movement(ref _state.playerPos, 1));
 			buttons.SetRight (false);
 		}
+		//TEST
+		//PlayerAi();
 
 		if (EnemiesMoveNow()) {
 			if (CanSpawn ()) {
@@ -481,6 +483,9 @@ public class GameController : MonoBehaviour {
             case 9:
                 ChangeLevel(0.4f,1,RandomBool());
                 break;
+			case 10:
+				ChangeLevel(0.1f,1,RandomBool());//<-- God Mode
+				break;
         }
     }
 
@@ -530,6 +535,19 @@ public class GameController : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.Space)) {
 			display.NewScreen ();
 			PlayerPrefs.DeleteAll ();
+		}
+	}
+	//TEST
+	//basic AI for fast testing
+	void PlayerAi(){
+
+		if(_state.enemiesArray[columnLength - 2][_state.playerPos] == '1'){
+			for(int i = 0; i < _state.enemiesArray[columnLength - 2].Length; i++){
+				if(_state.enemiesArray[columnLength - 2][i] == '0'){
+					display.PlayerMove(player.Movement(ref _state.playerPos, i -_state.playerPos));
+					break;
+				}
+			}
 		}
 	}
 
