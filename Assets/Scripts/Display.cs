@@ -83,7 +83,7 @@ public class Display : MonoBehaviour {
 
     public void Objects(int columnLength, int rowLength){
 
-        draw.GameObjects("b", "Enemy", 0, 20, columnLength, rowLength);
+        draw.GameObjects("b", "Enemy", 0, 20, columnLength, rowLength, true);
         draw.GameObjects("e", "Enemy", 1, 255, columnLength, rowLength);
     }
 
@@ -98,7 +98,7 @@ public class Display : MonoBehaviour {
 		draw.DisableAllSprites (draw.playerArray);	
 		draw.playerArray [index].enabled = true;
 	}
-
+	//mostramos a los enemigos con valor 1
 	public void Enemies(string[] enemiesArray){  //<--- paso como argumentos el arreglo de strings en forma binaria "000","101",....
 
 		int arrayLength = enemiesArray.Length;

@@ -122,8 +122,8 @@ public class Draw : MonoBehaviour {
 
 		go.transform.position = NewPos(pos);
 	}
-
-    public void GameObjects(string name,string tag, int sortingOrder, int alpha, int columnLength , int rowLength){
+	//Creacion de los objetos
+    public void GameObjects(string name,string tag, int sortingOrder, int alpha, int columnLength , int rowLength, bool srEnable = false){
 
         for (int i = 0; i < columnLength; i++)
         {
@@ -133,13 +133,13 @@ public class Draw : MonoBehaviour {
                 go.tag = tag;
                 go.AddComponent<SpriteRenderer>();
                 SpriteRenderer sr = go.GetComponent<SpriteRenderer>();
-                sr.enabled = false;
+                sr.enabled = srEnable;
                 sr.sortingLayerName = tag;
                 sr.sortingOrder = sortingOrder;
                 Color newColor = Color.white;
                 newColor.a = (float)alpha/255;
                 sr.color = newColor;
-                if (j == 0) sr.flipX = true;
+                if (j == 0) sr.flipX = true;//pendiente por si hay mas de 3 elementos por fila
             }
         }
     }
@@ -151,15 +151,14 @@ public class Draw : MonoBehaviour {
        
         foreach (GameObject go in array)
         {
-            char lastChar = go.name[go.name.Length - 1];
+            char lastChar = go.name[go.name.Length - 1];//pendiente por si el ultimo numero es mayor a 10
             SpriteRenderer sr = go.GetComponent<SpriteRenderer>();
-            if (lastChar == '1')
+			ProportionalScale(go, normalScale);
+            if (lastChar == '1')//TEST
             {
                 sr.sprite = centerSprite;
-                ProportionalScale(go, normalScale);
             }else{
                 sr.sprite = sideSprite;
-                ProportionalScale(go, normalScale);
             }
         }
     }
