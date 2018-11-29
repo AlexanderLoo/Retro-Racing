@@ -81,10 +81,10 @@ public class Display : MonoBehaviour {
 		return;
 	}
 
-    public void Objects(int columnLength, int rowLength){
+    public void Objects(int rowLength, int columnLength){
 
-        draw.GameObjects("b", "Enemy", 0, 20, columnLength, rowLength, true);
-        draw.GameObjects("e", "Enemy", 1, 255, columnLength, rowLength);
+        draw.GameObjects("b", "Enemy", 0, 20, rowLength, columnLength, true);
+        draw.GameObjects("e", "Enemy", 1, 255, rowLength, columnLength);
     }
 
 	public void StartCountDown(int count){

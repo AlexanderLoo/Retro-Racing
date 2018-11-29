@@ -81,7 +81,7 @@ public class GameController : MonoBehaviour {
     void Awake()
     {
         //TEST
-        display.Objects(columnLength, rowLength);
+        display.Objects(rowLength, columnLength);
     }
 
     void Start(){

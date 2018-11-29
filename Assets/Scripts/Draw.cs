@@ -78,13 +78,12 @@ public class Draw : MonoBehaviour {
         Polygon2D(groundVertices, triangles, ground, 1);
         Polygon2D(roadVertices, triangles, road, 2);
 
-        FillSprites("Player", centerCar, sideCar, 0.1f);
-        FillSprites("Enemy", centerCar, sideCar, 0.1f);
+        FillSprites("Player", centerCar, sideCar);
+        FillSprites("Enemy", centerCar, sideCar);
         //FillSprites("Colision", centerColision, sideColision);
         FillImages("Battery", battery);
         //  FillImageArray (livesArray, live);
 
-        //ProportionalPosition();
     }
 	//Obtenemos el tamaño de la pantalla en pixeles	
     public Vector2 GetScreenSizeInPixels(){
@@ -123,7 +122,9 @@ public class Draw : MonoBehaviour {
 		go.transform.position = NewPos(pos);
 	}
 	//Creacion de los objetos
-    public void GameObjects(string name,string tag, int sortingOrder, int alpha, int columnLength , int rowLength, bool srEnable = false){
+    public void GameObjects(string name,string tag, int sortingOrder, int alpha, int rowLength, int columnLength, bool srEnable = false){
+
+		Vector2 normalSize = GetNormalScale(rowLength, columnLength);
 
         for (int i = 0; i < columnLength; i++)
         {
@@ -140,20 +141,28 @@ public class Draw : MonoBehaviour {
                 newColor.a = (float)alpha/255;
                 sr.color = newColor;
                 if (j == 0) sr.flipX = true;//pendiente por si hay mas de 3 elementos por fila
+				go.transform.localScale = normalSize;
             }
         }
     }
+	//el parametro limitArea hace referencia a cuanto porcentaje de area de la pantalla queremos usar(como limite)
+	public Vector2 GetNormalScale(int rowLength, int columnLength, float limitArea = 0.8f){
 
-    public void FillSprites(string tag, Sprite centerSprite, Sprite sideSprite, float scaleP){
+		Vector2 screenLimits = new Vector2(GetScreenWidth(), GetScreenHeight()) * limitArea;
+		Vector2 normalSize = new Vector2(screenLimits.x/rowLength, screenLimits.y/columnLength);
+		return normalSize;
+	}
+
+    public void FillSprites(string tag, Sprite centerSprite, Sprite sideSprite, float scaleP = 0.1f){ //por eliminar
 
         GameObject[] array = FindGameObjectsByTag(tag);
-        Vector2 normalScale = GetNewSpriteScale(scaleP);
+        Vector2 normalScale = GetNewSpriteScale(scaleP);//TEST(por eliminar si se usa la funcion GetNormalSize())
        
         foreach (GameObject go in array)
         {
             char lastChar = go.name[go.name.Length - 1];//pendiente por si el ultimo numero es mayor a 10
             SpriteRenderer sr = go.GetComponent<SpriteRenderer>();
-			ProportionalScale(go, normalScale);
+			//ProportionalScale(go, normalScale);
             if (lastChar == '1')//TEST
             {
                 sr.sprite = centerSprite;
@@ -200,8 +209,8 @@ public class Draw : MonoBehaviour {
     {
         Vector2 newScale;
 
-        char rowIndex = go.name[1]; //Segundo caracter del nombre del objeto-->entero que indica la fila
-        switch (rowIndex)
+        char columnIndex = go.name[1]; //Segundo caracter del nombre del objeto
+        switch (columnIndex)
         {
             case '3':
                 newScale = normalScale;
@@ -220,25 +229,6 @@ public class Draw : MonoBehaviour {
                 break;
         }
         go.transform.localScale = newScale; 
-    }
-
-    //TEST
-    public void ProportionalPosition()
-    {
-        int rowLen = 4;
-        int columnLen = 3;
-
-        GameObject[][] array = new GameObject[rowLen][];
-
-        for (int i = 0; i < rowLen; i++)
-        {
-            array[i] = new GameObject[columnLen];
-            for (int j = 0; j < columnLen; j++)
-            {
-                GameObject go = GameObject.Find("e" + i.ToString() + "-" + j.ToString());
-                array[i][j] = go;
-            }
-        }
     }
 
 	//Funciones para buscar las listas en la escena según su tag

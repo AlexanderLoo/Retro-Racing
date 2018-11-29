@@ -21,7 +21,6 @@ public class ScreenController : MonoBehaviour {
 		Vector2 screenSize = Camera.main.ScreenToWorldPoint (screenSizeInPixels);
 		screenWidth = screenSize.x;
 		screenHeight = screenSize.y;
-		print("Screen: " + screenWidth + ", " + screenHeight);
 	}
     //TEST https://answers.unity.com/questions/1411572/how-do-i-draw-simple-shapes.html
 }
