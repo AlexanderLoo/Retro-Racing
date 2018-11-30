@@ -174,7 +174,8 @@ public class Draw : MonoBehaviour {
 		Vector2 screenSizeInPixel = GetScreenSizeInPixels();
 		Vector2 screenLimits = screenSizeInPixel * limitArea; 
 		float borderX = (screenSizeInPixel.x * (1 - limitArea))/2;
-		Vector2 cellPos = new Vector2(screenLimits.x/rowLength + borderX, screenLimits.y/columnLength); //<--tamaño de la celda en pixeles
+		float borderY = (screenSizeInPixel.y * (1 - limitArea))/2;
+		Vector2 cellPos = new Vector2(screenLimits.x/rowLength + borderX, screenLimits.y/columnLength + borderY); //<--tamaño de la celda en pixeles
 		return cellPos;
 		// Vector2 screenSizeInUnity = new Vector2(GetScreenWidth(), GetScreenHeight());
 		// Vector2 screenLimits = screenSizeInUnity * limitArea; 
