@@ -145,13 +145,25 @@ public class Draw : MonoBehaviour {
             }
         }
     }
-	//el parametro limitArea hace referencia a cuanto porcentaje de area de la pantalla queremos usar(como limite)
+	//screenLimits es una subpantalla que se obtiene reduciendo la pantalla original
+	//obtenemos el area de nuestro sprite dividiendo el area de nuestra subpantalla con el numero total de celdas
+	//distribuimos los lados sacando la raiz cuadrada al area(Unity maneja los sprites en cuadrados)
 	public Vector2 GetNormalScale(int rowLength, int columnLength, float limitArea = 0.8f){
 
 		Vector2 screenLimits = new Vector2(GetScreenWidth(), GetScreenHeight()) * limitArea;
-		Vector2 normalSize = new Vector2(screenLimits.x/rowLength, screenLimits.y/columnLength);
-		return normalSize;
+		float screenLimitsArea = screenLimits.x * screenLimits.y;
+		float normalScaleArea = screenLimitsArea/(rowLength * columnLength);
+		Vector2 normalScale = new Vector2(Mathf.Sqrt(normalScaleArea), Mathf.Sqrt(normalScaleArea));
+		return normalScale;
 	}
+
+	// //el parametro limitArea hace referencia a cuanto porcentaje de area de la pantalla queremos usar(como limite)
+	// public Vector2 GetNormalScale(int rowLength, int columnLength, float limitArea = 0.8f){
+
+	// 	Vector2 screenLimits = new Vector2(GetScreenWidth(), GetScreenHeight()) * limitArea;
+	// 	Vector2 normalSize = new Vector2(screenLimits.x/rowLength, screenLimits.y/columnLength);
+	// 	return normalSize;
+	// }
 
     public void FillSprites(string tag, Sprite centerSprite, Sprite sideSprite, float scaleP = 0.1f){ //por eliminar
 
