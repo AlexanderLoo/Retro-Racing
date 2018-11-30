@@ -91,6 +91,12 @@ public class Draw : MonoBehaviour {
         Vector2 screenSizeInPixels = new Vector2(Screen.width, Screen.height);
         return screenSizeInPixels;
     }
+
+	//como Unity convierte los pixeles en unidades Unity:
+	//tamaño en X en unidades Unity = 10 * screenWidth/screenHeight
+	//el tamaño del alto de la pantalla en unidades Unity siempre es igual a 10 sin importar su tamaño en pixeles
+	//el tamaño que varia en unidades Unity es el largo(width)
+
 	//Convertimos los pixeles en unidades de Unity(retornamos las COORDENADAS)
 	public Vector2 ConvertToUnityUnits(Vector2 v){
 
