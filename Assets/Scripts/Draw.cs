@@ -132,6 +132,11 @@ public class Draw : MonoBehaviour {
 
 		Vector2 normalSize = GetNormalScale(rowLength, columnLength);
 
+		Vector2 cellPos = GetCellPos(rowLength, columnLength); //<--posicion de la primera celda en pixeles
+		cellPos = ConvertToUnityUnits(cellPos); //<--convertimos en posicion de la escena
+		//ajustamos el pivote para que el sprite este justo en el centro de la celda
+		Vector2 newPos = new Vector2(cellPos.x - normalSize.x/2, cellPos.y - normalSize.y/2);
+
         for (int i = 0; i < columnLength; i++)
         {
             for (int j = 0; j < rowLength; j++)
@@ -148,6 +153,7 @@ public class Draw : MonoBehaviour {
                 sr.color = newColor;
                 if (j == 0) sr.flipX = true;//pendiente por si hay mas de 3 elementos por fila
 				go.transform.localScale = normalSize;
+				go.transform.position = newPos;
             }
         }
     }
@@ -161,6 +167,20 @@ public class Draw : MonoBehaviour {
 		float normalScaleArea = screenLimitsArea/(rowLength * columnLength);
 		Vector2 normalScale = new Vector2(Mathf.Sqrt(normalScaleArea), Mathf.Sqrt(normalScaleArea));
 		return normalScale;
+	}
+	//Obtenemos la posicion de la primera celda(izquierda) como longitud en pixeles, las coordenadas se ajustan en la funcion GameObjects()
+	public Vector2 GetCellPos(int rowLength, int columnLength, float limitArea = 0.8f){
+
+		Vector2 screenSizeInPixel = GetScreenSizeInPixels();
+		Vector2 screenLimits = screenSizeInPixel * limitArea; 
+		float borderX = (screenSizeInPixel.x * (1 - limitArea))/2;
+		Vector2 cellPos = new Vector2(screenLimits.x/rowLength + borderX, screenLimits.y/columnLength); //<--tamaño de la celda en pixeles
+		return cellPos;
+		// Vector2 screenSizeInUnity = new Vector2(GetScreenWidth(), GetScreenHeight());
+		// Vector2 screenLimits = screenSizeInUnity * limitArea; 
+		// float borderX = (screenSizeInUnity.x * (1 - limitArea))/2;
+		// Vector2 cellPos = new Vector2(screenLimits.x/rowLength + borderX, screenLimits.y/columnLength); //<--tamaño de la celda
+		// return cellPos;
 	}
 
 	// //el parametro limitArea hace referencia a cuanto porcentaje de area de la pantalla queremos usar(como limite)
