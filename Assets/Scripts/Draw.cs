@@ -60,7 +60,7 @@ public class Draw : MonoBehaviour {
         //TEST 
 		//TEMAS
         skyVertices = new Vector2[] { new Vector2(0, 0), new Vector2(0, GetScreenHeight()), new Vector2(GetScreenWidth(), GetScreenHeight()), new Vector2(GetScreenWidth(), 0)};
-        //ushort[] rectTriangles = new ushort[] { 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1}; // usando cuatro triangulos(requiere de otro vertice en el medio del rectangulo --> new Vector2(screenwith, screenHeigth)
+        //ushort[] rectTriangles = new ushort[] { 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1}; // usando cuatro triangulos(requiere de otro vertice en el medio del rectangulo --> new Vector2(screenwith, screenHeight)
         triangles = new ushort[] { 0, 1, 2, 0, 2, 3 }; //usando 2 triangulos rectangulos
 
         groundVertices = new Vector2[] { new Vector2(0, 0), new Vector2(0, GetScreenHeight() * 0.7f), new Vector2(GetScreenWidth(), GetScreenHeight() * 0.7f), new Vector2(GetScreenWidth(), 0)};
@@ -131,11 +131,8 @@ public class Draw : MonoBehaviour {
     public void GameObjects(string name,string tag, int sortingOrder, int alpha, int rowLength, int columnLength, bool srEnable = false){
 
 		Vector2 normalSize = GetNormalScale(rowLength, columnLength);
-
-		Vector2 cellPos = GetCellPos(rowLength, columnLength); //<--posicion de la primera celda en pixeles
-		cellPos = ConvertToUnityUnits(cellPos); //<--convertimos en posicion de la escena
-		//ajustamos el pivote para que el sprite este justo en el centro de la celda
-		Vector2 newPos = new Vector2(cellPos.x - normalSize.x/2, cellPos.y - normalSize.y/2);
+		Vector2 cellPos = GetCellPos(rowLength, columnLength);
+		Vector2 newPos = cellPos;
 
         for (int i = 0; i < columnLength; i++)
         {
@@ -154,6 +151,7 @@ public class Draw : MonoBehaviour {
                 if (j == 0) sr.flipX = true;//pendiente por si hay mas de 3 elementos por fila
 				go.transform.localScale = normalSize;
 				go.transform.position = newPos;
+				newPos.x += Mathf.Abs(cellPos.x);
             }
         }
     }
@@ -163,25 +161,30 @@ public class Draw : MonoBehaviour {
 	public Vector2 GetNormalScale(int rowLength, int columnLength, float limitArea = 0.8f){
 
 		Vector2 screenLimits = new Vector2(GetScreenWidth(), GetScreenHeight()) * limitArea;
-		float screenLimitsArea = screenLimits.x * screenLimits.y;
-		float normalScaleArea = screenLimitsArea/(rowLength * columnLength);
-		Vector2 normalScale = new Vector2(Mathf.Sqrt(normalScaleArea), Mathf.Sqrt(normalScaleArea));
+		Vector2 normalScale = GetCellSize(rowLength, columnLength, screenLimits.x, screenLimits.y);
 		return normalScale;
 	}
-	//Obtenemos la posicion de la primera celda(izquierda) como longitud en pixeles, las coordenadas se ajustan en la funcion GameObjects()
+	//Obtenemos la posicion de la primera celda(esquina izquierda inferior)
 	public Vector2 GetCellPos(int rowLength, int columnLength, float limitArea = 0.8f){
 
 		Vector2 screenSizeInPixel = GetScreenSizeInPixels();
 		Vector2 screenLimits = screenSizeInPixel * limitArea; 
 		float borderX = (screenSizeInPixel.x * (1 - limitArea))/2;
 		float borderY = (screenSizeInPixel.y * (1 - limitArea))/2;
-		Vector2 cellPos = new Vector2(screenLimits.x/rowLength + borderX, screenLimits.y/columnLength + borderY); //<--tamaño de la celda en pixeles
-		return cellPos;
-		// Vector2 screenSizeInUnity = new Vector2(GetScreenWidth(), GetScreenHeight());
-		// Vector2 screenLimits = screenSizeInUnity * limitArea; 
-		// float borderX = (screenSizeInUnity.x * (1 - limitArea))/2;
-		// Vector2 cellPos = new Vector2(screenLimits.x/rowLength + borderX, screenLimits.y/columnLength); //<--tamaño de la celda
-		// return cellPos;
+		//TEST
+		Vector2 cellPos = new Vector2(screenLimits.x/rowLength + borderX, screenLimits.y/columnLength + borderY)/2; 
+		//Vector2 cellSizeInPixels = GetCellSize(rowLength, columnLength, screenLimits.x, screenLimits.y);
+		//ajustamos el pivote al centro de la celda
+		//Vector2 cellPos = new Vector2(cellSizeInPixels.x + borderX, cellSizeInPixels.y + borderY)/2;
+		return ConvertToUnityUnits(cellPos);
+	}
+	//Obtenemos el tamaño de la celda como un cuadrado
+	public Vector2 GetCellSize(int rowLength, int columnLength, float width, float height){
+
+		float limitsArea = width * height;
+		float cellArea = limitsArea/(rowLength * columnLength);
+		Vector2 cellSize = new Vector2(Mathf.Sqrt(cellArea), Mathf.Sqrt(cellArea));
+		return cellSize;
 	}
 
 	// //el parametro limitArea hace referencia a cuanto porcentaje de area de la pantalla queremos usar(como limite)
