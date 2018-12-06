@@ -142,7 +142,7 @@ public class Draw : MonoBehaviour {
 		cellPos = ConvertToUnityUnits(cellPos);
 		Vector2 newPos = cellPos;
 		
-        for (int i = 0; i < columnLength; i++)
+        for (int i = columnLength -1; i > -1; i--)
         {
 			newPos.x = cellPos.x;
             for (int j = 0; j < rowLength; j++)
