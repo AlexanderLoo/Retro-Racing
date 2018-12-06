@@ -127,15 +127,24 @@ public class Draw : MonoBehaviour {
 
 		go.transform.position = NewPos(pos);
 	}
-	//Creacion de los objetos
+	//Creacion de los objetos y distribucion
     public void GameObjects(string name,string tag, int sortingOrder, int alpha, int rowLength, int columnLength, bool srEnable = false){
 
-		Vector2 normalSize = GetNormalScale(rowLength, columnLength);
-		Vector2 cellPos = GetCellPos(rowLength, columnLength);
+		float limitArea = 0.8f;
+		Vector2 normalSize = GetNormalScale(rowLength, columnLength, limitArea);
+		Vector2 screenSizeInPixel = GetScreenSizeInPixels();
+		Vector2 cellPosInPixel = GetCellPos(screenSizeInPixel, rowLength, columnLength, limitArea);
+		Vector2 cellSize = new Vector2(GetScreenWidth()/2 - Mathf.Abs(ConvertToUnityUnits(cellPosInPixel).x),
+		GetScreenHeight()/2 - Mathf.Abs(ConvertToUnityUnits(cellPosInPixel).y));
+		Vector2 border = new Vector2(screenSizeInPixel.x * (1 - limitArea)/2, screenSizeInPixel.y * (1 - limitArea)/2);
+		cellPosInPixel /= 2; //Ajustamos el pivote en el centro
+		Vector2 cellPos = new Vector2(cellPosInPixel.x + border.x, cellPosInPixel.y + border.y);
+		cellPos = ConvertToUnityUnits(cellPos);
 		Vector2 newPos = cellPos;
-
+		
         for (int i = 0; i < columnLength; i++)
         {
+			newPos.x = cellPos.x;
             for (int j = 0; j < rowLength; j++)
             {
                 GameObject go = new GameObject(name + i.ToString() + '-' + j.ToString());
@@ -151,40 +160,35 @@ public class Draw : MonoBehaviour {
                 if (j == 0) sr.flipX = true;//pendiente por si hay mas de 3 elementos por fila
 				go.transform.localScale = normalSize;
 				go.transform.position = newPos;
-				newPos.x += Mathf.Abs(cellPos.x);
+				newPos.x += cellSize.x;
             }
+			newPos.y += cellSize.y;
         }
     }
 	//screenLimits es una subpantalla que se obtiene reduciendo la pantalla original
 	//obtenemos el area de nuestro sprite dividiendo el area de nuestra subpantalla con el numero total de celdas
 	//distribuimos los lados sacando la raiz cuadrada al area(Unity maneja los sprites en cuadrados)
-	public Vector2 GetNormalScale(int rowLength, int columnLength, float limitArea = 0.8f){
+	public Vector2 GetNormalScale(int rowLength, int columnLength, float limitArea){
 
 		Vector2 screenLimits = new Vector2(GetScreenWidth(), GetScreenHeight()) * limitArea;
-		Vector2 normalScale = GetCellSize(rowLength, columnLength, screenLimits.x, screenLimits.y);
+		Vector2 normalScale = GetSpriteSize(rowLength, columnLength, screenLimits.x, screenLimits.y);
 		return normalScale;
 	}
-	//Obtenemos la posicion de la primera celda(esquina izquierda inferior)
-	public Vector2 GetCellPos(int rowLength, int columnLength, float limitArea = 0.8f){
+	//Obtenemos la posicion de la primera celda(esquina izquierda inferior) en pixeles
+	//El pivote se encuentra en la esquina superior derecha
+	public Vector2 GetCellPos(Vector2 screenSizeInPixel, int rowLength, int columnLength, float limitArea){
 
-		Vector2 screenSizeInPixel = GetScreenSizeInPixels();
 		Vector2 screenLimits = screenSizeInPixel * limitArea; 
-		float borderX = (screenSizeInPixel.x * (1 - limitArea))/2;
-		float borderY = (screenSizeInPixel.y * (1 - limitArea))/2;
-		//TEST
-		Vector2 cellPos = new Vector2(screenLimits.x/rowLength + borderX, screenLimits.y/columnLength + borderY)/2; 
-		//Vector2 cellSizeInPixels = GetCellSize(rowLength, columnLength, screenLimits.x, screenLimits.y);
-		//ajustamos el pivote al centro de la celda
-		//Vector2 cellPos = new Vector2(cellSizeInPixels.x + borderX, cellSizeInPixels.y + borderY)/2;
-		return ConvertToUnityUnits(cellPos);
+		Vector2 cellPos = new Vector2(screenLimits.x/rowLength, screenLimits.y/columnLength); 
+		return cellPos;
 	}
-	//Obtenemos el tamaño de la celda como un cuadrado
-	public Vector2 GetCellSize(int rowLength, int columnLength, float width, float height){
+	//Obtenemos el tamaño del sprite ideal como un cuadrado
+	public Vector2 GetSpriteSize(int rowLength, int columnLength, float width, float height){
 
 		float limitsArea = width * height;
-		float cellArea = limitsArea/(rowLength * columnLength);
-		Vector2 cellSize = new Vector2(Mathf.Sqrt(cellArea), Mathf.Sqrt(cellArea));
-		return cellSize;
+		float spriteArea = limitsArea/(rowLength * columnLength);
+		Vector2 spriteSize = new Vector2(Mathf.Sqrt(spriteArea), Mathf.Sqrt(spriteArea));
+		return spriteSize;
 	}
 
 	// //el parametro limitArea hace referencia a cuanto porcentaje de area de la pantalla queremos usar(como limite)
