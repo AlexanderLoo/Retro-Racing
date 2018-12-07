@@ -299,7 +299,7 @@ public class GameController : MonoBehaviour {
 			buttons.SetRight (false);
 		}
 		//TEST
-		PlayerAi();
+		//PlayerAi();
 
 		if (EnemiesMoveNow()) {
 			if (CanSpawn ()) {

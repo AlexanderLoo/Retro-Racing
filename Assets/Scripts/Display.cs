@@ -85,6 +85,7 @@ public class Display : MonoBehaviour {
 
         draw.GameObjects("b", "Enemy", 0, 20, rowLength, columnLength, true);
         draw.GameObjects("e", "Enemy", 1, 255, rowLength, columnLength);
+		draw.GameObjects("p", "Player", 0, 255, rowLength, columnLength, isPlayer:true);
     }
 
 	public void StartCountDown(int count){
@@ -102,10 +103,10 @@ public class Display : MonoBehaviour {
 	public void Enemies(string[] enemiesArray){  //<--- paso como argumentos el arreglo de strings en forma binaria "000","101",....
 
 		int arrayLength = enemiesArray.Length;
-		int rowlength = enemiesArray[0].Length;
+		int rowLength = enemiesArray[0].Length;
 
 		for (int i = 0; i < arrayLength; i++) {
-			for (int j= 0; j < rowlength; j++) {
+			for (int j= 0; j < rowLength; j++) {
 				string name = "e" + i.ToString () + "-" + j.ToString ();
 				draw.Enemy (name, ConvertCharToBool(enemiesArray[i][j]));
 			}

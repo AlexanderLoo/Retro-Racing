@@ -17,7 +17,7 @@ public class Draw : MonoBehaviour {
 	public Sprite live;
 
 	//Listas de Imagenes
-	public List<SpriteRenderer> playerArray; //Buscamos las referencias en el editor para no perder el orden
+	public List<SpriteRenderer> playerArray;
     public List<SpriteRenderer> colisionArray;
 	public List<Image> batteryArray; //Buscamos las referencias en el editor para no perder el orden
 	public List<Image> livesArray;
@@ -128,7 +128,7 @@ public class Draw : MonoBehaviour {
 		go.transform.position = NewPos(pos);
 	}
 	//Creacion de los objetos y distribucion
-    public void GameObjects(string name,string tag, int sortingOrder, int alpha, int rowLength, int columnLength, bool srEnable = false){
+    public void GameObjects(string name,string tag, int sortingOrder, int alpha, int rowLength, int columnLength, bool srEnable = false, bool isPlayer = false){
 
 		float limitArea = 0.8f;
 		Vector2 normalSize = GetNormalScale(rowLength, columnLength, limitArea);
@@ -161,7 +161,11 @@ public class Draw : MonoBehaviour {
 				go.transform.localScale = normalSize;
 				go.transform.position = newPos;
 				newPos.x += cellSize.x;
+				if(isPlayer){
+					playerArray.Add(sr); //Si estamos creando el player, lo agregamos a la lista playerArray
+				}
             }
+			if(isPlayer)return; //Con esto evitamos que se creen mas players en otras filas
 			newPos.y += cellSize.y;
         }
     }
