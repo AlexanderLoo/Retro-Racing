@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
     
-	private int maxIndex = 2;
-
+	
 	public bool CanLeft(int currentIndex){
 
 		if (currentIndex > 0) {
@@ -15,7 +14,7 @@ public class Player : MonoBehaviour {
 		}
 	}
 
-	public bool CanRight(int currentIndex){
+	public bool CanRight(int currentIndex, int maxIndex){
 
 		if (currentIndex < maxIndex) {
 			return true;

@@ -294,7 +294,7 @@ public class GameController : MonoBehaviour {
 			display.PlayerMove(player.Movement(ref _state.playerPos, -1));
 			buttons.SetLeft (false);
 		}
-		if (buttons.Right() && player.CanRight(_state.playerPos)) {
+		if (buttons.Right() && player.CanRight(_state.playerPos,rowLength - 1)) {
 			display.PlayerMove(player.Movement(ref _state.playerPos, 1));
 			buttons.SetRight (false);
 		}
