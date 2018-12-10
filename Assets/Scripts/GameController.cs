@@ -41,6 +41,8 @@ public class GameController : MonoBehaviour {
         }
 	}
 
+	public bool racingGame = true;
+
     private bool stateFirstRun = true;
 
 	public float lowestSpeed = 16.6f; //16.6 m/s
@@ -81,7 +83,7 @@ public class GameController : MonoBehaviour {
     void Awake()
     {
         //TEST
-        display.Objects(rowLength, columnLength);
+        display.Objects(racingGame, rowLength, columnLength);	
     }
 
     void Start(){

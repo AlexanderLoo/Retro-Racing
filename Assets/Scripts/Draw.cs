@@ -128,7 +128,7 @@ public class Draw : MonoBehaviour {
 		go.transform.position = NewPos(pos);
 	}
 	//Creacion de los objetos y distribucion
-    public void GameObjects(string name,string tag, int sortingOrder, int alpha, int rowLength, int columnLength,float borderX, float borderY, bool srEnable = false, bool isPlayer = false){
+    public void GameObjects(bool racingGame, string name,string tag, int sortingOrder, int alpha, int rowLength, int columnLength,float borderX, float borderY, bool srEnable = false, bool isPlayer = false){
 
 		float limitArea = 0.8f;
 		Vector2 normalSize = GetNormalScale(rowLength, columnLength, limitArea);
@@ -166,6 +166,12 @@ public class Draw : MonoBehaviour {
 				}
             }
 			if(isPlayer)return; //Con esto evitamos que se creen mas players en otras filas
+			if(racingGame){ //TEST
+				normalSize *= 0.7f;
+				cellPos.x *= 0.7f;
+				cellSize.x *= 0.7f;
+				cellSize.y *= 0.9f;
+			}
 			newPos.y += cellSize.y;
         }
     }
