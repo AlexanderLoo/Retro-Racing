@@ -83,9 +83,9 @@ public class Display : MonoBehaviour {
 
     public void Objects(int rowLength, int columnLength){
 
-        draw.GameObjects("b", "Enemy", 0, 20, rowLength, columnLength, true);
-        draw.GameObjects("e", "Enemy", 1, 255, rowLength, columnLength);
-		draw.GameObjects("p", "Player", 0, 255, rowLength, columnLength, isPlayer:true);
+        draw.GameObjects("b", "Enemy", 0, 20, rowLength, columnLength, 0.1f, 0.1f, true);
+        draw.GameObjects("e", "Enemy", 1, 255, rowLength, columnLength, 0.1f, 0.1f);
+		draw.GameObjects("p", "Player", 0, 255, rowLength, columnLength, 0.1f, 0.1f, isPlayer:true);
     }
 
 	public void StartCountDown(int count){

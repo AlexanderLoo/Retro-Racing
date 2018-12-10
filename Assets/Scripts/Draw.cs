@@ -128,7 +128,7 @@ public class Draw : MonoBehaviour {
 		go.transform.position = NewPos(pos);
 	}
 	//Creacion de los objetos y distribucion
-    public void GameObjects(string name,string tag, int sortingOrder, int alpha, int rowLength, int columnLength, bool srEnable = false, bool isPlayer = false){
+    public void GameObjects(string name,string tag, int sortingOrder, int alpha, int rowLength, int columnLength,float borderX, float borderY, bool srEnable = false, bool isPlayer = false){
 
 		float limitArea = 0.8f;
 		Vector2 normalSize = GetNormalScale(rowLength, columnLength, limitArea);
@@ -136,7 +136,7 @@ public class Draw : MonoBehaviour {
 		Vector2 cellPosInPixel = GetCellPos(screenSizeInPixel, rowLength, columnLength, limitArea);
 		Vector2 cellSize = new Vector2(GetScreenWidth()/2 - Mathf.Abs(ConvertToUnityUnits(cellPosInPixel).x),
 		GetScreenHeight()/2 - Mathf.Abs(ConvertToUnityUnits(cellPosInPixel).y));
-		Vector2 border = new Vector2(screenSizeInPixel.x * (1 - limitArea)/2, screenSizeInPixel.y * (1 - limitArea)/2);
+		Vector2 border = new Vector2(screenSizeInPixel.x * borderX, screenSizeInPixel.y * borderY);
 		cellPosInPixel /= 2; //Ajustamos el pivote en el centro
 		Vector2 cellPos = new Vector2(cellPosInPixel.x + border.x, cellPosInPixel.y + border.y);
 		cellPos = ConvertToUnityUnits(cellPos);
