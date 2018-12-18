@@ -301,7 +301,7 @@ public class GameController : MonoBehaviour {
 			buttons.SetRight (false);
 		}
 		//TEST
-		//PlayerAi();
+		PlayerAi();
 
 		if (EnemiesMoveNow()) {
 			if (CanSpawn ()) {
@@ -623,7 +623,7 @@ public class GameController : MonoBehaviour {
     //}
     private void OnApplicationQuit()
     {
-        SavePrefs(); //TEST en caso de bug con playerPref, comentar esta linea
+        //SavePrefs(); //TEST en caso de bug con playerPref, comentar esta linea
     }
 }
 

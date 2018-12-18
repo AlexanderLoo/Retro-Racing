@@ -141,6 +141,8 @@ public class Draw : MonoBehaviour {
 		Vector2 cellPos = new Vector2(cellPosInPixel.x + border.x, cellPosInPixel.y + border.y);
 		cellPos = ConvertToUnityUnits(cellPos);
 		Vector2 newPos = cellPos;
+
+		float r = ReductionPercentage(rowLength, columnLength, normalSize.x);
 		
         for (int i = columnLength -1; i > -1; i--)
         {
@@ -167,9 +169,9 @@ public class Draw : MonoBehaviour {
             }
 			if(isPlayer)return; //Con esto evitamos que se creen mas players en otras filas
 			if(racingGame){ //TEST
-				normalSize *= 0.7f;
-				cellPos.x *= 0.7f;
-				cellSize.x *= 0.7f;
+				normalSize *= r;
+				cellPos.x *= r;
+				cellSize.x *= r;
 				cellSize.y *= 0.9f;
 			}
 			newPos.y += cellSize.y;
@@ -209,6 +211,16 @@ public class Draw : MonoBehaviour {
 	// 	return normalSize;
 	// }
 
+	//Usamos la fórmula de serie geométrica para hallar la razón multiplicativa(r), solo para la versión Racing
+	public float ReductionPercentage(int rowLength, int columnLength, float initialSize, float p = 0.2f){
+
+		float screenLimit = GetScreenWidth() * p;
+		float finalSize = screenLimit/rowLength; //<-- el objeto mas lejano y pequeño
+		float r = Mathf.Pow((finalSize/initialSize), (float)1/(columnLength - 1));
+		print(r); //Test
+		return r;
+	}
+	
     public void FillSprites(string tag, Sprite centerSprite, Sprite sideSprite, float scaleP = 0.1f){ //por eliminar
 
         GameObject[] array = FindGameObjectsByTag(tag);
