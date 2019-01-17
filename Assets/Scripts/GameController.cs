@@ -63,6 +63,7 @@ public class GameController : MonoBehaviour {
 	private int timeToReachForBat;
 	private bool charging = false;
 
+    public int initAnimWait = 3; //Duracion de la animacion inicial
     public int timeToStartGame;
 	public int gameOverWait = 5;
 	private int timeToMainMenu;
@@ -106,15 +107,17 @@ public class GameController : MonoBehaviour {
             _state = new State(columnLength, emptyWave);
 			display.ShowSplashScreen ();
 			display.PlayerMove (_state.playerPos);
-			_state.name = "mainMenu";
+			_state.name = "init";
 		}
         newEnemiesWave = emptyWave;
 		if (bat.Get() != bat.maxBatteries) {
 			RemainingCharge ();
 		}
-		display.UI();					
-		display.MainMenu (bat.Get(),lives.Get());
+		display.UI();
+        //display.MainMenu (bat.Get(),lives.Get());
+        timeToMainMenu = CurrentTime() + initAnimWait;
 		SetState (_state.name);
+        if (_state.name != "init") display.Battery(bat.Get());
 	}
 
 	void Update(){		
@@ -123,20 +126,30 @@ public class GameController : MonoBehaviour {
 		TestingGetcurrentScreen();
 		//print (_state.name); //TEST
 
-		Charging();
-        LocalTime();
-		display.RealTime (hour, minute, amPm);
         buttons.Back();
 
-		//TEST	
-		if (timeForNextBat > 0) {
-			display.BatCountDown (true, timeForNextBat);
-		} else {
-			display.BatCountDown (false);
-		}
+		Charging();
+        LocalTime();
+
+        if(_state.name != "init"){
+
+            display.RealTime(hour, minute, amPm);
+            //TEST  
+            if (timeForNextBat > 0)
+            {
+                display.BatCountDown(true, timeForNextBat);
+            }
+            else
+            {
+                display.BatCountDown(false);
+            }
+        }
 
 		switch (_state.name) {
 			
+        case "init":
+            InitState();
+            break;
 		case "mainMenu":
 			MainMenuState ();
 			break;
@@ -202,6 +215,15 @@ public class GameController : MonoBehaviour {
             newString += str;
         }
         return newString;
+    }
+    //Estado inicial si no se ha interrunpido el juego(animacion que muestra todos los objetos)
+    void InitState(){
+
+        if (CurrentTime() > timeToMainMenu)
+        {
+            display.Battery(bat.Get());
+            SetState("mainMenu");
+        }
     }
 
 	void MainMenuState(){
@@ -301,7 +323,7 @@ public class GameController : MonoBehaviour {
 			buttons.SetRight (false);
 		}
 		//TEST
-		PlayerAi();
+		//PlayerAi();
 
 		if (EnemiesMoveNow()) {
 			if (CanSpawn ()) {
@@ -521,7 +543,7 @@ public class GameController : MonoBehaviour {
 			if (charging) {
 				bat.Add (1);
 				pref.SetInt ("CurrentBatteries", bat.batteries);
-				display.Battery (bat.Get());
+				if(_state.name != "init")display.Battery (bat.Get());
 				if (bat.Get () != bat.maxBatteries) {
 					timeToReachForBat = CurrentTime() + waitingTime;
 				} else {
@@ -623,7 +645,7 @@ public class GameController : MonoBehaviour {
     //}
     private void OnApplicationQuit()
     {
-        //SavePrefs(); //TEST en caso de bug con playerPref, comentar esta linea
+        SavePrefs(); //TEST en caso de bug con playerPref, comentar esta linea
     }
 }
 
