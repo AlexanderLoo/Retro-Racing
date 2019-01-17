@@ -107,6 +107,7 @@ public class GameController : MonoBehaviour {
             _state = new State(columnLength, emptyWave);
 			display.ShowSplashScreen ();
 			display.PlayerMove (_state.playerPos);
+            display.Eights(true);
 			_state.name = "init";
 		}
         newEnemiesWave = emptyWave;
@@ -120,8 +121,8 @@ public class GameController : MonoBehaviour {
         if (_state.name != "init") display.Battery(bat.Get());
 	}
 
-	void Update(){		
-
+	void Update(){
+        
 		//TEST
 		TestingGetcurrentScreen();
 		//print (_state.name); //TEST
@@ -175,6 +176,7 @@ public class GameController : MonoBehaviour {
 			Debug.Log ("No se encuentra en ningún estado");	//TEST
 			break;
 		}
+        print(_state.name);
 	}
 
 	private bool StartingFromInterupted(){
@@ -222,6 +224,7 @@ public class GameController : MonoBehaviour {
         if (CurrentTime() > timeToMainMenu)
         {
             display.Battery(bat.Get());
+            display.Eights(false);
             SetState("mainMenu");
         }
     }
@@ -297,6 +300,8 @@ public class GameController : MonoBehaviour {
         if (stateFirstRun)
         {
             interupted = true;
+            buttons.Show(buttons.playButton, false);
+            buttons.Show(buttons.startButton, false);
             buttons.Show(buttons.pauseButton, true);
             display.PlayerMove(_state.playerPos);
             stateFirstRun = false;
@@ -349,6 +354,7 @@ public class GameController : MonoBehaviour {
         if (stateFirstRun)
         {
             display.ShowExit();
+            buttons.Show(buttons.startButton, false);
             buttons.Show(buttons.pauseButton, false);
             buttons.Show(buttons.playButton, true);
             stateFirstRun = false;

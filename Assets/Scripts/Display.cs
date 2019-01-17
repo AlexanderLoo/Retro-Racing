@@ -75,6 +75,17 @@ public class Display : MonoBehaviour {
 		draw.Lives();
 		Battery(batteries);
 	}
+    //Funcion que enseña ochos para la animacion inicial
+    public void Eights(bool b){
+
+        if(b){
+            draw.scoreText.text = "8888";
+            draw.playCountDown.text = "8";
+        }else{
+            draw.scoreText.text = "";
+            draw.playCountDown.text = "";
+        }
+    }
 
 	public void ShowSplashScreen(){
 

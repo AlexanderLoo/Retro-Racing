@@ -42,6 +42,8 @@ public class Draw : MonoBehaviour {
 	public Text minute;
 	public Text amOrPm;
 
+    public List<GameObject> mainObjects;
+
     //TEST
     //Variables de temas(background)
     public Vector2[] skyVertices;
@@ -84,6 +86,7 @@ public class Draw : MonoBehaviour {
         FillImages("Battery", battery);
         //  FillImageArray (livesArray, live);
 
+        mainObjects = new List<GameObject>() { startGameCountDown };
     }
 	//Obtenemos el tamaño de la pantalla en pixeles	
     public Vector2 GetScreenSizeInPixels(){
