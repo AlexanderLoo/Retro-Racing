@@ -5,30 +5,30 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour {
 
-	public Display display;
-	public Sound sound; 
-	public Buttons buttons;
+    public Display display;
+    public Sound sound; 
+    public Buttons buttons;
 
-	public Player player;
-	public Enemies enemies;
-	public Colision colision;
+    public Player player;
+    public Enemies enemies;
+    public Colision colision;
 
-	public Preference pref;
+    public Preference pref;
 
-	public Battery bat;
+    public Battery bat;
 
-	public Lives lives;
+    public Lives lives;
 
     private State _state;
 
-	[SerializeField] //UNITY
-	public class State
-	{
-		public string name;
+    [SerializeField] //UNITY
+    public class State
+    {
+        public string name;
         public string[] enemiesArray; 
-		public int playerPos = 1;
-		public int level = 0;
-		public int racingTime = 0;
+        public int playerPos = 1;
+        public int level = 0;
+        public int racingTime = 0;
         public int spaceCounter = 0;
 
         public State(int columnLength, string newWave){
@@ -39,97 +39,101 @@ public class GameController : MonoBehaviour {
                 enemiesArray[i] = newWave;
             }
         }
-	}
+    }
 
-	public bool racingGame = true;
+    public bool racingGame = true;
 
     private bool stateFirstRun = true;
 
-	public float lowestSpeed = 16.6f; //16.6 m/s
-	public float gameSpeed = 1f; //Velocidad del juego donde 1 es normal(para animaciones)
-	private int startingTime; //TEST, se piensa cambiar el nombre de la variable
+    public float lowestSpeed = 16.6f; //16.6 m/s
+    public float gameSpeed = 1f; //Velocidad del juego donde 1 es normal(para animaciones)
+    private int startingTime; //TEST, se piensa cambiar el nombre de la variable
 
     public int rowLength = 3;
     public int columnLength = 4;
 
     private string emptyWave; //string rellenado con ceros
-	private string newEnemiesWave; //el nuevo spawn de los enemigos expresado en un string binario
-	public float enemySpeed = 1f;
-	private double timeToNextEnemyMove;
+    private string newEnemiesWave; //el nuevo spawn de los enemigos expresado en un string binario
+    public float enemySpeed = 1f;
+    private double timeToNextEnemyMove;
 
-	//variables para controllar las recargas de batería
-	public int waitingTime = 60; //segundos de espera para obtener una batería(una vez perdida)
-	private int timeForNextBat; //Variable para saber el tiempo que falta para una batería(mostrada en el display)
-	private int timeToReachForBat;
-	private bool charging = false;
+    //variables para controllar las recargas de batería
+    public int waitingTime = 60; //segundos de espera para obtener una batería(una vez perdida)
+    private int timeForNextBat; //Variable para saber el tiempo que falta para una batería(mostrada en el display)
+    private int timeToReachForBat;
+    private bool charging = false;
 
-    public int initAnimWait = 3; //Duracion de la animacion inicial
+    public int initAnimWait = 8; //Duracion de la animacion inicial(SIEMPRE DEBE SER PAR)
     public int timeToStartGame;
-	public int gameOverWait = 5;
-	private int timeToMainMenu;
+    public int gameOverWait = 5;
+    private int timeToMainMenu;
+    private int oneSecondAnim = 0; //por ahora esta solo usa valores enteros
+    private bool animValue = false;
 
-	//Para mostrar la hora actual(local)
-	private int hour, minute, seconds;
-	private string amPm = "AM";
+    //Para mostrar la hora actual(local)
+    private int hour, minute, seconds;
+    private string amPm = "AM";
 
     private int score;
     private int scoreForNextLevel;
     private int[] levelScore = new int[] { 200, 300, 500, 800, 1300, 2100, 3400, 5500, 8900, 14400, 999999999};
-	//TEST
-	public bool doubleSpawn;
-	public int space = 1; //<--Con level design establecemos el espacio de spawneo
+    //TEST
+    public bool doubleSpawn;
+    public int space = 1; //<--Con level design establecemos el espacio de spawneo
 
-	private bool interupted = false;
+    private bool interupted = false;
 
     void Awake()
     {
         //TEST
-        display.Objects(racingGame, rowLength, columnLength);	
+        display.Objects(racingGame, rowLength, columnLength);
     }
 
     void Start(){
 
-		display.NewScreen (); //TEST
-		FirstTimePlaying();
-		bat.batteries = pref.GetInt ("CurrentBatteries");
+        display.NewScreen (); //TEST
+        FirstTimePlaying();
+        bat.batteries = pref.GetInt ("CurrentBatteries");
 
-		if (StartingFromInterupted ()) {
-			LoadState ();
-			display.PlayerMove (_state.playerPos);
+        if (StartingFromInterupted ()) {
+            LoadState ();
+            display.PlayerMove (_state.playerPos);
             emptyWave = Repeat("0", _state.enemiesArray[0].Length);
-			display.Enemies (_state.enemiesArray);
-			startingTime = CurrentTime();
+            display.Enemies (_state.enemiesArray);
+            startingTime = CurrentTime();
             display.CurrentScore (Distance());
             scoreForNextLevel = levelScore[_state.level];
-		} else {
+        } else {
             //prepare for new game
             emptyWave = Repeat("0", rowLength);
             _state = new State(columnLength, emptyWave);
-			display.ShowSplashScreen ();
-			display.PlayerMove (_state.playerPos);
+            display.ShowSplashScreen ();
+            display.PlayerMove (_state.playerPos);
             display.Eights(true);
-			_state.name = "init";
-		}
+            display.InitAnimation(false);
+            oneSecondAnim = CurrentTime() + 1;
+            _state.name = "init";
+        }
         newEnemiesWave = emptyWave;
-		if (bat.Get() != bat.maxBatteries) {
-			RemainingCharge ();
-		}
-		display.UI();
+        if (bat.Get() != bat.maxBatteries) {
+            RemainingCharge ();
+        }
+        display.UI();
         //display.MainMenu (bat.Get(),lives.Get());
         timeToMainMenu = CurrentTime() + initAnimWait;
-		SetState (_state.name);
+        SetState (_state.name);
         if (_state.name != "init") display.Battery(bat.Get());
-	}
+    }
 
-	void Update(){
+    void Update(){
         
-		//TEST
-		TestingGetcurrentScreen();
-		//print (_state.name); //TEST
+        //TEST
+        TestingGetcurrentScreen();
+        //print (_state.name); //TEST
 
         buttons.Back();
 
-		Charging();
+        Charging();
         LocalTime();
 
         if(_state.name != "init"){
@@ -146,68 +150,68 @@ public class GameController : MonoBehaviour {
             }
         }
 
-		switch (_state.name) {
-			
+        switch (_state.name) {
+            
         case "init":
             InitState();
             break;
-		case "mainMenu":
-			MainMenuState ();
-			break;
-		case "startGame":
-			StartGameState ();
-			break;
+        case "mainMenu":
+            MainMenuState ();
+            break;
+        case "startGame":
+            StartGameState ();
+            break;
         case "playCountDown":
             PlayCountDown();
             break;
-		case "playing":
-			PlayingState ();
-			break;
-		case "crashed":
-			CrashedState ();
-			break;
-		case "paused":
-			PausedState ();
-			break;
-		case "gameOver":
-			GameOverState ();
-			break;
-		default:
-			Debug.Log ("No se encuentra en ningún estado");	//TEST
-			break;
-		}
+        case "playing":
+            PlayingState ();
+            break;
+        case "crashed":
+            CrashedState ();
+            break;
+        case "paused":
+            PausedState ();
+            break;
+        case "gameOver":
+            GameOverState ();
+            break;
+        default:
+            Debug.Log ("No se encuentra en ningún estado");    //TEST
+            break;
+        }
         print(_state.name);
-	}
+    }
 
-	private bool StartingFromInterupted(){
+    private bool StartingFromInterupted(){
 
-		if (pref.GetInt ("Interupted") == 1) {
+        if (pref.GetInt ("Interupted") == 1) {
             interupted = true;
-		} else {
-			interupted = false;
-		}
+        } else {
+            interupted = false;
+        }
         return interupted;
-	}
+    }
 
-	private void FirstTimePlaying(){
+    private void FirstTimePlaying(){
 
-		if (pref.GetInt("FirstTimePlaying") == 0) {
-			pref.SetInt ("FirstTimePlaying", 1);
-			pref.SetInt ("CurrentBatteries", bat.maxBatteries);
-		}
-	}
+        if (pref.GetInt("FirstTimePlaying") == 0) {
+            pref.SetInt ("FirstTimePlaying", 1);
+            pref.SetInt ("CurrentBatteries", bat.maxBatteries);
+        }
+    }
 
     //states: mainMenu, startGame,playCountDown, playing, crashed, paused, gameover
-	void SetState(string state){
+    void SetState(string state){
 
-		_state.name = state;
+        _state.name = state;
         stateFirstRun = true;
-	}
-	//TEST, SIN UTILIDAD POR AHORA
-	string GetState(){
+    }
+    //TEST, SIN UTILIDAD POR AHORA
+    string GetState(){
 
-		return _state.name;
-	}
+        return _state.name;
+    }
 
     string Repeat(string str, int count){
 
@@ -226,10 +230,18 @@ public class GameController : MonoBehaviour {
             display.Battery(bat.Get());
             display.Eights(false);
             SetState("mainMenu");
+        }else{
+
+            if (CurrentTime() > oneSecondAnim)
+            {
+                display.InitAnimation(!animValue);
+                animValue = !animValue;
+                oneSecondAnim += 1;
+            }
         }
     }
 
-	void MainMenuState(){
+    void MainMenuState(){
 
         if (stateFirstRun)
         {
@@ -242,36 +254,36 @@ public class GameController : MonoBehaviour {
             _state.racingTime = 0;
             stateFirstRun = false;
         }
-		if (buttons.StartPressed ()) {
-			buttons.SetStart (false);
+        if (buttons.StartPressed ()) {
+            buttons.SetStart (false);
             SetState("startGame");
-		} 
-	}
+        } 
+    }
 
-	void StartGameState(){
+    void StartGameState(){
 
-		if (bat.Left ()) {
+        if (bat.Left ()) {
 
-			bat.Add (-1);
-			pref.SetInt ("CurrentBatteries", bat.batteries);
-			buttons.Show (buttons.startButton, false);
-			//TEST
-			if (!charging) {
-				timeToReachForBat = CurrentTime() + waitingTime;
-				charging = true;
-			}
-			display.Battery (bat.Get ());
+            bat.Add (-1);
+            pref.SetInt ("CurrentBatteries", bat.batteries);
+            buttons.Show (buttons.startButton, false);
+            //TEST
+            if (!charging) {
+                timeToReachForBat = CurrentTime() + waitingTime;
+                charging = true;
+            }
+            display.Battery (bat.Get ());
             display.CurrentScore(0);
             _state.level = 0;
             scoreForNextLevel = levelScore[0];
             timeToStartGame = CurrentTime() + 3; 
             SetState("playCountDown");
-		} else {
-			display.NotEnoughtBat (); //Posible animacion de la batería
-			sound.BadLuck();
-			SetState("mainMenu");
-		}
-	}
+        } else {
+            display.NotEnoughtBat (); //Posible animacion de la batería
+            sound.BadLuck();
+            SetState("mainMenu");
+        }
+    }
 
     void PlayCountDown(){
 
@@ -290,12 +302,12 @@ public class GameController : MonoBehaviour {
         }
     }
 
-	void PlayingState(){
+    void PlayingState(){
         
-		//TEST
-		#if UNITY_EDITOR
-		buttons.KeysController();
-		#endif
+        //TEST
+        #if UNITY_EDITOR
+        buttons.KeysController();
+        #endif
 
         if (stateFirstRun)
         {
@@ -307,49 +319,49 @@ public class GameController : MonoBehaviour {
             stateFirstRun = false;
         }
 
-		if (buttons.PausePressed()) {
-			buttons.SetPause (false);
+        if (buttons.PausePressed()) {
+            buttons.SetPause (false);
             SetState("paused");
-		}
-		//TEST, buscando la mejor manera de manejar los segundos
+        }
+        //TEST, buscando la mejor manera de manejar los segundos
         _state.racingTime += (CurrentTime() - startingTime);
-		startingTime = CurrentTime();
-		//racingTime += Time.deltaTime; //Esta lógica hace que el score corra más rápido
+        startingTime = CurrentTime();
+        //racingTime += Time.deltaTime; //Esta lógica hace que el score corra más rápido
 
-		display.CurrentScore(Distance ());
+        display.CurrentScore(Distance ());
         LevelManager();
 
-		if (buttons.Left() && player.CanLeft(_state.playerPos)) {
-			display.PlayerMove(player.Movement(ref _state.playerPos, -1));
-			buttons.SetLeft (false);
-		}
-		if (buttons.Right() && player.CanRight(_state.playerPos,rowLength - 1)) {
-			display.PlayerMove(player.Movement(ref _state.playerPos, 1));
-			buttons.SetRight (false);
-		}
-		//TEST
-		//PlayerAi();
+        if (buttons.Left() && player.CanLeft(_state.playerPos)) {
+            display.PlayerMove(player.Movement(ref _state.playerPos, -1));
+            buttons.SetLeft (false);
+        }
+        if (buttons.Right() && player.CanRight(_state.playerPos,rowLength - 1)) {
+            display.PlayerMove(player.Movement(ref _state.playerPos, 1));
+            buttons.SetRight (false);
+        }
+        //TEST
+        //PlayerAi();
 
-		if (EnemiesMoveNow()) {
-			if (CanSpawn ()) {
-				if (doubleSpawn)
-					NewSpawn (1,0);
-				else
-					NewSpawn (0,1);
-			} else {
-				newEnemiesWave = emptyWave;
-			}
-			_state.enemiesArray = enemies.MoveDown(newEnemiesWave, _state.enemiesArray);
-			display.Enemies(_state.enemiesArray);
-		}
+        if (EnemiesMoveNow()) {
+            if (CanSpawn ()) {
+                if (doubleSpawn)
+                    NewSpawn (1,0);
+                else
+                    NewSpawn (0,1);
+            } else {
+                newEnemiesWave = emptyWave;
+            }
+            _state.enemiesArray = enemies.MoveDown(newEnemiesWave, _state.enemiesArray);
+            display.Enemies(_state.enemiesArray);
+        }
 
-		if(colision.Crashed(_state.enemiesArray, _state.playerPos)){
+        if(colision.Crashed(_state.enemiesArray, _state.playerPos)){
 
-			SetState("crashed");
-		}
-	}
+            SetState("crashed");
+        }
+    }
 
-	void PausedState(){
+    void PausedState(){
 
         if (stateFirstRun)
         {
@@ -360,33 +372,33 @@ public class GameController : MonoBehaviour {
             stateFirstRun = false;
         }
        
-		if (buttons.StartPressed()) {
-			buttons.SetStart (false);
+        if (buttons.StartPressed()) {
+            buttons.SetStart (false);
             timeToStartGame = CurrentTime() + 3;
             SetState("playCountDown");
-			//startingTime = CurrentTime();
+            //startingTime = CurrentTime();
             //SetState("playing");
-		}
-	}
+        }
+    }
 
-	void CrashedState(){
+    void CrashedState(){
 
-		lives.Decrease (1);
-		display.Crashed (_state.playerPos);
-		sound.Crashed();
-		//kenemies.Reset(); //TEST QUIZAS NO SE DEBA RESETEAR
-		if (lives.Left ()) {
-			SetState ("playing");
-		} else {
-			bat.GameOver();
-			display.GameOver();
-			sound.GameOver();
-			timeToMainMenu = CurrentTime() + gameOverWait;
+        lives.Decrease (1);
+        display.Crashed (_state.playerPos);
+        sound.Crashed();
+        //kenemies.Reset(); //TEST QUIZAS NO SE DEBA RESETEAR
+        if (lives.Left ()) {
+            SetState ("playing");
+        } else {
+            bat.GameOver();
+            display.GameOver();
+            sound.GameOver();
+            timeToMainMenu = CurrentTime() + gameOverWait;
             SetState("gameOver");
-		}
-	}
+        }
+    }
 
-	void GameOverState(){
+    void GameOverState(){
 
         if (stateFirstRun)
         {
@@ -395,10 +407,10 @@ public class GameController : MonoBehaviour {
             stateFirstRun = false;
         }
        
-		 if (CurrentTime() > timeToMainMenu) {
-			SetState ("mainMenu");
-		}
-	}
+         if (CurrentTime() > timeToMainMenu) {
+            SetState ("mainMenu");
+        }
+    }
 
     private double Now(){
 
@@ -412,55 +424,55 @@ public class GameController : MonoBehaviour {
         return (int)Now();
     }
 
-	private void LocalTime(){
+    private void LocalTime(){
 
-		System.DateTime time = System.DateTime.Now; //Tiempo local
+        System.DateTime time = System.DateTime.Now; //Tiempo local
 
-		hour = time.Hour;
-		minute = time.Minute;
-		seconds = time.Second;
+        hour = time.Hour;
+        minute = time.Minute;
+        seconds = time.Second;
 
-	}
+    }
 
-	private bool EnemiesMoveNow(){
-		 
-		if (Now() >= timeToNextEnemyMove) {
-			timeToNextEnemyMove = Now() + enemySpeed * gameSpeed;
-			return true;
-		} else {
-			return false;
-		}
-	}
-	//TEST
-	private bool CanSpawn(){
-		
-		if (_state.spaceCounter == 0) {
-			_state.spaceCounter = space;
-			return true;
-		} else {
-			_state.spaceCounter--;
-			return false;
-		}
-	}
+    private bool EnemiesMoveNow(){
+         
+        if (Now() >= timeToNextEnemyMove) {
+            timeToNextEnemyMove = Now() + enemySpeed * gameSpeed;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    //TEST
+    private bool CanSpawn(){
+        
+        if (_state.spaceCounter == 0) {
+            _state.spaceCounter = space;
+            return true;
+        } else {
+            _state.spaceCounter--;
+            return false;
+        }
+    }
 
-	//Función par crear los waves, manipula si se spawnea 1 ò 2 enemigos por fila
-	//para un enemigo por fila --> setup:0 , chosenOne:1 --> NewSpawn(0,1);
-	//para dos enemigos por fila --> setup:1, chosenOne:0 ---> NewSpawn(1,0);
-	private void NewSpawn(int setup = 0, int chosenOne = 1){
+    //Función par crear los waves, manipula si se spawnea 1 ò 2 enemigos por fila
+    //para un enemigo por fila --> setup:0 , chosenOne:1 --> NewSpawn(0,1);
+    //para dos enemigos por fila --> setup:1, chosenOne:0 ---> NewSpawn(1,0);
+    private void NewSpawn(int setup = 0, int chosenOne = 1){
 
-		int arrayLength = newEnemiesWave.Length;
-		int [] temporalArray = new int[arrayLength];
+        int arrayLength = newEnemiesWave.Length;
+        int [] temporalArray = new int[arrayLength];
 
-		for (int i = 0; i < arrayLength; i++) {
-			temporalArray [i] = setup;
-		}
-		//int randomIndex = new System.Random ().Next (0, arrayLength);
-		int randomIndex = RandomInt(0,arrayLength);
-		temporalArray [randomIndex] = chosenOne;
-		//única solución encontrada...
-		string newString = string.Join("", new List<int>(temporalArray).ConvertAll(i => i.ToString()).ToArray());
-		newEnemiesWave = newString;
-	}
+        for (int i = 0; i < arrayLength; i++) {
+            temporalArray [i] = setup;
+        }
+        //int randomIndex = new System.Random ().Next (0, arrayLength);
+        int randomIndex = RandomInt(0,arrayLength);
+        temporalArray [randomIndex] = chosenOne;
+        //única solución encontrada...
+        string newString = string.Join("", new List<int>(temporalArray).ConvertAll(i => i.ToString()).ToArray());
+        newEnemiesWave = newString;
+    }
 
     private int Distance()
     {
@@ -513,9 +525,9 @@ public class GameController : MonoBehaviour {
             case 9:
                 ChangeLevel(0.4f,1,RandomBool());
                 break;
-			case 10:
-				ChangeLevel(0.1f,1,RandomBool());//<-- God Mode
-				break;
+            case 10:
+                ChangeLevel(0.1f,1,RandomBool());//<-- God Mode
+                break;
         }
     }
 
@@ -539,102 +551,102 @@ public class GameController : MonoBehaviour {
         return value;
     }
 
-	//TEST
-	private void Charging(){
+    //TEST
+    private void Charging(){
 
-		if (timeToReachForBat > CurrentTime()) {
-			timeForNextBat = timeToReachForBat - CurrentTime();
-		} else {
-			timeForNextBat = 0;
-			if (charging) {
-				bat.Add (1);
-				pref.SetInt ("CurrentBatteries", bat.batteries);
-				if(_state.name != "init")display.Battery (bat.Get());
-				if (bat.Get () != bat.maxBatteries) {
-					timeToReachForBat = CurrentTime() + waitingTime;
-				} else {
-					charging = false;
-				}
-			}
-		}
-	}
+        if (timeToReachForBat > CurrentTime()) {
+            timeForNextBat = timeToReachForBat - CurrentTime();
+        } else {
+            timeForNextBat = 0;
+            if (charging) {
+                bat.Add (1);
+                pref.SetInt ("CurrentBatteries", bat.batteries);
+                if(_state.name != "init")display.Battery (bat.Get());
+                if (bat.Get () != bat.maxBatteries) {
+                    timeToReachForBat = CurrentTime() + waitingTime;
+                } else {
+                    charging = false;
+                }
+            }
+        }
+    }
 
-	//TEST
-	void TestingGetcurrentScreen(){
+    //TEST
+    void TestingGetcurrentScreen(){
 
-		if (Input.GetKeyDown(KeyCode.Space)) {
-			display.NewScreen ();
-			PlayerPrefs.DeleteAll ();
-		}
-	}
-	//TEST
-	//basic AI for fast testing
-	void PlayerAi(){
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            display.NewScreen ();
+            PlayerPrefs.DeleteAll ();
+        }
+    }
+    //TEST
+    //basic AI for fast testing
+    void PlayerAi(){
 
-		if(_state.enemiesArray[columnLength - 2][_state.playerPos] == '1'){
-			for(int i = 0; i < _state.enemiesArray[columnLength - 2].Length; i++){
-				if(_state.enemiesArray[columnLength - 2][i] == '0'){
-					display.PlayerMove(player.Movement(ref _state.playerPos, i -_state.playerPos));
-					break;
-				}
-			}
-		}
-	}
+        if(_state.enemiesArray[columnLength - 2][_state.playerPos] == '1'){
+            for(int i = 0; i < _state.enemiesArray[columnLength - 2].Length; i++){
+                if(_state.enemiesArray[columnLength - 2][i] == '0'){
+                    display.PlayerMove(player.Movement(ref _state.playerPos, i -_state.playerPos));
+                    break;
+                }
+            }
+        }
+    }
 
-	public void RemainingCharge(){
+    public void RemainingCharge(){
 
-//		int reachTimeForFullCharge = pref.GetInt ("LastTimePlayed") + pref.GetInt ("RemainingTime");
+//        int reachTimeForFullCharge = pref.GetInt ("LastTimePlayed") + pref.GetInt ("RemainingTime");
 //
-//		if (CurrentTime() >= reachTimeForFullCharge) {
-//			bat.Add (bat.maxBatteries - bat.Get ());
-//			pref.SetInt ("CurrentBatteries", bat.batteries);
-//		} else {
-//			int offLineTime = CurrentTime() - pref.GetInt("LastTimePlayed");
-//			bat.Add ((offLineTime + pref.GetInt("TimeElapsedForBat"))/ waitingTime);
-//			pref.SetInt ("CurrentBatteries", bat.batteries);
-//			timeToReachForBat = ((reachTimeForFullCharge - CurrentTime()) % waitingTime) + CurrentTime();
-//			charging = true;
-//		}
+//        if (CurrentTime() >= reachTimeForFullCharge) {
+//            bat.Add (bat.maxBatteries - bat.Get ());
+//            pref.SetInt ("CurrentBatteries", bat.batteries);
+//        } else {
+//            int offLineTime = CurrentTime() - pref.GetInt("LastTimePlayed");
+//            bat.Add ((offLineTime + pref.GetInt("TimeElapsedForBat"))/ waitingTime);
+//            pref.SetInt ("CurrentBatteries", bat.batteries);
+//            timeToReachForBat = ((reachTimeForFullCharge - CurrentTime()) % waitingTime) + CurrentTime();
+//            charging = true;
+//        }
 
-		int offLineTime = CurrentTime() - pref.GetInt("LastTimePlayed") + pref.GetInt("TimeElapsedForBat");
-		bat.Add (offLineTime / waitingTime);
-		pref.SetInt ("CurrentBatteries", bat.batteries);
-		if (bat.Get () == bat.maxBatteries) {
-			timeToReachForBat = 0;
-		} else {
-			timeToReachForBat = CurrentTime() + (waitingTime -(offLineTime % waitingTime));
-			charging = true;
-		}
-	}
-	//TEST(cuando salimos de la aplicación)
+        int offLineTime = CurrentTime() - pref.GetInt("LastTimePlayed") + pref.GetInt("TimeElapsedForBat");
+        bat.Add (offLineTime / waitingTime);
+        pref.SetInt ("CurrentBatteries", bat.batteries);
+        if (bat.Get () == bat.maxBatteries) {
+            timeToReachForBat = 0;
+        } else {
+            timeToReachForBat = CurrentTime() + (waitingTime -(offLineTime % waitingTime));
+            charging = true;
+        }
+    }
+    //TEST(cuando salimos de la aplicación)
     private void SavePrefs(){
-//		int remainingTimeForFullCharge;
-		int timeElapsedForBat = waitingTime - timeForNextBat;
-//		if (bat.Get () != bat.maxBatteries) {
-//			
-//			remainingTimeForFullCharge = (bat.maxBatteries - bat.Get ()) * waitingTime - (timeElapsedForBat);
-//		} else {
-//			remainingTimeForFullCharge = 0;
-//		}
-//		pref.SetInt ("RemainingTime", remainingTimeForFullCharge);
-		pref.SetInt ("LastTimePlayed", CurrentTime());
-		pref.SetInt("TimeElapsedForBat",timeElapsedForBat);
-		SaveState ();
-		//TEST
-		pref.SetInt("Interupted", pref.SetInterupted(interupted));
-	}
+//        int remainingTimeForFullCharge;
+        int timeElapsedForBat = waitingTime - timeForNextBat;
+//        if (bat.Get () != bat.maxBatteries) {
+//            
+//            remainingTimeForFullCharge = (bat.maxBatteries - bat.Get ()) * waitingTime - (timeElapsedForBat);
+//        } else {
+//            remainingTimeForFullCharge = 0;
+//        }
+//        pref.SetInt ("RemainingTime", remainingTimeForFullCharge);
+        pref.SetInt ("LastTimePlayed", CurrentTime());
+        pref.SetInt("TimeElapsedForBat",timeElapsedForBat);
+        SaveState ();
+        //TEST
+        pref.SetInt("Interupted", pref.SetInterupted(interupted));
+    }
 
-	private void SaveState() {
-		
-		string toSaveJson = JsonUtility.ToJson(_state); //UNITY
-		pref.SetString ("CurrentState", toSaveJson);
-	}
+    private void SaveState() {
+        
+        string toSaveJson = JsonUtility.ToJson(_state); //UNITY
+        pref.SetString ("CurrentState", toSaveJson);
+    }
 
-	public void LoadState() {
+    public void LoadState() {
 
-		string loadJson = pref.GetString("CurrentState");
-		_state = JsonUtility.FromJson<State>(loadJson); //UNITY
-	}
+        string loadJson = pref.GetString("CurrentState");
+        _state = JsonUtility.FromJson<State>(loadJson); //UNITY
+    }
 
     //FUNCIONES DE SALIDA DEL JUEGO
     //private void OnApplicationPause(bool pause)

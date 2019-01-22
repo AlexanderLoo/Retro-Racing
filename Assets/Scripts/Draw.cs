@@ -42,7 +42,7 @@ public class Draw : MonoBehaviour {
 	public Text minute;
 	public Text amOrPm;
 
-    public List<GameObject> mainObjects;
+    public GameObject[] mainObjects; //Lista de los objetos para la animacion inicial
 
     //TEST
     //Variables de temas(background)
@@ -86,7 +86,9 @@ public class Draw : MonoBehaviour {
         FillImages("Battery", battery);
         //  FillImageArray (livesArray, live);
 
-        mainObjects = new List<GameObject>() { startGameCountDown };
+        mainObjects = new GameObject[]{ startGameCountDown, bat, batCountDown, bat0, bat1, bat2,
+            score, pause, play, start, timeHour, timeMinute, timeDots, timeAmOrPm
+        };
     }
 	//Obtenemos el tamaño de la pantalla en pixeles	
     public Vector2 GetScreenSizeInPixels(){
@@ -367,6 +369,14 @@ public class Draw : MonoBehaviour {
 
 		gameObject.SetActive (value);
 	}
+    //Override Function
+    public void ObjectShown(GameObject[] gameObjects, bool value){
+
+        foreach (GameObject go in gameObjects)
+        {
+            go.SetActive(value);
+        }
+    }
     //Función para dibujar poligonos
     public void Polygon2D(Vector2[] vertices, ushort[] triangles, Color color, int sortingOrder)
     {

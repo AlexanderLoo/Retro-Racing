@@ -75,6 +75,11 @@ public class Display : MonoBehaviour {
 		draw.Lives();
 		Battery(batteries);
 	}
+
+    public void InitAnimation(bool value){
+
+        draw.ObjectShown(draw.mainObjects, value);
+    }
     //Funcion que enseña ochos para la animacion inicial
     public void Eights(bool b){
 
