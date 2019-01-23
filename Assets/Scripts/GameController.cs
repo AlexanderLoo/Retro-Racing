@@ -245,6 +245,7 @@ public class GameController : MonoBehaviour {
 
         if (stateFirstRun)
         {
+            display.PlayerMove(_state.playerPos);
             buttons.Show(buttons.startButton, true);
             buttons.Show(buttons.pauseButton, false);
             buttons.Show(buttons.playButton, false);

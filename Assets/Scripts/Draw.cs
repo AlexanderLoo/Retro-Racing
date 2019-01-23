@@ -43,7 +43,7 @@ public class Draw : MonoBehaviour {
 	public Text amOrPm;
 
     public GameObject[] mainObjects; //Lista de los objetos para la animacion inicial
-
+    public List<GameObject> enemiesObjects;
     //TEST
     //Variables de temas(background)
     public Vector2[] skyVertices;
@@ -155,6 +155,9 @@ public class Draw : MonoBehaviour {
             for (int j = 0; j < rowLength; j++)
             {
                 GameObject go = new GameObject(name + i.ToString() + '-' + j.ToString());
+                if (name == "e"){
+                    enemiesObjects.Add(go);
+                }
                 go.tag = tag;
                 go.AddComponent<SpriteRenderer>();
                 SpriteRenderer sr = go.GetComponent<SpriteRenderer>();
@@ -377,6 +380,24 @@ public class Draw : MonoBehaviour {
             go.SetActive(value);
         }
     }
+    public void ObjectShown(List<GameObject> gameObjects, bool value)
+    {
+
+        foreach (GameObject go in gameObjects)
+        {
+            go.SetActive(value);
+        }
+    }
+    public void ObjectShown(List<SpriteRenderer> spriteRenderer, bool value)
+    {
+
+        foreach (SpriteRenderer sr in spriteRenderer)
+        {
+            sr.enabled = value;
+        }
+    }
+
+
     //Función para dibujar poligonos
     public void Polygon2D(Vector2[] vertices, ushort[] triangles, Color color, int sortingOrder)
     {

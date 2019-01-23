@@ -79,6 +79,8 @@ public class Display : MonoBehaviour {
     public void InitAnimation(bool value){
 
         draw.ObjectShown(draw.mainObjects, value);
+        draw.ObjectShown(draw.enemiesObjects, value);
+        draw.ObjectShown(draw.playerArray, value);
     }
     //Funcion que enseña ochos para la animacion inicial
     public void Eights(bool b){
@@ -100,7 +102,7 @@ public class Display : MonoBehaviour {
     public void Objects(bool game, int rowLength, int columnLength){
 
         draw.GameObjects(game, "b", "Enemy", 0, 20, rowLength, columnLength, 0.1f, 0.1f, true);
-        draw.GameObjects(game, "e", "Enemy", 1, 255, rowLength, columnLength, 0.1f, 0.1f);
+        draw.GameObjects(game, "e", "Enemy", 1, 255, rowLength, columnLength, 0.1f, 0.1f, true);
 		draw.GameObjects(game, "p", "Player", 0, 255, rowLength, columnLength, 0.1f, 0.1f, isPlayer:true);
     }
 
