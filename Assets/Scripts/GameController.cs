@@ -650,18 +650,18 @@ public class GameController : MonoBehaviour {
     }
 
     //FUNCIONES DE SALIDA DEL JUEGO
-    //private void OnApplicationPause(bool pause)
-    //{
-    //    SavePrefs();
-    //}
-    //private void OnApplicationFocus(bool focus)
-    //{
-    //    SavePrefs();
-    //}
-    //private void OnDisable()
-    //{
-    //    SavePrefs();
-    //}
+    private void OnApplicationPause(bool pause)
+    {
+        SavePrefs();
+    }
+    private void OnApplicationFocus(bool focus)
+    {
+        SavePrefs();
+    }
+    private void OnDisable()
+    {
+        SavePrefs();
+    }
     private void OnApplicationQuit()
     {
         SavePrefs(); //TEST en caso de bug con playerPref, comentar esta linea
